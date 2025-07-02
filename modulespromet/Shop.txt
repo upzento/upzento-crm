@@ -1,0 +1,38 @@
+Shop (E-Commerce Management)
+Purpose:
+Empower clients to manage their online store, products, and orders directly within Upzento, with easy integration and embedding on their own websites.
+Key Features
+•  Product Management:
+•  Add, edit, and delete products.
+•  Manage product details: name, description, images, price, inventory, categories, variants (size, color, etc.).
+•  Bulk import/export products.
+•  Set product status (active/inactive, featured).
+•  Order Management:
+•  View, filter, and manage customer orders.
+•  Update order status (pending, paid, shipped, completed, cancelled).
+•  Track payment and shipping information.
+•  Automated email/SMS notifications for order updates.
+•  Download order reports.
+•  Coupons & Discounts:
+•  Create and manage discount codes (percentage, fixed amount, free shipping, etc.).
+•  Set usage limits, expiration dates, and eligible products/categories.
+•  Track coupon usage and performance.
+•  Integrations:
+•  Webhooks/API for syncing orders, inventory, and customer data with external systems (e.g., accounting, fulfillment, analytics).
+•  Integration with payment gateways (Stripe, PayPal, etc.).
+•  Shop Embedding:
+•  Generate embeddable code (iframe or JS widget) for:
+•  Full shop (all products, categories, cart, checkout).
+•  Product grid (select products or categories).
+•  Single product (for landing pages or promotions).
+•  Customizable branding, layout, and colors.
+•  Responsive and mobile-friendly.
+•  Performance Tracking:
+•  Dashboard for sales analytics, conversion rates, best-selling products, and revenue trends.
+•  Exportable reports for deeper analysis.
+•  Permissions & Security:
+•  Role-based access for shop management.
+•  Data isolation between agencies/clients.
+________________________________________
+Summary:
+The Shop module allows clients to run a full-featured e-commerce store from Upzento, manage products and orders, use coupons, integrate with other tools, and embed their shop or products on their own website with just a few clicks.

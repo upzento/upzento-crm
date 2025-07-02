@@ -1,0 +1,29 @@
+Chat (Live Chat & WhatsApp Integration)
+Purpose:
+Allow clients to add real-time chat to their websites for customer support and engagement, with the option to integrate WhatsApp, and manage all conversations from within Upzento.
+Key Features
+•  Website Chat Widget:
+•  Generate embeddable code (JS snippet or iframe) to add chat to any client website.
+•  Customizable appearance: branding, colors, welcome message, agent avatars.
+•  Responsive and mobile-friendly.
+•  Offline mode with contact form fallback.
+•  WhatsApp Integration:
+•  Connect WhatsApp Business account for direct messaging.
+•  Unified inbox for both website chat and WhatsApp conversations.
+•  Automated greeting and away messages.
+•  Support for media (images, files, etc.).
+•  Chat Management:
+•  Clients can view, manage, and reply to all chat conversations from their Upzento dashboard.
+•  Assign chats to staff or teams.
+•  Conversation tagging, notes, and status (open, pending, closed).
+•  Conversation history and search.
+•  Notifications:
+•  Real-time notifications for new messages.
+•  Email/SMS alerts for missed chats or replies.
+•  Analytics:
+•  Track chat volume, response times, customer satisfaction ratings.
+•  Export chat transcripts for quality or training purposes.
+•  Security & Permissions:
+•  Role-based access for chat management.
+•  Data isolation between agencies/clients.
+•  GDPR-compliant chat data handling.

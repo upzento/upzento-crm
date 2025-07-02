@@ -1,0 +1,35 @@
+Agency Dashboard
+Purpose:
+Empower agencies to manage their clients, team, subscriptions, and support—all from a dedicated, centralized dashboard.
+Key Features
+• My Clients:
+• View, add, edit, and manage all clients under the agency.
+• Track client performance, growth, and CRM usage.
+• Access client dashboards (impersonation) for support or management.
+• Monitor client subscription status and module usage.
+• Agency Team:
+• Add, remove, and manage agency team members.
+• Assign roles and permissions (e.g., which clients or modules each team member can access).
+• Track team activity and performance.
+• Agency Settings:
+• Manage agency profile (name, logo, contact info, branding).
+• Set agency preferences (notifications, default modules, etc.).
+• Manage integrations (connect agency-level tools/services).
+• Client Plan Management:
+• Create and assign subscription plans for clients (feature/module access, limits).
+• Upgrade/downgrade client plans as needed.
+• Payments:
+• View and manage payments for all clients (subscriptions, invoices).
+• Manage agency’s own subscription and billing with the CRM admin.
+• Export payment data for accounting.
+• Help & Support:
+• Access knowledge base and FAQs.
+• Submit and manage support tickets for agency issues (with CRM admin).
+• Clients can submit support tickets to the agency (agency manages these tickets).
+• Support Tickets:
+• Ticketing system for both agency-admin and agency-client support.
+• Track status, priority, and resolution history.
+• Assign tickets to team members.
+________________________________________
+Summary:
+The Agency Dashboard in Upzento CRM provides agencies with robust tools to oversee their clients, manage their team and subscriptions, handle payments, and deliver top-tier support—ensuring agencies can scale and serve their clients efficiently.

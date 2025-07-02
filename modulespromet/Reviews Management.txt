@@ -1,0 +1,27 @@
+Reviews Management
+Purpose:
+Enable businesses to collect, manage, and showcase customer reviews, with easy embedding on client websites to build trust and social proof.
+Key Features
+•	Review Collection:
+•	Generate embeddable code (iframe or JS widget) to display reviews on the client’s website.
+•	Customizable review forms (star rating, text, images, etc.).
+•	Option to collect reviews from multiple sources (direct, Google, Facebook, etc.).
+•	Review Moderation & Management:
+•	Admin and client dashboards to view, approve, or reject reviews.
+•	Flag inappropriate or spam reviews.
+•	Respond to reviews directly from the dashboard.
+•	Tag or categorize reviews (e.g., by service, staff, location).
+•	Showcase & Embedding:
+•	Generate embeddable code (iframe or JS widget) to display reviews on the client’s website.
+•	Customizable display: filter by rating, recency, service, etc.
+•	Branding options: colors, fonts, layout.
+•	Responsive and mobile-friendly.
+•	Analytics:
+•	Dashboard to track review volume, average rating, response rate, and trends.
+•	Export reviews for use in marketing or reporting.
+•	Permissions & Security:
+•	Role-based access: only authorized users can manage or moderate reviews.
+•	Data isolation between agencies/clients.
+________________________________________
+Summary:
+The Reviews Management module helps businesses gather authentic feedback, manage their reputation, and easily display customer reviews on their website—all from within Upzento.
