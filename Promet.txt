@@ -1,0 +1,143 @@
+Project Overview
+Build a multi-tenant CRM platform called Upzento for agencies and their clients, centralizing all business growth functions. The CRM must be secure, modular, mobile-ready, and support iframe/JS widget embedding with strict domain control.
+UI/UX must be unique, Modern (futuristic, cosmic feel), and support both dark and light modes.
+
+Tech Stack:
+Frontend: TypeScript, React, Next.js
+Backend: TypeScript, NestJS (Node.js)
+Database: PostgreSQL (Prisma ORM)
+CRM will host at Railway
+
+1. Core System Requirements
+Multi-tenant: Agencies manage clients; clients have isolated data.
+Admin dashboard for platform-wide management and analytics.
+Agency dashboard for managing clients, team, plans, and support.
+Client dashboard with modular access to all enabled features.
+Mobile-ready, API-first architecture for future mobile app.
+All embeddable modules (iframe/JS) must only work on authorized client domains (block on others).
+Role-based access: Admin, agency, client, team members.
+GDPR and privacy compliance; secure authentication and data handling.
+Notification System: Real-time and scheduled notifications (email, SMS, in-app, push) across all modules.
+UI/UX: Unique, space-like design, with full dark and light mode support and smooth transitions.
+
+2. Major Modules & Features
+2.1 Deals
+Manage sales pipelines, stages, notes, reminders, and reporting.
+Assign deals to staff, track progress, and relate to campaigns.
+
+2.2 Appointments System
+Manage staff, locations, services, and bookings.
+Integrate with Google Calendar, Outlook, Zoom, Microsoft Teams, webhooks/API.
+Embeddable booking widget (iframe/JS, domain-restricted).
+
+2.3 Phone & SMS Tracking
+Manage calls and SMS via Twilio/Vonage.
+Log, record, and assign calls/SMS to leads, deals, or contacts.
+Bulk SMS, templates, and automated notifications.
+
+2.4 Reviews Management
+Collect, moderate, and showcase customer reviews.
+Multi-source (direct, Google, Facebook, etc.).
+Embeddable review widget (iframe/JS, domain-restricted).
+Analytics and export options.
+
+2.5 Shop (E-Commerce)
+Create/manage products, orders, coupons, and inventory.
+Integrate with payment gateways (Stripe, PayPal, etc.).
+Webhook/API for external sync.
+Embeddable shop, product grid, or single product (iframe/JS, domain-restricted).
+Sales analytics dashboard.
+
+2.6 Forms Builder
+Drag-and-drop form builder for websites and campaigns.
+Multi-step, conditional logic, customizable fields and appearance.
+Submission handling, analytics, and export.
+Embeddable forms (iframe/JS, domain-restricted).
+Webhook/API integration.
+
+2.7 Marketing Campaigns
+Create, track, and optimize email, SMS, and multi-channel campaigns.
+Relate campaigns to deals for attribution.
+Automation (drip, follow-ups, triggers), A/B testing, and analytics.
+
+2.8 Chat
+Add chat to client sites via (iframe/JS, domain-restricted) or integrate WhatsApp.
+Unified inbox for web chat and WhatsApp.
+Assign/reply to chats, notifications, analytics.
+Domain-restricted embedding.
+
+2.9 Contacts
+Upload contacts via CSV or sync from leads and external sources.
+Full contact/lead management, segmentation, and automation triggers.
+
+2.10 Settings
+Centralized settings area for all modules and integrations.
+Tabs/sections for each module’s configuration and all required third-party integrations.
+Manage authorized domains for embedding.
+
+2.11 Payment
+Clients: View upcoming payments, payment history, and manage billing info.
+Agencies: Manage payments for clients and agency subscriptions.
+Admin: Manage all platform payments.
+
+2.12 Analytics Modules
+Clients: Access dashboards for Google Ads, Meta (Facebook/Instagram), LinkedIn, Google Analytics, etc.
+Real-time and historical data, customizable dashboards.
+
+2.13 Notification System
+Real-time and scheduled notifications for all modules.
+Supports in-app, email, SMS, and push notifications.
+Notification settings per user and per module.
+Notification center UI with read/unread, filtering, and actions.
+
+3. Dashboards
+
+3.1 Admin Dashboard
+System analytics: usage, revenue, health, growth trends.
+Manage agencies, all clients, plans, payments, and global settings.
+Impersonate/view any client dashboard.
+Manage agency/client plans and module access.
+System-wide support ticketing.
+
+3.2 Agency Dashboard
+Manage clients, track performance, and access client dashboards (impersonation).
+Manage agency team and permissions.
+Manage agency profile, preferences, and integrations.
+Create/assign client plans.
+Manage payments for clients and agency subscriptions.
+Help & Support: knowledge base, support tickets (with admin and clients).
+
+3.3 Client Dashboard
+Access all enabled modules.
+Manage own settings, integrations, and authorized domains.
+Submit/view support tickets to agency.
+
+4. Security & Compliance
+All embeddable modules must check and enforce allowed domains.
+Role-based access for all features and data.
+Data isolation between tenants (agencies/clients).
+Full audit logs for sensitive actions.
+GDPR, PCI, and privacy compliance throughout.
+
+5. Development Order (Suggested)
+Gather requirements and design system architecture (multi-tenancy, RBAC, integrations).
+Define database schema and relationships (Prisma ORM).
+Set up authentication/authorization (admin, agency, client, team).
+Build backend structure (NestJS, Prisma).
+Build frontend structure (Next.js, initial layout, dark/light/space-like UI).
+Implement core modules: Deals, Appointments, Phone & SMS, Reviews, Shop, Forms, Marketing, Chat, Contacts, Settings, Payment, Analytics, Notification System.
+Build admin, agency, and client dashboards.
+Integrate all required third-party APIs (Twilio, Google, Meta, Stripe, etc.).
+Implement iframe/JS embedding with domain restriction.
+Test multi-tenancy, security, and module embedding.
+Prepare for mobile app (API coverage, responsive UI).
+Deploy and document.
+
+6. Special Notes
+All widgets/modules has (iframe/JS) must only work on authorized domains.
+Platform must be mobile-ready and API-first.
+Support for impersonation (admin/agency as client) must be built in.
+All dashboards must have robust analytics and reporting.
+Support ticketing must be available for all user levels.
+UI/UX must be unique and modern  and support both dark and light modes.
+Notification system is required for all critical and user events.
