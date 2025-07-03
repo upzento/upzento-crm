@@ -7,10 +7,13 @@ function fixFileEncoding(filePath) {
     console.log("Fixing encoding for: " + filePath);
     
     // Read the file with binary encoding
-    const content = fs.readFileSync(filePath, "binary");
+    let content = fs.readFileSync(filePath, "binary");
     
-    // Write it back with UTF-8 encoding
-    fs.writeFileSync(filePath, content, "utf8");
+    // Replace any non-ASCII characters with their ASCII equivalents or remove them
+    content = content.replace(/[^\x00-\x7F]/g, "");
+    
+    // Write it back with ASCII encoding
+    fs.writeFileSync(filePath, content, "ascii");
     
     console.log("Fixed: " + filePath);
   } catch (error) {
@@ -45,5 +48,15 @@ function fixAllTsFiles(rootDir) {
   console.log("Finished fixing encoding for all TypeScript files");
 }
 
-// Fix files in backend directory
-fixAllTsFiles("./backend/src");
+// Handle direct file fix if provided as command line argument
+if (process.argv.length > 2) {
+  const filePath = process.argv[2];
+  if (fs.existsSync(filePath)) {
+    fixFileEncoding(filePath);
+  } else {
+    console.error("File not found: " + filePath);
+  }
+} else {
+  // Fix files in backend directory
+  fixAllTsFiles("./backend/src");
+}
