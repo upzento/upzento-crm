@@ -203,7 +203,7 @@ export default function ReviewsPage() {
                           <span className="text-sm font-medium">{review.title}</span>
                         </div>
                         <div className="text-sm text-muted-foreground mb-2">
-                          By {review.authorName} • {formatDate(review.createdAt)} • 
+                          By {review.authorName} â¢ {formatDate(review.createdAt)} â¢ 
                           <Badge variant="outline" className="ml-2 text-xs">
                             {review.source}
                           </Badge>

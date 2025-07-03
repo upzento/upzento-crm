@@ -543,8 +543,8 @@ export default function ShopWidgetsPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="usd">USD ($)</SelectItem>
-                    <SelectItem value="eur">EUR (€)</SelectItem>
-                    <SelectItem value="gbp">GBP (£)</SelectItem>
+                    <SelectItem value="eur">EUR (â¬)</SelectItem>
+                    <SelectItem value="gbp">GBP (Â£)</SelectItem>
                     <SelectItem value="cad">CAD ($)</SelectItem>
                     <SelectItem value="aud">AUD ($)</SelectItem>
                   </SelectContent>

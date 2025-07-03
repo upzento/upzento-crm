@@ -72,31 +72,31 @@ const features = [
   {
     title: 'Multi-tenant Architecture',
     description: 'Securely manage agencies and their clients with complete data isolation.',
-    icon: '🏢',
+    icon: 'ð¢',
   },
   {
     title: 'Modular Design',
     description: 'Access 12+ business growth modules that can be enabled as needed.',
-    icon: '🧩',
+    icon: 'ð§©',
   },
   {
     title: 'Embeddable Widgets',
     description: 'Embed booking forms, reviews, and more on your website with domain control.',
-    icon: '📦',
+    icon: 'ð¦',
   },
   {
     title: 'Cosmic UI',
     description: 'Modern space-themed interface with both dark and light modes.',
-    icon: '✨',
+    icon: 'â¨',
   },
   {
     title: 'Mobile Ready',
     description: 'Responsive design works seamlessly on all devices.',
-    icon: '📱',
+    icon: 'ð±',
   },
   {
     title: 'Advanced Analytics',
     description: 'Comprehensive dashboards for all your business data.',
-    icon: '📊',
+    icon: 'ð',
   },
 ]; 

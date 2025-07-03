@@ -364,7 +364,7 @@ export default function FormEmbedPage({ params }: { params: { id: string } }) {
                   <h3 className="font-medium text-amber-800 mb-2">Important Note</h3>
                   <p className="text-amber-700 text-sm">
                     For security reasons, your form can only be embedded on domains you've verified in your account settings.
-                    If you need to add a new domain, go to Settings → Domains.
+                    If you need to add a new domain, go to Settings â Domains.
                   </p>
                 </div>
               </div>

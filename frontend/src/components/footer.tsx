@@ -53,7 +53,7 @@ export function Footer() {
         
         <div className="border-t border-light-text-secondary/10 dark:border-dark-text-secondary/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
           <p className="text-sm text-light-text-secondary dark:text-dark-text-secondary">
-            © {new Date().getFullYear()} Upzento CRM. All rights reserved.
+            Â© {new Date().getFullYear()} Upzento CRM. All rights reserved.
           </p>
           <div className="flex gap-6 mt-4 md:mt-0">
             <Link href="/privacy" className="text-sm text-light-text-secondary dark:text-dark-text-secondary hover:text-primary transition-colors">

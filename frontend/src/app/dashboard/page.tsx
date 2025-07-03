@@ -21,7 +21,7 @@ export default function DashboardPage() {
         <div className="cosmic-card">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary text-xl">
-              💰
+              ð°
             </div>
             <div>
               <p className="text-light-text-secondary dark:text-dark-text-secondary text-sm">
@@ -35,7 +35,7 @@ export default function DashboardPage() {
         <div className="cosmic-card">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-secondary/10 flex items-center justify-center text-secondary text-xl">
-              📅
+              ð
             </div>
             <div>
               <p className="text-light-text-secondary dark:text-dark-text-secondary text-sm">
@@ -49,7 +49,7 @@ export default function DashboardPage() {
         <div className="cosmic-card">
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 rounded-full bg-accent/10 flex items-center justify-center text-accent text-xl">
-              📇
+              ð
             </div>
             <div>
               <p className="text-light-text-secondary dark:text-dark-text-secondary text-sm">
@@ -114,25 +114,25 @@ export default function DashboardPage() {
 // Sample data for the dashboard
 const recentActivities = [
   {
-    icon: '💰',
+    icon: 'ð°',
     title: 'New deal created',
     description: 'Website redesign project for ABC Corp',
     time: '2 hours ago',
   },
   {
-    icon: '📅',
+    icon: 'ð',
     title: 'Appointment scheduled',
     description: 'Meeting with John Smith',
     time: '3 hours ago',
   },
   {
-    icon: '📇',
+    icon: 'ð',
     title: 'Contact added',
     description: 'Jane Doe (jane@example.com)',
     time: '5 hours ago',
   },
   {
-    icon: '📝',
+    icon: 'ð',
     title: 'Note added to deal',
     description: 'Client requested additional features',
     time: 'Yesterday',
@@ -141,22 +141,22 @@ const recentActivities = [
 
 const quickActions = [
   {
-    icon: '➕',
+    icon: 'â',
     title: 'Add Contact',
     description: 'Create a new contact',
   },
   {
-    icon: '💰',
+    icon: 'ð°',
     title: 'Create Deal',
     description: 'Start a new sales opportunity',
   },
   {
-    icon: '📅',
+    icon: 'ð',
     title: 'Schedule',
     description: 'Book a new appointment',
   },
   {
-    icon: '📊',
+    icon: 'ð',
     title: 'Reports',
     description: 'View analytics and reports',
   },
