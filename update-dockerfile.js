@@ -1,4 +1,8 @@
-FROM node:18-alpine AS builder
+const fs = require('fs');
+const path = require('path');
+
+// Define the new Dockerfile content
+const dockerfileContent = `FROM node:18-alpine AS builder
 
 WORKDIR /app
 
@@ -34,4 +38,13 @@ COPY --from=builder /app/public ./public
 EXPOSE 3000
 
 # Start application
-CMD ["npm", "start"]
+CMD ["npm", "start"]`;
+
+// Write the new Dockerfile
+const frontendDir = path.join(__dirname, 'frontend');
+const dockerfilePath = path.join(frontendDir, 'Dockerfile');
+
+fs.writeFileSync(dockerfilePath, dockerfileContent);
+console.log(`Updated ${dockerfilePath}`);
+
+console.log('Dockerfile updated successfully!'); 

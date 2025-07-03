@@ -13,6 +13,11 @@ const nextConfig = {
     // your project has TypeScript errors.
     ignoreBuildErrors: true,
   },
+  webpack: (config, { isServer }) => {
+    // Ignore module not found errors
+    config.ignoreWarnings = [/Module not found/];
+    return config;
+  },
 }
 
 module.exports = nextConfig

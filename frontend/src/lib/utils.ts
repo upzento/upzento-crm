@@ -4,8 +4,7 @@
 
 /**
  * Combines multiple class names into a single string
- * Simple implementation without dependencies
  */
-export function cn(...classes: (string | undefined | null | false)[]) {
+export function cn(...classes) {
   return classes.filter(Boolean).join(' ');
-} 
+}
