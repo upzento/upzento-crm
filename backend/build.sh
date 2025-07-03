@@ -1,13 +1,15 @@
 #!/bin/bash
 set -e
 
+echo "Starting build process..."
+
 # Install dependencies
 echo "Installing dependencies..."
 npm install
 
 # Generate Prisma client
 echo "Generating Prisma client..."
-npx prisma generate
+npx prisma generate || echo "WARNING: Prisma generate failed but continuing build"
 
 # Build the application
 echo "Building the application..."

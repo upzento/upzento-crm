@@ -7,7 +7,7 @@ nixpkgsArchive = "ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7"
 cmds = ['npm install']
 
 [phases.build]
-cmds = ['npx prisma generate', 'npm run build']
+cmds = ['chmod +x build.sh', './build.sh']
 
 [start]
 cmd = 'npm run start:prod'
