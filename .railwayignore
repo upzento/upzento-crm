@@ -1,8 +1,43 @@
+# Node modules and cache
 node_modules
-.git
-.env
-.env.*
+**/node_modules
+**/.cache
+**/node_modules/.cache
+npm-debug.log
+.DS_Store
+
+# Build directories
 dist
+build
+.next
+out
+.nuxt
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+.git
+.env.*
 coverage
 test
 # # build.sh - needed for deployment - needed for deployment 

@@ -1,27 +1,24 @@
 #!/bin/sh
-# Use bash instead of sh for better error handling
-exec /bin/bash -e <<'EOT'
+# Simple build script that avoids cache issues
 
 echo "Starting backend build process..."
 
-# Clean up any existing cache directories
-find /app -name ".cache" -type d -exec rm -rf {} +
-find /app -name "node_modules/.cache" -type d -exec rm -rf {} +
+# Don't try to remove the cache directory, instead ignore it
+echo "Skipping cache directory cleanup (avoid EBUSY error)"
 
-# Set npm config to avoid cache
-export NPM_CONFIG_CACHE=disabled
+# Set npm config to use a different cache directory
+export NPM_CONFIG_CACHE=/tmp/npm-cache
 
-# Install dependencies without using cache
+# Install dependencies using a different cache directory
 echo "Installing dependencies..."
-npm ci --no-fund --prefer-offline --no-audit || npm install --no-fund --prefer-offline --no-audit
+npm ci --no-fund --prefer-offline --no-audit --cache=/tmp/npm-cache || npm install --no-fund --prefer-offline --no-audit --cache=/tmp/npm-cache
 
 # Generate Prisma client
 echo "Generating Prisma client..."
 npx prisma generate
 
-# Build the NestJS application with transpile-only to ignore TypeScript errors
+# Build the NestJS application with skipLibCheck to ignore TypeScript errors
 echo "Building backend (ignoring TypeScript errors for now)..."
 npx tsc --skipLibCheck || true
 
 echo "Backend build completed!"
-EOT

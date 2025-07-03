@@ -6,14 +6,19 @@ cmds = [
 ]
 
 [phases.install]
+# Use a custom directory for npm cache
+env = { NPM_CONFIG_CACHE = "/tmp/npm-cache" }
 cmds = [
-  "cd backend && npm ci --no-fund --prefer-offline --no-audit",
-  "cd ../frontend && npm ci --no-fund --prefer-offline --no-audit"
+  "mkdir -p /tmp/npm-cache",
+  "cd backend && npm ci --no-fund --prefer-offline --no-audit --cache=/tmp/npm-cache || npm install --no-fund --prefer-offline --no-audit --cache=/tmp/npm-cache",
+  "cd ../frontend && npm ci --no-fund --prefer-offline --no-audit --cache=/tmp/npm-cache || npm install --no-fund --prefer-offline --no-audit --cache=/tmp/npm-cache"
 ]
 
 [phases.build]
+# Skip the cache during build as well
+env = { NPM_CONFIG_CACHE = "/tmp/npm-cache" }
 cmds = [
-  "cd backend && npx prisma generate",
+  "cd backend && NODE_ENV=development npx prisma generate",
   "cd backend && npm run build || true",
   "cd ../frontend && npm run build"
 ]
