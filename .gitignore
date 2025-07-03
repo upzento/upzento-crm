@@ -45,6 +45,9 @@ lerna-debug.log*
 **/test-*
 **/test.*
 **/*.test.*
+**/simple-test/
+frontend/src/app/simple-test/
+frontend/src/app/test-components/
 
 # Test HTML files
 /frontend/public/index.html
