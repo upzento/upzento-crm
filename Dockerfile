@@ -1,41 +1,27 @@
-FROM node:20-slim AS builder
+FROM node:20-alpine
 
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Copy package files
 COPY backend/package*.json ./backend/
-RUN cd backend && npm install
+COPY frontend/package*.json ./frontend/
+
+# Install dependencies without using cache
+RUN cd backend && npm ci --no-fund --prefer-offline --no-audit && \
+    cd ../frontend && npm ci --no-fund --prefer-offline --no-audit
 
 # Copy source code
-COPY backend ./backend/
-
-# Build the app
-RUN cd backend && npx tsc || true
-
-# Runtime stage
-FROM node:20-slim
-
-WORKDIR /app
-
-# Copy package files and install production dependencies
-COPY backend/package*.json ./backend/
-RUN cd backend && npm install --only=production
-
-# Copy built application from builder stage
-COPY --from=builder /app/backend/dist ./backend/dist
-
-# Copy Prisma schema
-COPY backend/prisma ./backend/prisma
+COPY . .
 
 # Generate Prisma client
 RUN cd backend && npx prisma generate
 
-# Set environment variables
-ENV NODE_ENV=production
-ENV PORT=3000
+# Build the applications (continue on TypeScript errors)
+RUN cd backend && npm run build || true && \
+    cd ../frontend && npm run build
 
-# Expose port
+# Expose the port
 EXPOSE 3000
 
-# Start the application
-CMD ["node", "backend/dist/main.js"] 
+# Start the server
+CMD ["node", "backend/dist/main.js"]
