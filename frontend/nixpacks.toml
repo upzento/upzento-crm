@@ -1,13 +1,29 @@
 [phases.setup]
-nixPkgs = ['nodejs_20']
-nixOverlays = []
-nixpkgsArchive = "ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7"
+nixPkgs = ["nodejs", "npm"]
 
 [phases.install]
-cmds = ['npm install']
+cmds = ["npm install --no-fund"]
 
 [phases.build]
-cmds = ['chmod +x build.sh', './build.sh']
+cmds = [
+  "chmod +x build.sh",
+  "./build.sh"
+]
 
 [start]
-cmd = 'npm start'
+cmd = "npm start"
+
+[variables]
+NODE_ENV = "production"
+NEXT_TELEMETRY_DISABLED = "1"
+
+[nixpacks]
+plan-path = "/tmp/nixpacks.plan"
+
+[[nixpacks.cache]]
+dir = "/tmp/next-cache"
+type = "shared"
+
+[[nixpacks.cache]]
+dir = "/tmp/node_cache"
+type = "shared"

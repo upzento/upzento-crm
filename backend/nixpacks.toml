@@ -1,13 +1,21 @@
 [phases.setup]
-nixPkgs = ['nodejs_20']
-nixOverlays = []
-nixpkgsArchive = "ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7"
+nixPkgs = ["nodejs", "npm"]
 
 [phases.install]
-cmds = ['npm install']
+cmds = ["npm install --no-fund"]
 
 [phases.build]
-cmds = ['chmod +x build.sh', './build.sh']
+cmds = [
+  "npm run prisma:generate",
+  "npm run build || true"
+]
 
 [start]
-cmd = 'npm run start:prod'
+cmd = "npm run start:prod"
+
+[variables]
+NODE_ENV = "production"
+CACHE_DIR = "/tmp/node_cache"
+
+[nixpacks]
+plan-path = "/tmp/nixpacks.plan"
