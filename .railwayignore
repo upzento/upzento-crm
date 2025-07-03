@@ -5,4 +5,4 @@ node_modules
 dist
 coverage
 test
-build.sh 
+# # build.sh - needed for deployment - needed for deployment 
