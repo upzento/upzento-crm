@@ -58,8 +58,9 @@ import { PaymentModule } from './modules/payment/payment.module';
     AnalyticsModule,
     SettingsModule,
     PaymentModule,
+
+    // Other modules will be added here as development progresses
   ],
   controllers: [],
   providers: [],
-})
-export class AppModule {}
+}) 

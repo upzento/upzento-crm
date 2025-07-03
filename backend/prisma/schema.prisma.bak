@@ -1,0 +1,2048 @@
+// This is the Prisma schema file for Upzento CRM
+// Learn more about Prisma: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Multi-tenancy models
+
+model Tenant {
+  id          String    @id @default(uuid())
+  name        String
+  domain      String?   @unique
+  plan        String    @default("free")
+  status      String    @default("active")
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  agencies    Agency[]
+}
+
+model Agency {
+  id          String    @id @default(uuid())
+  name        String
+  logo        String?
+  primaryColor String?
+  tenantId    String
+  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  clients             Client[]
+  users               User[]
+  subscriptions       Subscription[]
+  invoices            Invoice[]
+  payments            Payment[]
+  paymentMethods      PaymentMethod[]
+}
+
+model Client {
+  id          String    @id @default(uuid())
+  name        String
+  logo        String?
+  primaryColor String?
+  agencyId    String
+  agency      Agency    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  users               User[]
+  contacts            Contact[]
+  contactTags         ContactTag[]
+  contactCustomFields ContactCustomField[]
+  pipelines           Pipeline[]
+  deals               Deal[]
+  domains             Domain[]
+  services            Service[]
+  staff               Staff[]
+  appointments        Appointment[]
+  phoneNumbers        PhoneNumber[]
+  calls               Call[]
+  smsConversations    SMSConversation[]
+  smsTemplates        SMSTemplate[]
+  smsTags             SMSTag[]
+  phoneRoutingRules   PhoneRoutingRule[]
+  bulkSMSCampaigns    BulkSMSCampaign[]
+  reviews             Review[]
+  reviewTags          ReviewTag[]
+  reviewServices      ReviewService[]
+  reviewLocations     ReviewLocation[]
+  reviewWidgets       ReviewWidget[]
+  products            Product[]
+  productCategories   ProductCategory[]
+  orders              Order[]
+  coupons             Coupon[]
+  shopWidgets         ShopWidget[]
+  campaigns           Campaign[]
+  campaignSegments    CampaignSegment[]
+  campaignTemplates   CampaignTemplate[]
+  automationWorkflows AutomationWorkflow[]
+  analyticsIntegrations AnalyticsIntegration[]
+  analyticsDashboards AnalyticsDashboard[]
+  analyticsDatasets   AnalyticsDataset[]
+  analyticsReports    AnalyticsReport[]
+  
+  // Settings relationships
+  generalSettings     GeneralSettings?
+  integrationSettings IntegrationSettings[]
+  moduleSettings      ModuleSettings[]
+  securitySettings    SecuritySettings?
+  auditLogs           AuditLog[]
+  
+  // Payment relationships
+  subscriptions       Subscription[]
+  invoices            Invoice[]
+  payments            Payment[]
+  paymentMethods      PaymentMethod[]
+}
+
+model Domain {
+  id                  String    @id @default(uuid())
+  domain              String
+  verificationMethod  String    @default("DNS")
+  verificationToken   String
+  status              String    @default("PENDING")
+  clientId            String
+  client              Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
+}
+
+// User management models
+
+model User {
+  id          String    @id @default(uuid())
+  email       String    @unique
+  password    String
+  firstName   String
+  lastName    String
+  role        Role      @default(CLIENT_USER)
+  agencyId    String?
+  agency      Agency?   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  clientId    String?
+  client      Client?   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  tenant              Tenant?   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  agency              Agency?   @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  client              Client?   @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  notifications       Notification[]
+  assignedChats       ChatConversation[]
+  sentChatMessages    ChatMessage[]
+  chatNotes           ChatNote[]
+  assignedContacts    Contact[]
+  contactHistories    ContactHistory[]
+  assignedDeals        Deal[]   @relation("AssignedTo")
+  assignedCalls        Call[]   @relation("AssignedCalls")
+  assignedConversations SMSConversation[] @relation("AssignedConversations")
+  bulkSMSCampaigns     BulkSMSCampaign[]
+  
+  // Settings relationships
+  notificationSettings NotificationSettings[]
+  auditLogs            AuditLog[]
+}
+
+enum Role {
+  ADMIN
+  AGENCY_ADMIN
+  AGENCY_USER
+  CLIENT_ADMIN
+  CLIENT_USER
+}
+
+// Core module models
+
+// Deals Module
+model Pipeline {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  stages      Stage[]
+  deals       Deal[]
+}
+
+model Stage {
+  id          String    @id @default(uuid())
+  name        String
+  order       Int
+  color       String?
+  probability Int?      // Probability of closing deals in this stage (0-100)
+  pipelineId  String
+  pipeline    Pipeline  @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  deals       Deal[]
+}
+
+model Deal {
+  id                String    @id @default(uuid())
+  title             String
+  value             Float?
+  description       String?
+  source            String?   // Where the deal came from (e.g., website, referral)
+  expectedCloseDate String?   // Expected close date in ISO format
+  stageId           String
+  stage             Stage     @relation(fields: [stageId], references: [id], onDelete: Cascade)
+  pipelineId        String
+  pipeline          Pipeline  @relation(fields: [pipelineId], references: [id], onDelete: Cascade)
+  clientId          String
+  client            Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  assignedToId      String?
+  assignedTo        User?     @relation("AssignedTo", fields: [assignedToId], references: [id], onDelete: SetNull)
+  contactId         String?
+  contact           Contact?  @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  campaignId        String?
+  campaign          Campaign? @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  
+  // Relationships
+  notes             Note[]
+  activities        DealActivity[]
+  calls             Call[]
+  smsMessages       SMSMessage[]
+}
+
+model Note {
+  id          String    @id @default(uuid())
+  content     String
+  dealId      String
+  deal        Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  createdById String?
+  createdBy   User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
+}
+
+model DealActivity {
+  id          String    @id @default(uuid())
+  type        String    // Type of activity (e.g., email, call, meeting)
+  description String
+  dealId      String
+  deal        Deal      @relation(fields: [dealId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  dueDate     DateTime?
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  assignedToId String?
+  assignedTo  User?     @relation(fields: [assignedToId], references: [id], onDelete: SetNull)
+}
+
+// Contacts Module
+model Contact {
+  id          String    @id @default(uuid())
+  firstName   String
+  lastName    String
+  email       String?
+  phone       String?
+  company     String?
+  jobTitle    String?
+  notes       String?
+  address     String?
+  isLead      Boolean   @default(false)
+  leadStatus  String?   // e.g., "New", "Qualified", "Contacted", "Converted"
+  leadSource  String?   // e.g., "Website", "Referral", "Facebook", "Google"
+  assignedToId String?
+  assignedTo  User?     @relation(fields: [assignedToId], references: [id], onDelete: SetNull)
+  customFields Json?    // Store custom fields as JSON
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  deals       Deal[]
+  appointments Appointment[]
+  tags        ContactToTag[]
+  calls       Call[]
+  smsMessages SMSMessage[]
+  smsConversations SMSConversation[]
+  bulkSMSRecipients BulkSMSRecipient[]
+  reviews     Review[]
+  orders      Order[]
+  messageRecipients MessageRecipient[]
+  history     ContactHistory[]
+}
+
+model ContactHistory {
+  id          String    @id @default(uuid())
+  contactId   String
+  contact     Contact   @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  action      String    // e.g., "Created", "Updated", "Tagged", "Converted"
+  description String
+  metadata    Json?     // Additional data about the action
+  performedById String?
+  performedBy User?     @relation(fields: [performedById], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+}
+
+model ContactTag {
+  id          String    @id @default(uuid())
+  name        String
+  color       String?
+  description String?
+  clientId    String
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  contacts    ContactToTag[]
+}
+
+model ContactToTag {
+  contactId   String
+  tagId       String
+  contact     Contact     @relation(fields: [contactId], references: [id], onDelete: Cascade)
+  tag         ContactTag  @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  createdAt   DateTime    @default(now())
+  
+  @@id([contactId, tagId])
+}
+
+model ContactCustomField {
+  id          String    @id @default(uuid())
+  name        String
+  type        String    // e.g., "text", "number", "date", "select"
+  options     Json?     // For select fields, store options as JSON array
+  isRequired  Boolean   @default(false)
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+// Appointments Module
+model Service {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  duration    Int       // in minutes
+  price       Float?
+  bufferTimeBefore Int? // buffer time before appointment in minutes
+  bufferTimeAfter Int?  // buffer time after appointment in minutes
+  color       String?   // color for calendar display
+  category    String?   // service category
+  isVirtual   Boolean   @default(false) // is this a virtual service (online meeting)
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  appointments Appointment[]
+  staffServices StaffToService[]
+}
+
+model Staff {
+  id          String    @id @default(uuid())
+  name        String
+  email       String
+  phone       String?
+  bio         String?   // staff description or bio
+  imageUrl    String?   // profile image URL
+  position    String?   // job title or position
+  calendarType String?  // integration type (google, outlook, etc.)
+  calendarId  String?   // calendar integration ID or email
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  appointments Appointment[]
+  services    StaffToService[]
+  availability StaffAvailability[]
+  timeOff     StaffTimeOff[]
+}
+
+model StaffToService {
+  staffId     String
+  serviceId   String
+  staff       Staff     @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  service     Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  
+  @@id([staffId, serviceId])
+}
+
+model Location {
+  id          String    @id @default(uuid())
+  name        String
+  address     String
+  description String?
+  phone       String?
+  email       String?
+  latitude    String?
+  longitude   String?
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  appointments Appointment[]
+}
+
+model StaffAvailability {
+  id          String    @id @default(uuid())
+  staffId     String
+  staff       Staff     @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  dayOfWeek   Int       // 0 = Sunday, 1 = Monday, etc.
+  startTime   String    // format: "HH:MM" (24-hour)
+  endTime     String    // format: "HH:MM" (24-hour)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  @@unique([staffId, dayOfWeek, startTime, endTime])
+}
+
+model StaffTimeOff {
+  id          String    @id @default(uuid())
+  staffId     String
+  staff       Staff     @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  startTime   DateTime
+  endTime     DateTime
+  description String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Appointment {
+  id          String    @id @default(uuid())
+  startTime   DateTime
+  endTime     DateTime
+  status      AppointmentStatus @default(SCHEDULED)
+  notes       String?
+  virtualMeetingUrl String? // URL for virtual meetings (Zoom, Teams, etc.)
+  serviceId   String
+  service     Service   @relation(fields: [serviceId], references: [id], onDelete: Cascade)
+  staffId     String
+  staff       Staff     @relation(fields: [staffId], references: [id], onDelete: Cascade)
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  contactId   String?
+  contact     Contact?  @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  locationId  String?
+  location    Location? @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  reminders   AppointmentReminder[]
+  calls       Call[]
+  smsMessages SMSMessage[]
+}
+
+model AppointmentReminder {
+  id            String    @id @default(uuid())
+  appointmentId String
+  appointment   Appointment @relation(fields: [appointmentId], references: [id], onDelete: Cascade)
+  type          ReminderType
+  minutesBefore Int       // how many minutes before the appointment
+  sent          Boolean   @default(false)
+  sentAt        DateTime?
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+enum AppointmentStatus {
+  SCHEDULED
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+enum ReminderType {
+  EMAIL
+  SMS
+  PUSH
+}
+
+// Notification System
+model Notification {
+  id          String    @id @default(uuid())
+  title       String
+  content     String
+  type        String
+  read        Boolean   @default(false)
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+}
+
+// Chat Module
+model ChatWidget {
+  id              String    @id @default(uuid())
+  name            String
+  welcomeMessage  String    @default("Welcome! How can we help you today?")
+  offlineMessage  String    @default("We're currently offline. Please leave a message and we'll get back to you.")
+  primaryColor    String    @default("#3498db")
+  secondaryColor  String    @default("#2ecc71")
+  position        String    @default("RIGHT") // RIGHT, LEFT, BOTTOM_RIGHT, BOTTOM_LEFT
+  showAgentAvatar Boolean   @default(true)
+  showAgentName   Boolean   @default(true)
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relationships
+  conversations   ChatConversation[]
+}
+
+model ChatConversation {
+  id          String    @id @default(uuid())
+  visitorName String?
+  visitorEmail String?
+  status      ChatConversationStatus @default(OPEN)
+  source      ChatSource @default(WEBSITE)
+  widgetId    String?
+  widget      ChatWidget? @relation(fields: [widgetId], references: [id], onDelete: SetNull)
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  assignedToId String?
+  assignedTo  User?     @relation(fields: [assignedToId], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  messages    ChatMessage[]
+  tags        ChatConversationTag[]
+  notes       ChatNote[]
+}
+
+model ChatMessage {
+  id              String    @id @default(uuid())
+  content         String
+  type            ChatMessageType @default(TEXT)
+  mediaUrl        String?   // For images, files, etc.
+  isFromVisitor   Boolean
+  conversationId  String
+  conversation    ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sentById        String?
+  sentBy          User?     @relation(fields: [sentById], references: [id], onDelete: SetNull)
+  read            Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+}
+
+model ChatTag {
+  id          String    @id @default(uuid())
+  name        String
+  color       String    @default("#3498db")
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  conversations ChatConversationTag[]
+}
+
+model ChatConversationTag {
+  conversationId String
+  conversation   ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  tagId          String
+  tag            ChatTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  
+  @@id([conversationId, tagId])
+}
+
+model ChatNote {
+  id              String    @id @default(uuid())
+  content         String
+  conversationId  String
+  conversation    ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  createdById     String?
+  createdBy       User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model WhatsAppAccount {
+  id            String    @id @default(uuid())
+  phoneNumber   String
+  displayName   String
+  apiKey        String?   // For WhatsApp Business API
+  status        String    @default("DISCONNECTED") // CONNECTED, DISCONNECTED, PENDING
+  clientId      String
+  client        Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+enum ChatConversationStatus {
+  OPEN
+  PENDING
+  CLOSED
+}
+
+enum ChatSource {
+  WEBSITE
+  WHATSAPP
+}
+
+enum ChatMessageType {
+  TEXT
+  IMAGE
+  FILE
+  LOCATION
+}
+
+// Forms Module
+model Form {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  status      FormStatus @default(ACTIVE)
+  settings    Json      // Stores form settings like colors, fonts, etc.
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  fields      FormField[]
+  steps       FormStep[]
+  submissions FormSubmission[]
+  webhooks    FormWebhook[]
+}
+
+model FormStep {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  order       Int
+  formId      String
+  form        Form      @relation(fields: [formId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  fields      FormField[]
+}
+
+model FormField {
+  id          String    @id @default(uuid())
+  label       String
+  type        FormFieldType
+  placeholder String?
+  helpText    String?
+  isRequired  Boolean   @default(false)
+  order       Int
+  options     Json?     // For dropdown, radio, checkbox options
+  validation  Json?     // Validation rules
+  defaultValue String?
+  formId      String
+  form        Form      @relation(fields: [formId], references: [id], onDelete: Cascade)
+  stepId      String?
+  step        FormStep? @relation(fields: [stepId], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  conditions  FormFieldCondition[]
+  responses   FormFieldResponse[]
+}
+
+model FormFieldCondition {
+  id              String    @id @default(uuid())
+  fieldId         String
+  field           FormField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  targetFieldId   String    // The field this condition affects
+  operator        String    // equals, not_equals, contains, etc.
+  value           String    // The value to compare against
+  action          String    // show, hide, require, etc.
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model FormSubmission {
+  id          String    @id @default(uuid())
+  formId      String
+  form        Form      @relation(fields: [formId], references: [id], onDelete: Cascade)
+  ipAddress   String?
+  userAgent   String?
+  createdAt   DateTime  @default(now())
+  
+  // Relationships
+  responses   FormFieldResponse[]
+}
+
+model FormFieldResponse {
+  id              String    @id @default(uuid())
+  fieldId         String
+  field           FormField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+  submissionId    String
+  submission      FormSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+  value           String?
+  fileUrl         String?   // For file upload responses
+  createdAt       DateTime  @default(now())
+}
+
+model FormWebhook {
+  id          String    @id @default(uuid())
+  formId      String
+  form        Form      @relation(fields: [formId], references: [id], onDelete: Cascade)
+  url         String
+  method      WebhookMethod @default(POST)
+  headers     Json?     // Custom headers
+  active      Boolean   @default(true)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum FormStatus {
+  ACTIVE
+  INACTIVE
+  DRAFT
+}
+
+enum FormFieldType {
+  TEXT
+  EMAIL
+  PHONE
+  NUMBER
+  TEXTAREA
+  SELECT
+  RADIO
+  CHECKBOX
+  DATE
+  TIME
+  DATETIME
+  FILE
+  HIDDEN
+  HTML
+  SIGNATURE
+  RATING
+  URL
+}
+
+enum WebhookMethod {
+  GET
+  POST
+  PUT
+  PATCH
+}
+
+// Phone & SMS Tracking Module
+model PhoneNumber {
+  id          String    @id @default(uuid())
+  number      String
+  name        String
+  provider    String    @default("TWILIO") // TWILIO, VONAGE, etc.
+  type        String    @default("VOICE_SMS") // VOICE, SMS, VOICE_SMS
+  status      String    @default("ACTIVE") // ACTIVE, INACTIVE, PENDING
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  calls       Call[]
+  smsMessages SMSMessage[]
+  routingRules PhoneRoutingRule[]
+}
+
+model Call {
+  id              String    @id @default(uuid())
+  direction       CallDirection
+  status          CallStatus
+  from            String
+  to              String
+  duration        Int?      // in seconds
+  startTime       DateTime
+  endTime         DateTime?
+  recordingUrl    String?
+  notes           String?
+  phoneNumberId   String
+  phoneNumber     PhoneNumber @relation(fields: [phoneNumberId], references: [id], onDelete: Cascade)
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  contactId       String?
+  contact         Contact?  @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  dealId          String?
+  deal            Deal?     @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  appointmentId   String?
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  assignedToId    String?
+  assignedTo      User?     @relation("AssignedCalls", fields: [assignedToId], references: [id], onDelete: SetNull)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  
+  // Relationships
+  tasks           CallTask[]
+}
+
+model CallTask {
+  id          String    @id @default(uuid())
+  title       String
+  description String?
+  dueDate     DateTime?
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  callId      String
+  call        Call      @relation(fields: [callId], references: [id], onDelete: Cascade)
+  assignedToId String?
+  assignedTo  User?     @relation(fields: [assignedToId], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model SMSMessage {
+  id              String    @id @default(uuid())
+  direction       MessageDirection
+  status          MessageStatus
+  from            String
+  to              String
+  body            String
+  mediaUrls       String[]
+  phoneNumberId   String
+  phoneNumber     PhoneNumber @relation(fields: [phoneNumberId], references: [id], onDelete: Cascade)
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  contactId       String?
+  contact         Contact?  @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  dealId          String?
+  deal            Deal?     @relation(fields: [dealId], references: [id], onDelete: SetNull)
+  appointmentId   String?
+  appointment     Appointment? @relation(fields: [appointmentId], references: [id], onDelete: SetNull)
+  conversationId  String
+  conversation    SMSConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model SMSConversation {
+  id          String    @id @default(uuid())
+  status      ConversationStatus @default(ACTIVE)
+  contactId   String?
+  contact     Contact?  @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  assignedToId String?
+  assignedTo  User?     @relation("AssignedConversations", fields: [assignedToId], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  messages    SMSMessage[]
+  tags        SMSConversationTag[]
+}
+
+model SMSTemplate {
+  id          String    @id @default(uuid())
+  name        String
+  body        String
+  category    String?
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model SMSTag {
+  id          String    @id @default(uuid())
+  name        String
+  color       String    @default("#3498db")
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  conversations SMSConversationTag[]
+}
+
+model SMSConversationTag {
+  conversationId String
+  conversation   SMSConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  tagId          String
+  tag            SMSTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  createdAt      DateTime @default(now())
+  
+  @@id([conversationId, tagId])
+}
+
+model PhoneRoutingRule {
+  id              String    @id @default(uuid())
+  name            String
+  description     String?
+  condition       Json      // JSON object with conditions (time, day, number, etc.)
+  action          String    // ROUTE_TO_USER, ROUTE_TO_VOICEMAIL, etc.
+  actionParams    Json      // JSON object with action parameters (userId, message, etc.)
+  priority        Int       // Higher number = higher priority
+  isActive        Boolean   @default(true)
+  phoneNumberId   String
+  phoneNumber     PhoneNumber @relation(fields: [phoneNumberId], references: [id], onDelete: Cascade)
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model BulkSMSCampaign {
+  id          String    @id @default(uuid())
+  name        String
+  message     String
+  status      CampaignStatus @default(DRAFT)
+  scheduledAt DateTime?
+  sentAt      DateTime?
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdById String?
+  createdBy   User?     @relation(fields: [createdById], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  
+  // Relationships
+  recipients  BulkSMSRecipient[]
+}
+
+model BulkSMSRecipient {
+  id          String    @id @default(uuid())
+  phoneNumber String
+  status      RecipientStatus @default(PENDING)
+  sentAt      DateTime?
+  deliveredAt DateTime?
+  errorMessage String?
+  campaignId  String
+  campaign    BulkSMSCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  contactId   String?
+  contact     Contact?  @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+enum CallDirection {
+  INBOUND
+  OUTBOUND
+}
+
+enum CallStatus {
+  INITIATED
+  RINGING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+  NO_ANSWER
+  BUSY
+  CANCELED
+}
+
+enum MessageDirection {
+  INBOUND
+  OUTBOUND
+}
+
+enum MessageStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+  READ
+}
+
+enum ConversationStatus {
+  ACTIVE
+  ARCHIVED
+  SPAM
+}
+
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  IN_PROGRESS
+  COMPLETED
+  CANCELED
+}
+
+enum RecipientStatus {
+  PENDING
+  SENT
+  DELIVERED
+  FAILED
+  OPTED_OUT
+}
+
+// Reviews Management Module
+model Review {
+  id              String    @id @default(uuid())
+  rating          Int       // 1-5 star rating
+  title           String?
+  content         String
+  authorName      String
+  authorEmail     String?
+  authorPhone     String?
+  source          ReviewSource @default(DIRECT)
+  status          ReviewStatus @default(PENDING)
+  responseContent String?
+  responseDate    DateTime?
+  imageUrls       String[]
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  contactId       String?
+  contact         Contact?  @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  serviceId       String?
+  service         ReviewService? @relation(fields: [serviceId], references: [id], onDelete: SetNull)
+  locationId      String?
+  location        ReviewLocation? @relation(fields: [locationId], references: [id], onDelete: SetNull)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  tags            ReviewToTag[]
+}
+
+model ReviewTag {
+  id          String    @id @default(uuid())
+  name        String
+  color       String    @default("#3498db")
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relationships
+  reviews     ReviewToTag[]
+}
+
+model ReviewToTag {
+  reviewId    String
+  review      Review    @relation(fields: [reviewId], references: [id], onDelete: Cascade)
+  tagId       String
+  tag         ReviewTag @relation(fields: [tagId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@id([reviewId, tagId])
+}
+
+model ReviewService {
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relationships
+  reviews     Review[]
+}
+
+model ReviewLocation {
+  id          String    @id @default(uuid())
+  name        String
+  address     String?
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relationships
+  reviews     Review[]
+}
+
+model ReviewWidget {
+  id              String    @id @default(uuid())
+  name            String
+  description     String?
+  displayType     String    @default("CAROUSEL") // CAROUSEL, GRID, LIST
+  theme           Json      // Theme settings as JSON (colors, fonts, etc.)
+  filters         Json?     // Filter settings as JSON (min rating, services, etc.)
+  showRating      Boolean   @default(true)
+  showDate        Boolean   @default(true)
+  showSource      Boolean   @default(true)
+  showResponse    Boolean   @default(true)
+  maxReviews      Int       @default(10)
+  allowedDomains  String[]  // Domains where this widget can be embedded
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+enum ReviewSource {
+  DIRECT
+  GOOGLE
+  FACEBOOK
+  YELP
+  TRUSTPILOT
+  OTHER
+}
+
+enum ReviewStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  FLAGGED
+}
+
+// Shop (E-Commerce Management) Module
+model Product {
+  id              String    @id @default(uuid())
+  name            String
+  slug            String
+  description     String?
+  price           Decimal   @db.Decimal(10, 2)
+  compareAtPrice  Decimal?  @db.Decimal(10, 2)
+  sku             String?
+  barcode         String?
+  inventory       Int       @default(0)
+  allowBackorder  Boolean   @default(false)
+  trackInventory  Boolean   @default(true)
+  status          ProductStatus @default(ACTIVE)
+  isFeatured      Boolean   @default(false)
+  seoTitle        String?
+  seoDescription  String?
+  imageUrls       String[]
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  categories      ProductToCategory[]
+  variants        ProductVariant[]
+  orderItems      OrderItem[]
+  coupons         CouponToProduct[]
+}
+
+model ProductCategory {
+  id          String    @id @default(uuid())
+  name        String
+  slug        String
+  description String?
+  imageUrl    String?
+  parentId    String?
+  parent      ProductCategory? @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children    ProductCategory[] @relation("CategoryHierarchy")
+  clientId    String
+  client      Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relationships
+  products    ProductToCategory[]
+  coupons     CouponToCategory[]
+}
+
+model ProductToCategory {
+  productId     String
+  product       Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  categoryId    String
+  category      ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt     DateTime  @default(now())
+
+  @@id([productId, categoryId])
+}
+
+model ProductVariant {
+  id              String    @id @default(uuid())
+  name            String
+  sku             String?
+  barcode         String?
+  price           Decimal?  @db.Decimal(10, 2)
+  inventory       Int       @default(0)
+  allowBackorder  Boolean   @default(false)
+  trackInventory  Boolean   @default(true)
+  imageUrls       String[]
+  options         Json      // JSON object with variant options (e.g., {"color": "red", "size": "M"})
+  productId       String
+  product         Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  orderItems      OrderItem[]
+}
+
+model Order {
+  id                String    @id @default(uuid())
+  orderNumber       String    @unique
+  status            OrderStatus @default(PENDING)
+  subtotal          Decimal   @db.Decimal(10, 2)
+  discountTotal     Decimal   @db.Decimal(10, 2) @default(0)
+  shippingTotal     Decimal   @db.Decimal(10, 2) @default(0)
+  taxTotal          Decimal   @db.Decimal(10, 2) @default(0)
+  total             Decimal   @db.Decimal(10, 2)
+  notes             String?
+  shippingAddress   Json?
+  billingAddress    Json?
+  paymentMethod     String?
+  paymentStatus     PaymentStatus @default(PENDING)
+  paymentIntentId   String?
+  shippingMethod    String?
+  shippingStatus    ShippingStatus @default(PENDING)
+  trackingNumber    String?
+  customerEmail     String
+  customerName      String
+  customerPhone     String?
+  couponCode        String?
+  couponId          String?
+  coupon            Coupon?   @relation(fields: [couponId], references: [id], onDelete: SetNull)
+  clientId          String
+  client            Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  contactId         String?
+  contact           Contact?  @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  // Relationships
+  items             OrderItem[]
+  events            OrderEvent[]
+}
+
+model OrderItem {
+  id              String    @id @default(uuid())
+  quantity        Int
+  price           Decimal   @db.Decimal(10, 2)
+  total           Decimal   @db.Decimal(10, 2)
+  productName     String
+  variantName     String?
+  productOptions  Json?     // JSON object with selected options
+  orderId         String
+  order           Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  productId       String?
+  product         Product?  @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variantId       String?
+  variant         ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model OrderEvent {
+  id          String    @id @default(uuid())
+  type        String    // CREATED, STATUS_CHANGED, PAYMENT_RECEIVED, etc.
+  data        Json      // Event-specific data
+  orderId     String
+  order       Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+}
+
+model Coupon {
+  id              String    @id @default(uuid())
+  code            String
+  type            CouponType @default(PERCENTAGE)
+  value           Decimal   @db.Decimal(10, 2)
+  minOrderAmount  Decimal?  @db.Decimal(10, 2)
+  maxUsage        Int?      // Maximum number of times the coupon can be used
+  usageCount      Int       @default(0)
+  startDate       DateTime?
+  endDate         DateTime?
+  isActive        Boolean   @default(true)
+  description     String?
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  orders          Order[]
+  products        CouponToProduct[]
+  categories      CouponToCategory[]
+}
+
+model CouponToProduct {
+  couponId    String
+  coupon      Coupon    @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  productId   String
+  product     Product   @relation(fields: [productId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@id([couponId, productId])
+}
+
+model CouponToCategory {
+  couponId    String
+  coupon      Coupon    @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  categoryId  String
+  category    ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  createdAt   DateTime  @default(now())
+
+  @@id([couponId, categoryId])
+}
+
+model ShopWidget {
+  id              String    @id @default(uuid())
+  name            String
+  description     String?
+  type            WidgetType @default(FULL_SHOP)
+  theme           Json      // Theme settings as JSON (colors, fonts, etc.)
+  settings        Json      // Widget-specific settings
+  allowedDomains  String[]  // Domains where this widget can be embedded
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+enum ProductStatus {
+  ACTIVE
+  DRAFT
+  ARCHIVED
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  CANCELLED
+  ON_HOLD
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum ShippingStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  RETURNED
+}
+
+enum CouponType {
+  PERCENTAGE
+  FIXED_AMOUNT
+  FREE_SHIPPING
+}
+
+enum WidgetType {
+  FULL_SHOP
+  PRODUCT_GRID
+  SINGLE_PRODUCT
+}
+
+// Marketing Campaigns Module
+model Campaign {
+  id              String    @id @default(uuid())
+  name            String
+  description     String?
+  type            CampaignType
+  status          CampaignStatus @default(DRAFT)
+  goal            String?
+  budget          Decimal?  @db.Decimal(10, 2)
+  startDate       DateTime?
+  endDate         DateTime?
+  utmSource       String?
+  utmMedium       String?
+  utmCampaign     String?
+  utmTerm         String?
+  utmContent      String?
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  messages        CampaignMessage[]
+  segments        CampaignToSegment[]
+  deals           Deal[]
+  analytics       CampaignAnalytics?
+  abTests         ABTest[]
+}
+
+model CampaignMessage {
+  id              String    @id @default(uuid())
+  subject         String?
+  body            String
+  template        String?
+  mediaUrl        String?
+  sendAt          DateTime?
+  sentAt          DateTime?
+  type            MessageType
+  status          MessageStatus @default(DRAFT)
+  campaignId      String
+  campaign        Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  recipients      MessageRecipient[]
+}
+
+model MessageRecipient {
+  id              String    @id @default(uuid())
+  email           String?
+  phone           String?
+  name            String?
+  status          RecipientStatus @default(PENDING)
+  sentAt          DateTime?
+  openedAt        DateTime?
+  clickedAt       DateTime?
+  repliedAt       DateTime?
+  unsubscribedAt  DateTime?
+  bouncedAt       DateTime?
+  customFields    Json?
+  messageId       String
+  message         CampaignMessage @relation(fields: [messageId], references: [id], onDelete: Cascade)
+  contactId       String?
+  contact         Contact?  @relation(fields: [contactId], references: [id], onDelete: SetNull)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  events          RecipientEvent[]
+}
+
+model RecipientEvent {
+  id              String    @id @default(uuid())
+  type            EventType
+  metadata        Json?
+  ipAddress       String?
+  userAgent       String?
+  timestamp       DateTime  @default(now())
+  recipientId     String
+  recipient       MessageRecipient @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+}
+
+model CampaignSegment {
+  id              String    @id @default(uuid())
+  name            String
+  description     String?
+  filterCriteria  Json
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  campaigns       CampaignToSegment[]
+}
+
+model CampaignToSegment {
+  campaignId      String
+  campaign        Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  segmentId       String
+  segment         CampaignSegment @relation(fields: [segmentId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+
+  @@id([campaignId, segmentId])
+}
+
+model CampaignTemplate {
+  id              String    @id @default(uuid())
+  name            String
+  description     String?
+  subject         String?
+  body            String
+  type            MessageType
+  category        String?
+  thumbnail       String?
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model CampaignAnalytics {
+  id              String    @id @default(uuid())
+  sent            Int       @default(0)
+  delivered       Int       @default(0)
+  opened          Int       @default(0)
+  clicked         Int       @default(0)
+  replied         Int       @default(0)
+  bounced         Int       @default(0)
+  unsubscribed    Int       @default(0)
+  conversions     Int       @default(0)
+  revenue         Decimal?  @db.Decimal(10, 2)
+  roi             Decimal?  @db.Decimal(10, 2)
+  campaignId      String    @unique
+  campaign        Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  updatedAt       DateTime  @updatedAt
+}
+
+model ABTest {
+  id              String    @id @default(uuid())
+  name            String
+  description     String?
+  testVariable    String    // subject, body, sendTime, etc.
+  variantA        Json
+  variantB        Json
+  winningVariant  String?
+  startDate       DateTime?
+  endDate         DateTime?
+  status          ABTestStatus @default(RUNNING)
+  campaignId      String
+  campaign        Campaign  @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model AutomationWorkflow {
+  id              String    @id @default(uuid())
+  name            String
+  description     String?
+  trigger         TriggerType
+  triggerCriteria Json?
+  isActive        Boolean   @default(false)
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  steps           AutomationStep[]
+}
+
+model AutomationStep {
+  id              String    @id @default(uuid())
+  name            String
+  description     String?
+  type            StepType
+  config          Json
+  order           Int
+  delay           Int?      // Delay in minutes
+  condition       Json?     // Conditions to execute this step
+  workflowId      String
+  workflow        AutomationWorkflow @relation(fields: [workflowId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+enum CampaignType {
+  EMAIL
+  SMS
+  SOCIAL
+  MULTI_CHANNEL
+}
+
+enum CampaignStatus {
+  DRAFT
+  SCHEDULED
+  RUNNING
+  PAUSED
+  COMPLETED
+  CANCELLED
+}
+
+enum MessageType {
+  EMAIL
+  SMS
+  PUSH
+  SOCIAL
+}
+
+enum MessageStatus {
+  DRAFT
+  SCHEDULED
+  SENDING
+  SENT
+  FAILED
+}
+
+enum RecipientStatus {
+  PENDING
+  SENT
+  OPENED
+  CLICKED
+  REPLIED
+  BOUNCED
+  UNSUBSCRIBED
+}
+
+enum EventType {
+  SENT
+  DELIVERED
+  OPENED
+  CLICKED
+  REPLIED
+  BOUNCED
+  UNSUBSCRIBED
+  CONVERSION
+}
+
+enum ABTestStatus {
+  RUNNING
+  COMPLETED
+  CANCELLED
+}
+
+enum TriggerType {
+  CONTACT_CREATED
+  CONTACT_UPDATED
+  DEAL_STAGE_CHANGED
+  FORM_SUBMITTED
+  WEBSITE_VISIT
+  EMAIL_OPENED
+  EMAIL_CLICKED
+  MANUAL
+  SCHEDULED
+}
+
+enum StepType {
+  SEND_EMAIL
+  SEND_SMS
+  UPDATE_CONTACT
+  CREATE_DEAL
+  UPDATE_DEAL
+  WAIT
+  CONDITION
+  WEBHOOK
+}
+
+// Advanced Analytics Module
+model AnalyticsIntegration {
+  id              String    @id @default(uuid())
+  name            String
+  type            IntegrationType
+  credentials     Json?
+  settings        Json?
+  isActive        Boolean   @default(true)
+  lastSync        DateTime?
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  dashboards      AnalyticsDashboard[]
+  datasets        AnalyticsDataset[]
+}
+
+model AnalyticsDashboard {
+  id              String    @id @default(uuid())
+  name            String
+  description     String?
+  layout          Json      // Layout configuration
+  isDefault       Boolean   @default(false)
+  integrationId   String
+  integration     AnalyticsIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  widgets         AnalyticsWidget[]
+}
+
+model AnalyticsWidget {
+  id              String    @id @default(uuid())
+  name            String
+  type            WidgetType
+  settings        Json      // Widget-specific settings
+  position        Json      // Position in dashboard
+  size            Json      // Size in dashboard
+  datasetId       String
+  dataset         AnalyticsDataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  dashboardId     String
+  dashboard       AnalyticsDashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model AnalyticsDataset {
+  id              String    @id @default(uuid())
+  name            String
+  description     String?
+  query           Json      // Query configuration
+  dataType        DataType
+  cacheTime       Int       @default(3600) // Cache time in seconds
+  lastUpdated     DateTime?
+  integrationId   String
+  integration     AnalyticsIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  widgets         AnalyticsWidget[]
+  cachedData      AnalyticsCachedData?
+}
+
+model AnalyticsCachedData {
+  id              String    @id @default(uuid())
+  data            Json
+  expiresAt       DateTime
+  datasetId       String    @unique
+  dataset         AnalyticsDataset @relation(fields: [datasetId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model AnalyticsReport {
+  id              String    @id @default(uuid())
+  name            String
+  description     String?
+  schedule        Json?     // Schedule configuration
+  recipients      String[]  // Email addresses
+  format          ReportFormat
+  settings        Json      // Report-specific settings
+  lastSent        DateTime?
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+enum IntegrationType {
+  GOOGLE_ANALYTICS
+  GOOGLE_ADS
+  META
+  FACEBOOK
+  INSTAGRAM
+  LINKEDIN
+  TWITTER
+  TIKTOK
+  CUSTOM
+}
+
+enum WidgetType {
+  BAR_CHART
+  LINE_CHART
+  PIE_CHART
+  AREA_CHART
+  TABLE
+  METRIC
+  FUNNEL
+  HEATMAP
+  MAP
+  CUSTOM
+}
+
+enum DataType {
+  TIME_SERIES
+  CATEGORICAL
+  TABULAR
+  GEOSPATIAL
+  CUSTOM
+}
+
+enum ReportFormat {
+  PDF
+  CSV
+  EXCEL
+  HTML
+}
+
+// Settings Module
+model GeneralSettings {
+  id              String    @id @default(uuid())
+  companyName     String
+  logo            String?
+  contactEmail    String?
+  contactPhone    String?
+  address         String?
+  timezone        String    @default("UTC")
+  dateFormat      String    @default("MM/DD/YYYY")
+  timeFormat      String    @default("12h")
+  clientId        String    @unique
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model IntegrationSettings {
+  id              String    @id @default(uuid())
+  name            String
+  type            IntegrationType
+  apiKey          String?
+  apiSecret       String?
+  refreshToken    String?
+  accessToken     String?
+  tokenExpiry     DateTime?
+  webhookUrl      String?
+  status          IntegrationStatus @default(DISCONNECTED)
+  settings        Json?
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model ModuleSettings {
+  id              String    @id @default(uuid())
+  moduleType      ModuleType
+  isEnabled       Boolean   @default(true)
+  settings        Json?
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([clientId, moduleType])
+}
+
+model NotificationSettings {
+  id              String    @id @default(uuid())
+  moduleType      ModuleType
+  emailEnabled    Boolean   @default(true)
+  smsEnabled      Boolean   @default(false)
+  pushEnabled     Boolean   @default(true)
+  inAppEnabled    Boolean   @default(true)
+  userId          String
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@unique([userId, moduleType])
+}
+
+model SecuritySettings {
+  id                      String    @id @default(uuid())
+  passwordExpiryDays      Int?      // null means no expiry
+  mfaEnabled              Boolean   @default(false)
+  mfaType                 MFAType?
+  ipRestrictions          String[]
+  sessionTimeoutMinutes   Int       @default(60)
+  clientId                String    @unique
+  client                  Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt               DateTime  @default(now())
+  updatedAt               DateTime  @updatedAt
+}
+
+model AuditLog {
+  id              String    @id @default(uuid())
+  action          String
+  entityType      String
+  entityId        String
+  details         Json?
+  ipAddress       String?
+  userAgent       String?
+  userId          String?
+  user            User?     @relation(fields: [userId], references: [id], onDelete: SetNull)
+  clientId        String
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdAt       DateTime  @default(now())
+}
+
+enum IntegrationType {
+  GOOGLE_CALENDAR
+  OUTLOOK_CALENDAR
+  ZOOM
+  TEAMS
+  TWILIO
+  VONAGE
+  WHATSAPP
+  FACEBOOK
+  INSTAGRAM
+  STRIPE
+  PAYPAL
+  GOOGLE_ANALYTICS
+  MAILCHIMP
+  SENDGRID
+  CUSTOM
+}
+
+enum IntegrationStatus {
+  CONNECTED
+  DISCONNECTED
+  ERROR
+  PENDING
+}
+
+enum ModuleType {
+  DEALS
+  APPOINTMENTS
+  PHONE_SMS
+  REVIEWS
+  SHOP
+  FORMS
+  MARKETING
+  CHAT
+  CONTACTS
+  ANALYTICS
+  SETTINGS
+  PAYMENT
+}
+
+enum MFAType {
+  SMS
+  EMAIL
+  AUTHENTICATOR_APP
+}
+
+// Payment System Module
+model Plan {
+  id                String    @id @default(uuid())
+  name              String
+  description       String?
+  price             Float
+  billingCycle      BillingCycle
+  features          Json
+  isActive          Boolean   @default(true)
+  maxUsers          Int?
+  maxContacts       Int?
+  maxStorage        Int?      // in GB
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // Plan can be for agencies or clients
+  planType          PlanType
+  
+  // Relationships
+  subscriptions     Subscription[]
+}
+
+model Subscription {
+  id                String    @id @default(uuid())
+  planId            String
+  plan              Plan      @relation(fields: [planId], references: [id])
+  status            SubscriptionStatus @default(ACTIVE)
+  startDate         DateTime  @default(now())
+  endDate           DateTime?
+  autoRenew         Boolean   @default(true)
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // A subscription can be for an agency or a client
+  agencyId          String?
+  agency            Agency?   @relation(fields: [agencyId], references: [id])
+  clientId          String?
+  client            Client?   @relation(fields: [clientId], references: [id])
+  
+  // Relationships
+  invoices          Invoice[]
+}
+
+model Invoice {
+  id                String    @id @default(uuid())
+  invoiceNumber     String    @unique
+  subscriptionId    String
+  subscription      Subscription @relation(fields: [subscriptionId], references: [id])
+  amount            Float
+  tax               Float     @default(0)
+  total             Float
+  status            InvoiceStatus @default(PENDING)
+  dueDate           DateTime
+  issueDate         DateTime  @default(now())
+  paidDate          DateTime?
+  notes             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // A invoice can be for an agency or a client
+  agencyId          String?
+  agency            Agency?   @relation(fields: [agencyId], references: [id])
+  clientId          String?
+  client            Client?   @relation(fields: [clientId], references: [id])
+  
+  // Relationships
+  payments          Payment[]
+}
+
+model Payment {
+  id                String    @id @default(uuid())
+  invoiceId         String
+  invoice           Invoice   @relation(fields: [invoiceId], references: [id])
+  amount            Float
+  paymentMethod     String
+  paymentDate       DateTime  @default(now())
+  transactionId     String?
+  status            PaymentStatus @default(COMPLETED)
+  notes             String?
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // A payment can be from an agency or a client
+  agencyId          String?
+  agency            Agency?   @relation(fields: [agencyId], references: [id])
+  clientId          String?
+  client            Client?   @relation(fields: [clientId], references: [id])
+}
+
+model PaymentMethod {
+  id                String    @id @default(uuid())
+  type              PaymentMethodType
+  name              String    // e.g., "Corporate Card"
+  isDefault         Boolean   @default(false)
+  
+  // Card details (if type is CARD)
+  cardLast4         String?
+  cardBrand         String?
+  cardExpiryMonth   Int?
+  cardExpiryYear    Int?
+  
+  // Bank account details (if type is BANK_ACCOUNT)
+  bankName          String?
+  bankAccountLast4  String?
+  
+  // External payment details (if type is PAYPAL, etc.)
+  externalId        String?
+  
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  
+  // A payment method can belong to an agency or a client
+  agencyId          String?
+  agency            Agency?   @relation(fields: [agencyId], references: [id])
+  clientId          String?
+  client            Client?   @relation(fields: [clientId], references: [id])
+}
+
+enum BillingCycle {
+  MONTHLY
+  QUARTERLY
+  SEMI_ANNUAL
+  ANNUAL
+}
+
+enum PlanType {
+  AGENCY
+  CLIENT
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  EXPIRED
+  TRIAL
+}
+
+enum InvoiceStatus {
+  DRAFT
+  PENDING
+  PAID
+  OVERDUE
+  CANCELED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum PaymentMethodType {
+  CARD
+  BANK_ACCOUNT
+  PAYPAL
+  STRIPE
+  OTHER
+}
+
+// Other modules can be added as needed
+// This schema covers the core functionality and multi-tenancy structure 

@@ -20,8 +20,11 @@ async function bootstrap() {
     }),
   );
 
-  // API prefix
-  app.setGlobalPrefix('api');
+  // API prefix for all routes except health check
+  const globalPrefix = 'api';
+  app.setGlobalPrefix(globalPrefix, {
+    exclude: ['health'],
+  });
 
   // Start the server
   const port = process.env.PORT || 3001;

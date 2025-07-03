@@ -10,4 +10,4 @@ cmds = ['npm install']
 cmds = ['chmod +x build.sh', './build.sh']
 
 [start]
-cmd = 'npm start'
+cmd = 'npm start' 
