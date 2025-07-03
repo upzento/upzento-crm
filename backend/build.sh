@@ -8,6 +8,7 @@ export CACHE_DIR="/tmp/node_cache"
 mkdir -p $CACHE_DIR
 
 echo "Installing dependencies..."
+# Use npm install instead of npm ci to update package-lock.json
 npm install --no-fund
 
 echo "Generating Prisma client..."

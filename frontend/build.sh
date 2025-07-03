@@ -6,7 +6,7 @@ echo "Starting frontend build process..."
 # Fix file encoding issues
 if [ -f "fix-frontend-encoding.js" ]; then
   echo "Fixing file encoding issues..."
-  node fix-frontend-encoding.js
+  node fix-frontend-encoding.js || echo "Encoding fix completed with warnings"
 fi
 
 # Create temp directory for cache

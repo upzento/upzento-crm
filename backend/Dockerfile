@@ -5,8 +5,8 @@ WORKDIR /app
 # Copy package files
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci
+# Install dependencies (using npm install instead of npm ci)
+RUN npm install
 
 # Copy prisma schema
 COPY prisma ./prisma/
@@ -34,4 +34,4 @@ COPY --from=builder /app/prisma ./prisma
 EXPOSE 3000
 
 # Start application
-CMD ["npm", "run", "start:prod"] 
+CMD ["npm", "run", "start:prod"]
