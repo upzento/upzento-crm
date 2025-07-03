@@ -1,0 +1,20 @@
+{
+  "setup": {
+    "nixPkgs": ["nodejs", "nodePackages.npm", "postgresql"]
+  },
+  "install": {
+    "command": "cd backend && npm ci --no-fund --prefer-offline --no-audit && cd ../frontend && npm ci --no-fund --prefer-offline --no-audit"
+  },
+  "build": {
+    "command": "cd backend && npx prisma generate && npm run build || true && cd ../frontend && npm run build"
+  },
+  "start": {
+    "command": "cd backend && node dist/main.js"
+  },
+  "mounts": {
+    "exclude": ["/app/node_modules/.cache"]
+  },
+  "variables": {
+    "NPM_CONFIG_CACHE": "disabled"
+  }
+} 

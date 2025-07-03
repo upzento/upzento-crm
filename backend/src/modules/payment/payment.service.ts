@@ -1,0 +1,781 @@
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
+import { PrismaService } from '../../common/prisma/prisma.service';
+import { Prisma } from '@prisma/client';
+
+import { CreatePlanDto } from './dto/create-plan.dto';
+import { UpdatePlanDto } from './dto/update-plan.dto';
+import { CreateSubscriptionDto } from './dto/create-subscription.dto';
+import { UpdateSubscriptionDto } from './dto/update-subscription.dto';
+import { CreateInvoiceDto } from './dto/create-invoice.dto';
+import { UpdateInvoiceDto } from './dto/update-invoice.dto';
+import { CreatePaymentDto } from './dto/create-payment.dto';
+import { UpdatePaymentDto } from './dto/update-payment.dto';
+import { CreatePaymentMethodDto } from './dto/create-payment-method.dto';
+import { UpdatePaymentMethodDto } from './dto/update-payment-method.dto';
+
+@Injectable()
+export class PaymentService {
+  constructor(private prisma: PrismaService) {}
+
+  // Plan methods
+  async createPlan(createPlanDto: CreatePlanDto) {
+    return this.prisma.plan.create({
+      data: {
+        ...createPlanDto,
+        features: createPlanDto.features as unknown as Prisma.JsonObject,
+      },
+    });
+  }
+
+  async findAllPlans(params?: {
+    where?: Prisma.PlanWhereInput;
+    orderBy?: Prisma.PlanOrderByWithRelationInput;
+    skip?: number;
+    take?: number;
+  }) {
+    const { where, orderBy, skip, take } = params || {};
+    return this.prisma.plan.findMany({
+      where,
+      orderBy,
+      skip,
+      take,
+    });
+  }
+
+  async findPlanById(id: string) {
+    const plan = await this.prisma.plan.findUnique({
+      where: { id },
+    });
+
+    if (!plan) {
+      throw new NotFoundException(`Plan with ID ${id} not found`);
+    }
+
+    return plan;
+  }
+
+  async updatePlan(id: string, updatePlanDto: UpdatePlanDto) {
+    // Check if plan exists
+    await this.findPlanById(id);
+
+    return this.prisma.plan.update({
+      where: { id },
+      data: {
+        ...updatePlanDto,
+        features: updatePlanDto.features as unknown as Prisma.JsonObject,
+      },
+    });
+  }
+
+  async deletePlan(id: string) {
+    // Check if plan exists
+    await this.findPlanById(id);
+
+    // Check if plan is being used by any subscriptions
+    const subscriptions = await this.prisma.subscription.findMany({
+      where: { planId: id },
+    });
+
+    if (subscriptions.length > 0) {
+      throw new BadRequestException(`Cannot delete plan with ID ${id} because it is being used by ${subscriptions.length} subscriptions`);
+    }
+
+    return this.prisma.plan.delete({
+      where: { id },
+    });
+  }
+
+  // Subscription methods
+  async createSubscription(createSubscriptionDto: CreateSubscriptionDto) {
+    // Validate that either agencyId or clientId is provided, but not both
+    if (!createSubscriptionDto.agencyId && !createSubscriptionDto.clientId) {
+      throw new BadRequestException('Either agencyId or clientId must be provided');
+    }
+
+    if (createSubscriptionDto.agencyId && createSubscriptionDto.clientId) {
+      throw new BadRequestException('Only one of agencyId or clientId should be provided');
+    }
+
+    // Check if plan exists
+    await this.findPlanById(createSubscriptionDto.planId);
+
+    return this.prisma.subscription.create({
+      data: createSubscriptionDto,
+    });
+  }
+
+  async findAllSubscriptions(params?: {
+    where?: Prisma.SubscriptionWhereInput;
+    orderBy?: Prisma.SubscriptionOrderByWithRelationInput;
+    skip?: number;
+    take?: number;
+    include?: Prisma.SubscriptionInclude;
+  }) {
+    const { where, orderBy, skip, take, include } = params || {};
+    return this.prisma.subscription.findMany({
+      where,
+      orderBy,
+      skip,
+      take,
+      include,
+    });
+  }
+
+  async findSubscriptionById(id: string) {
+    const subscription = await this.prisma.subscription.findUnique({
+      where: { id },
+      include: {
+        plan: true,
+        agency: true,
+        client: true,
+        invoices: true,
+      },
+    });
+
+    if (!subscription) {
+      throw new NotFoundException(`Subscription with ID ${id} not found`);
+    }
+
+    return subscription;
+  }
+
+  async updateSubscription(id: string, updateSubscriptionDto: UpdateSubscriptionDto) {
+    // Check if subscription exists
+    await this.findSubscriptionById(id);
+
+    return this.prisma.subscription.update({
+      where: { id },
+      data: updateSubscriptionDto,
+    });
+  }
+
+  async deleteSubscription(id: string) {
+    // Check if subscription exists
+    await this.findSubscriptionById(id);
+
+    // Check if subscription has invoices
+    const invoices = await this.prisma.invoice.findMany({
+      where: { subscriptionId: id },
+    });
+
+    if (invoices.length > 0) {
+      throw new BadRequestException(`Cannot delete subscription with ID ${id} because it has ${invoices.length} invoices`);
+    }
+
+    return this.prisma.subscription.delete({
+      where: { id },
+    });
+  }
+
+  // Invoice methods
+  async createInvoice(createInvoiceDto: CreateInvoiceDto) {
+    // Validate that either agencyId or clientId is provided, but not both
+    if (!createInvoiceDto.agencyId && !createInvoiceDto.clientId) {
+      throw new BadRequestException('Either agencyId or clientId must be provided');
+    }
+
+    if (createInvoiceDto.agencyId && createInvoiceDto.clientId) {
+      throw new BadRequestException('Only one of agencyId or clientId should be provided');
+    }
+
+    // Check if subscription exists
+    await this.findSubscriptionById(createInvoiceDto.subscriptionId);
+
+    // Check if invoice number is unique
+    const existingInvoice = await this.prisma.invoice.findUnique({
+      where: { invoiceNumber: createInvoiceDto.invoiceNumber },
+    });
+
+    if (existingInvoice) {
+      throw new BadRequestException(`Invoice with number ${createInvoiceDto.invoiceNumber} already exists`);
+    }
+
+    return this.prisma.invoice.create({
+      data: createInvoiceDto,
+    });
+  }
+
+  async findAllInvoices(params?: {
+    where?: Prisma.InvoiceWhereInput;
+    orderBy?: Prisma.InvoiceOrderByWithRelationInput;
+    skip?: number;
+    take?: number;
+    include?: Prisma.InvoiceInclude;
+  }) {
+    const { where, orderBy, skip, take, include } = params || {};
+    return this.prisma.invoice.findMany({
+      where,
+      orderBy,
+      skip,
+      take,
+      include,
+    });
+  }
+
+  async findInvoiceById(id: string) {
+    const invoice = await this.prisma.invoice.findUnique({
+      where: { id },
+      include: {
+        subscription: {
+          include: {
+            plan: true,
+          },
+        },
+        agency: true,
+        client: true,
+        payments: true,
+      },
+    });
+
+    if (!invoice) {
+      throw new NotFoundException(`Invoice with ID ${id} not found`);
+    }
+
+    return invoice;
+  }
+
+  async updateInvoice(id: string, updateInvoiceDto: UpdateInvoiceDto) {
+    // Check if invoice exists
+    await this.findInvoiceById(id);
+
+    return this.prisma.invoice.update({
+      where: { id },
+      data: updateInvoiceDto,
+    });
+  }
+
+  async deleteInvoice(id: string) {
+    // Check if invoice exists
+    await this.findInvoiceById(id);
+
+    // Check if invoice has payments
+    const payments = await this.prisma.payment.findMany({
+      where: { invoiceId: id },
+    });
+
+    if (payments.length > 0) {
+      throw new BadRequestException(`Cannot delete invoice with ID ${id} because it has ${payments.length} payments`);
+    }
+
+    return this.prisma.invoice.delete({
+      where: { id },
+    });
+  }
+
+  // Payment methods
+  async createPayment(createPaymentDto: CreatePaymentDto) {
+    // Validate that either agencyId or clientId is provided, but not both
+    if (!createPaymentDto.agencyId && !createPaymentDto.clientId) {
+      throw new BadRequestException('Either agencyId or clientId must be provided');
+    }
+
+    if (createPaymentDto.agencyId && createPaymentDto.clientId) {
+      throw new BadRequestException('Only one of agencyId or clientId should be provided');
+    }
+
+    // Check if invoice exists
+    await this.findInvoiceById(createPaymentDto.invoiceId);
+
+    const payment = await this.prisma.payment.create({
+      data: createPaymentDto,
+    });
+
+    // Update invoice status if payment is completed
+    if (payment.status === 'COMPLETED') {
+      const invoice = await this.findInvoiceById(payment.invoiceId);
+      
+      // Calculate total payments for this invoice
+      const payments = await this.prisma.payment.findMany({
+        where: { 
+          invoiceId: payment.invoiceId,
+          status: 'COMPLETED',
+        },
+      });
+      
+      const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
+      
+      // If total paid equals or exceeds invoice total, mark as paid
+      if (totalPaid >= invoice.total) {
+        await this.prisma.invoice.update({
+          where: { id: payment.invoiceId },
+          data: { 
+            status: 'PAID',
+            paidDate: new Date(),
+          },
+        });
+      }
+    }
+
+    return payment;
+  }
+
+  async findAllPayments(params?: {
+    where?: Prisma.PaymentWhereInput;
+    orderBy?: Prisma.PaymentOrderByWithRelationInput;
+    skip?: number;
+    take?: number;
+    include?: Prisma.PaymentInclude;
+  }) {
+    const { where, orderBy, skip, take, include } = params || {};
+    return this.prisma.payment.findMany({
+      where,
+      orderBy,
+      skip,
+      take,
+      include,
+    });
+  }
+
+  async findPaymentById(id: string) {
+    const payment = await this.prisma.payment.findUnique({
+      where: { id },
+      include: {
+        invoice: true,
+        agency: true,
+        client: true,
+      },
+    });
+
+    if (!payment) {
+      throw new NotFoundException(`Payment with ID ${id} not found`);
+    }
+
+    return payment;
+  }
+
+  async updatePayment(id: string, updatePaymentDto: UpdatePaymentDto) {
+    // Check if payment exists
+    await this.findPaymentById(id);
+
+    return this.prisma.payment.update({
+      where: { id },
+      data: updatePaymentDto,
+    });
+  }
+
+  async deletePayment(id: string) {
+    // Check if payment exists
+    const payment = await this.findPaymentById(id);
+
+    // If payment is completed, we need to update the invoice status
+    if (payment.status === 'COMPLETED') {
+      const invoice = await this.findInvoiceById(payment.invoiceId);
+      
+      // Calculate total payments for this invoice (excluding this payment)
+      const payments = await this.prisma.payment.findMany({
+        where: { 
+          invoiceId: payment.invoiceId,
+          status: 'COMPLETED',
+          id: { not: id },
+        },
+      });
+      
+      const totalPaid = payments.reduce((sum, p) => sum + p.amount, 0);
+      
+      // If invoice is paid but removing this payment would make it unpaid
+      if (invoice.status === 'PAID' && totalPaid < invoice.total) {
+        await this.prisma.invoice.update({
+          where: { id: payment.invoiceId },
+          data: { 
+            status: 'PENDING',
+            paidDate: null,
+          },
+        });
+      }
+    }
+
+    return this.prisma.payment.delete({
+      where: { id },
+    });
+  }
+
+  // Payment Method methods
+  async createPaymentMethod(createPaymentMethodDto: CreatePaymentMethodDto) {
+    // Validate that either agencyId or clientId is provided, but not both
+    if (!createPaymentMethodDto.agencyId && !createPaymentMethodDto.clientId) {
+      throw new BadRequestException('Either agencyId or clientId must be provided');
+    }
+
+    if (createPaymentMethodDto.agencyId && createPaymentMethodDto.clientId) {
+      throw new BadRequestException('Only one of agencyId or clientId should be provided');
+    }
+
+    // If this is the default payment method, unset any existing default
+    if (createPaymentMethodDto.isDefault) {
+      if (createPaymentMethodDto.agencyId) {
+        await this.prisma.paymentMethod.updateMany({
+          where: { 
+            agencyId: createPaymentMethodDto.agencyId,
+            isDefault: true,
+          },
+          data: { isDefault: false },
+        });
+      } else if (createPaymentMethodDto.clientId) {
+        await this.prisma.paymentMethod.updateMany({
+          where: { 
+            clientId: createPaymentMethodDto.clientId,
+            isDefault: true,
+          },
+          data: { isDefault: false },
+        });
+      }
+    }
+
+    return this.prisma.paymentMethod.create({
+      data: createPaymentMethodDto,
+    });
+  }
+
+  async findAllPaymentMethods(params?: {
+    where?: Prisma.PaymentMethodWhereInput;
+    orderBy?: Prisma.PaymentMethodOrderByWithRelationInput;
+    skip?: number;
+    take?: number;
+  }) {
+    const { where, orderBy, skip, take } = params || {};
+    return this.prisma.paymentMethod.findMany({
+      where,
+      orderBy,
+      skip,
+      take,
+    });
+  }
+
+  async findPaymentMethodById(id: string) {
+    const paymentMethod = await this.prisma.paymentMethod.findUnique({
+      where: { id },
+      include: {
+        agency: true,
+        client: true,
+      },
+    });
+
+    if (!paymentMethod) {
+      throw new NotFoundException(`Payment method with ID ${id} not found`);
+    }
+
+    return paymentMethod;
+  }
+
+  async updatePaymentMethod(id: string, updatePaymentMethodDto: UpdatePaymentMethodDto) {
+    // Check if payment method exists
+    const paymentMethod = await this.findPaymentMethodById(id);
+
+    // If setting this as default, unset any existing default
+    if (updatePaymentMethodDto.isDefault) {
+      if (paymentMethod.agencyId) {
+        await this.prisma.paymentMethod.updateMany({
+          where: { 
+            agencyId: paymentMethod.agencyId,
+            isDefault: true,
+            id: { not: id },
+          },
+          data: { isDefault: false },
+        });
+      } else if (paymentMethod.clientId) {
+        await this.prisma.paymentMethod.updateMany({
+          where: { 
+            clientId: paymentMethod.clientId,
+            isDefault: true,
+            id: { not: id },
+          },
+          data: { isDefault: false },
+        });
+      }
+    }
+
+    return this.prisma.paymentMethod.update({
+      where: { id },
+      data: updatePaymentMethodDto,
+    });
+  }
+
+  async deletePaymentMethod(id: string) {
+    // Check if payment method exists
+    await this.findPaymentMethodById(id);
+
+    return this.prisma.paymentMethod.delete({
+      where: { id },
+    });
+  }
+
+  // Utility methods
+  async getClientSubscriptions(clientId: string) {
+    return this.prisma.subscription.findMany({
+      where: { clientId },
+      include: {
+        plan: true,
+        invoices: {
+          orderBy: {
+            dueDate: 'desc',
+          },
+          take: 5,
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
+  async getAgencySubscriptions(agencyId: string) {
+    return this.prisma.subscription.findMany({
+      where: { agencyId },
+      include: {
+        plan: true,
+        invoices: {
+          orderBy: {
+            dueDate: 'desc',
+          },
+          take: 5,
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+    });
+  }
+
+  async getClientInvoices(clientId: string, params?: {
+    status?: string;
+    startDate?: Date;
+    endDate?: Date;
+    skip?: number;
+    take?: number;
+  }) {
+    const { status, startDate, endDate, skip = 0, take = 10 } = params || {};
+    
+    const where: Prisma.InvoiceWhereInput = { clientId };
+    
+    if (status) {
+      where.status = status;
+    }
+    
+    if (startDate || endDate) {
+      where.dueDate = {};
+      
+      if (startDate) {
+        where.dueDate.gte = startDate;
+      }
+      
+      if (endDate) {
+        where.dueDate.lte = endDate;
+      }
+    }
+    
+    return this.prisma.invoice.findMany({
+      where,
+      include: {
+        subscription: {
+          include: {
+            plan: true,
+          },
+        },
+        payments: true,
+      },
+      orderBy: {
+        dueDate: 'desc',
+      },
+      skip,
+      take,
+    });
+  }
+
+  async getAgencyInvoices(agencyId: string, params?: {
+    status?: string;
+    startDate?: Date;
+    endDate?: Date;
+    skip?: number;
+    take?: number;
+  }) {
+    const { status, startDate, endDate, skip = 0, take = 10 } = params || {};
+    
+    const where: Prisma.InvoiceWhereInput = { agencyId };
+    
+    if (status) {
+      where.status = status;
+    }
+    
+    if (startDate || endDate) {
+      where.dueDate = {};
+      
+      if (startDate) {
+        where.dueDate.gte = startDate;
+      }
+      
+      if (endDate) {
+        where.dueDate.lte = endDate;
+      }
+    }
+    
+    return this.prisma.invoice.findMany({
+      where,
+      include: {
+        subscription: {
+          include: {
+            plan: true,
+          },
+        },
+        payments: true,
+      },
+      orderBy: {
+        dueDate: 'desc',
+      },
+      skip,
+      take,
+    });
+  }
+
+  async getClientPaymentMethods(clientId: string) {
+    return this.prisma.paymentMethod.findMany({
+      where: { clientId },
+      orderBy: {
+        isDefault: 'desc',
+      },
+    });
+  }
+
+  async getAgencyPaymentMethods(agencyId: string) {
+    return this.prisma.paymentMethod.findMany({
+      where: { agencyId },
+      orderBy: {
+        isDefault: 'desc',
+      },
+    });
+  }
+
+  async getUpcomingInvoices(params?: {
+    agencyId?: string;
+    clientId?: string;
+    days?: number;
+  }) {
+    const { agencyId, clientId, days = 30 } = params || {};
+    
+    if (!agencyId && !clientId) {
+      throw new BadRequestException('Either agencyId or clientId must be provided');
+    }
+    
+    const today = new Date();
+    const futureDate = new Date();
+    futureDate.setDate(today.getDate() + days);
+    
+    const where: Prisma.InvoiceWhereInput = {
+      status: 'PENDING',
+      dueDate: {
+        gte: today,
+        lte: futureDate,
+      },
+    };
+    
+    if (agencyId) {
+      where.agencyId = agencyId;
+    } else if (clientId) {
+      where.clientId = clientId;
+    }
+    
+    return this.prisma.invoice.findMany({
+      where,
+      include: {
+        subscription: {
+          include: {
+            plan: true,
+          },
+        },
+      },
+      orderBy: {
+        dueDate: 'asc',
+      },
+    });
+  }
+
+  async getOverdueInvoices(params?: {
+    agencyId?: string;
+    clientId?: string;
+  }) {
+    const { agencyId, clientId } = params || {};
+    
+    if (!agencyId && !clientId) {
+      throw new BadRequestException('Either agencyId or clientId must be provided');
+    }
+    
+    const today = new Date();
+    
+    const where: Prisma.InvoiceWhereInput = {
+      status: 'PENDING',
+      dueDate: {
+        lt: today,
+      },
+    };
+    
+    if (agencyId) {
+      where.agencyId = agencyId;
+    } else if (clientId) {
+      where.clientId = clientId;
+    }
+    
+    return this.prisma.invoice.findMany({
+      where,
+      include: {
+        subscription: {
+          include: {
+            plan: true,
+          },
+        },
+      },
+      orderBy: {
+        dueDate: 'asc',
+      },
+    });
+  }
+
+  async getPaymentSummary(params?: {
+    agencyId?: string;
+    clientId?: string;
+    startDate?: Date;
+    endDate?: Date;
+  }) {
+    const { agencyId, clientId, startDate, endDate } = params || {};
+    
+    if (!agencyId && !clientId) {
+      throw new BadRequestException('Either agencyId or clientId must be provided');
+    }
+    
+    const where: Prisma.PaymentWhereInput = {
+      status: 'COMPLETED',
+    };
+    
+    if (agencyId) {
+      where.agencyId = agencyId;
+    } else if (clientId) {
+      where.clientId = clientId;
+    }
+    
+    if (startDate || endDate) {
+      where.paymentDate = {};
+      
+      if (startDate) {
+        where.paymentDate.gte = startDate;
+      }
+      
+      if (endDate) {
+        where.paymentDate.lte = endDate;
+      }
+    }
+    
+    const payments = await this.prisma.payment.findMany({
+      where,
+      select: {
+        amount: true,
+        paymentDate: true,
+      },
+    });
+    
+    const totalAmount = payments.reduce((sum, payment) => sum + payment.amount, 0);
+    
+    return {
+      totalPayments: payments.length,
+      totalAmount,
+      payments,
+    };
+  }
+}

@@ -1,0 +1,11 @@
+'use client';
+
+import { useState } from 'react';
+
+export default function InvoicesTab() {
+  return (
+    <div>
+      <p>Invoices tab will be implemented here.</p>
+    </div>
+  );
+}

@@ -1,0 +1,11 @@
+[build]
+builder = "nixpacks"
+buildCommand = "chmod +x nocache.sh && ./nocache.sh"
+
+[deploy]
+startCommand = "cd backend && node dist/main.js"
+healthcheckPath = "/health"
+healthcheckTimeout = 100
+
+[nixpacks]
+nixpacksConfigPath = "./nixpacks.toml" 

@@ -1,0 +1,11 @@
+'use client';
+
+import { useState } from 'react';
+
+export default function SecuritySettings() {
+  return (
+    <div>
+      <p>Security settings component will be implemented here.</p>
+    </div>
+  );
+}

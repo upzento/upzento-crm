@@ -1,0 +1,107 @@
+# Node modules and cache
+node_modules
+**/node_modules
+**/.cache
+**/node_modules/.cache
+npm-debug.log
+.DS_Store
+
+# Build directories
+dist
+build
+.next
+out
+.nuxt
+
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Editor directories and files
+.idea
+.vscode
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+.git
+.env.*
+coverage
+test
+# # build.sh - needed for deployment - needed for deployment 
+
+# Large media files
+*.mp4
+*.tiff
+*.avi
+*.flv
+*.mov
+*.wmv
+*.mp3
+*.wav
+*.zip
+*.tar.gz
+*.rar
+*.7z
+*.iso
+*.dmg
+*.pkg
+*.exe
+*.dll
+*.so
+*.dylib
+
+# Large data files
+*.sql
+*.sqlite
+*.db
+*.csv
+*.tsv
+*.xls
+*.xlsx
+*.pdf
+
+# Test files
+test/
+tests/
+__tests__/
+coverage/
+.nyc_output/
+
+# Documentation
+docs/
+*.md
+LICENSE
+CHANGELOG.md
+CONTRIBUTING.md
+
+# Git files
+.git/
+.gitignore
+.gitattributes
+.github/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+*.bak
+*.backup
+*.swp 

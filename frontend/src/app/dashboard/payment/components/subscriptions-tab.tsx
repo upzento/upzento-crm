@@ -1,0 +1,11 @@
+'use client';
+
+import { useState } from 'react';
+
+export default function SubscriptionsTab() {
+  return (
+    <div>
+      <p>Subscriptions tab will be implemented here.</p>
+    </div>
+  );
+}

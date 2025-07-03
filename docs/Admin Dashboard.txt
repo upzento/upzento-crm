@@ -1,0 +1,45 @@
+Admin Dashboard
+Purpose:
+Provide platform administrators with comprehensive control, monitoring, and management tools for the entire multi-tenant CRM ecosystem.
+Key Features
+• System Analytics:
+• Real-time and historical analytics dashboard.
+• Metrics: active users, agencies, clients, module usage, revenue, growth trends, system health.
+• Customizable reports and export options.
+• Agencies Management:
+• View, create, edit, and deactivate agencies.
+• Manage agency settings, assigned admins, and limits.
+• View agency performance and usage statistics.
+• All Clients Management:
+• View and manage all clients across all agencies.
+• Search, filter, and bulk actions (activate, deactivate, reset password, etc.).
+• View client activity, subscription, and module usage.
+• Agency Plans Management:
+• Create and manage subscription plans for agencies.
+• Set client limits, feature access, and pricing.
+• Assign or change plans for agencies.
+• Client Plans Management:
+• Create and manage subscription plans for clients.
+• Define module access controls and usage limits.
+• Assign or change plans for clients (individually or in bulk).
+• Payments Management:
+• Monitor and manage all payments received across the platform.
+• View payment history, upcoming payments, failed transactions.
+• Export payment data for accounting.
+• System Settings:
+• Configure global settings and platform preferences.
+• Manage integrations (global API keys, default providers).
+• Set up system-wide notifications, branding, and compliance options.
+• Security & Compliance:
+• Role-based access for admin users.
+• Audit logs for all critical actions.
+• Data privacy and regulatory compliance tools.
+________________________________________
+Summary:
+The Admin Dashboard in Upzento CRM offers a powerful suite of tools for platform administrators to monitor analytics, manage agencies and clients, control subscription plans, oversee payments, and configure global system settings—ensuring smooth operation and scalability.
+
+Impersonation & Dashboard Viewing
+• Admin Impersonation:
+Admins can impersonate any client and view their full dashboard and modules, allowing for troubleshooting, support, or configuration on the client’s behalf.
+• Agency Impersonation:
+Agency users can impersonate and view only their own clients’ dashboards, ensuring privacy and proper access control.

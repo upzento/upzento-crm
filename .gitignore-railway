@@ -1,0 +1,49 @@
+# Keep only essential files for Railway deployment
+
+# Ignore everything
+*
+
+# But keep these files
+!.gitignore-railway
+!.gitattributes
+!.railwayignore
+!railway.json
+!railway.toml
+!Dockerfile*
+!.dockerignore
+!package.json
+!package-lock.json
+!yarn.lock
+!pnpm-lock.yaml
+
+# Frontend files
+!frontend/
+!frontend/package.json
+!frontend/package-lock.json
+!frontend/next.config.js
+!frontend/tsconfig.json
+!frontend/tailwind.config.js
+!frontend/postcss.config.js
+!frontend/Dockerfile*
+!frontend/railway.json
+!frontend/health-server.js
+!frontend/fix-frontend-encoding.js
+!frontend/update-ui-components.js
+!frontend/public/**
+!frontend/src/**
+
+# Backend files
+!backend/
+!backend/package.json
+!backend/package-lock.json
+!backend/tsconfig.json
+!backend/Dockerfile*
+!backend/railway.json
+!backend/health-check.js
+!backend/src/**
+!backend/prisma/schema.prisma
+
+# Scripts
+!*.sh
+!*.js
+!prepare-for-railway.js 

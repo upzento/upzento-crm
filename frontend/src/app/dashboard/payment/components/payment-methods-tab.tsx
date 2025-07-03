@@ -1,0 +1,11 @@
+'use client';
+
+import { useState } from 'react';
+
+export default function PaymentMethodsTab() {
+  return (
+    <div>
+      <p>Payment methods tab will be implemented here.</p>
+    </div>
+  );
+}

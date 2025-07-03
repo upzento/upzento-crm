@@ -1,0 +1,1097 @@
+> upzento-crm-backend@0.1.0 build
+> rimraf dist && tsc --skipLibCheck || true
+
+
+src/app.module.ts(7,31): error TS2307: Cannot find module './modules/tenants/tenants.module' or its corresponding type declarations.
+
+src/app.module.ts(8,32): error TS2307: Cannot find module './modules/agencies/agencies.module' or its corresponding type declarations.
+
+src/app.module.ts(9,31): error TS2307: Cannot find module './modules/clients/clients.module' or its corresponding type declarations.
+src/app.module.ts(10,31): error TS2307: Cannot find module './modules/domains/domains.module' or its corresponding type declarations.
+
+src/modules/analytics/analytics.controller.ts(1,10): error TS2300: Duplicate identifier 'Controller'.
+src/modules/analytics/analytics.controller.ts(1,22): error TS2300: Duplicate identifier 'Get'.
+
+src/modules/analytics/analytics.controller.ts(1,27): error TS2300: Duplicate identifier 'Post'.
+
+src/modules/analytics/analytics.controller.ts(1,33): error TS2300: Duplicate identifier 'Body'.
+
+src/modules/analytics/analytics.controller.ts(1,39): error TS2300: Duplicate identifier 'Patch'.
+
+src/modules/analytics/analytics.controller.ts(1,46): error TS2300: Duplicate identifier 'Param'.
+src/modules/analytics/analytics.controller.ts(1,53): error TS2300: Duplicate identifier 'Delete'.
+
+src/modules/analytics/analytics.controller.ts(1,61): error TS2300: Duplicate identifier 'Query'.
+src/modules/analytics/analytics.controller.ts(1,68): error TS2300: Duplicate identifier 'UseGuards'.
+
+src/modules/analytics/analytics.controller.ts(6,10): error TS2300: Duplicate identifier 'AnalyticsService'.
+
+src/modules/analytics/analytics.controller.ts(8,3): error TS2300: Duplicate identifier 'Controller'.
+src/modules/analytics/analytics.controller.ts(9,3): error TS2300: Duplicate identifier 'Get'.
+src/modules/analytics/analytics.controller.ts(10,3): error TS2300: Duplicate identifier 'Post'.
+src/modules/analytics/analytics.controller.ts(11,3): error TS2300: Duplicate identifier 'Body'.
+src/modules/analytics/analytics.controller.ts(12,3): error TS2300: Duplicate identifier 'Patch'.
+
+src/modules/analytics/analytics.controller.ts(13,3): error TS2300: Duplicate identifier 'Param'.
+src/modules/analytics/analytics.controller.ts(14,3): error TS2300: Duplicate identifier 'Delete'.
+
+src/modules/analytics/analytics.controller.ts(15,3): error TS2300: Duplicate identifier 'Query'.
+src/modules/analytics/analytics.controller.ts(16,3): error TS2300: Duplicate identifier 'UseGuards'.
+
+src/modules/analytics/analytics.controller.ts(18,10): error TS2300: Duplicate identifier 'AnalyticsService'.
+
+src/modules/analytics/analytics.service.ts(16,24): error TS2339: Property 'analyticsIntegration' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(26,24): error TS2339: Property 'analyticsIntegration' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(36,43): error TS2339: Property 'analyticsIntegration' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(55,24): error TS2339: Property 'analyticsIntegration' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(70,23): error TS2339: Property 'analyticsIntegration' does not exist on type 'PrismaService'.
+
+src/modules/analytics/analytics.service.ts(82,23): error TS2339: Property 'analyticsIntegration' does not exist on type 'PrismaService'.
+
+src/modules/analytics/analytics.service.ts(102,24): error TS2339: Property 'analyticsDashboard' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(111,24): error TS2339: Property 'analyticsDashboard' does not exist on type 'PrismaService'.
+
+src/modules/analytics/analytics.service.ts(121,41): error TS2339: Property 'analyticsDashboard' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(149,24): error TS2339: Property 'analyticsDashboard' does not exist on type 'PrismaService'.
+
+src/modules/analytics/analytics.service.ts(163,23): error TS2339: Property 'analyticsDashboard' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(180,23): error TS2339: Property 'analyticsDashboard' does not exist on type 'PrismaService'.
+
+src/modules/analytics/analytics.service.ts(186,23): error TS2339: Property 'analyticsDashboard' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(202,24): error TS2339: Property 'analyticsWidget' does not exist on type 'PrismaService'.
+
+src/modules/analytics/analytics.service.ts(213,38): error TS2339: Property 'analyticsWidget' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(242,24): error TS2339: Property 'analyticsWidget' does not exist on type 'PrismaService'.
+
+src/modules/analytics/analytics.service.ts(258,23): error TS2339: Property 'analyticsWidget' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(270,24): error TS2339: Property 'analyticsDataset' does not exist on type 'PrismaService'.
+
+src/modules/analytics/analytics.service.ts(279,24): error TS2339: Property 'analyticsDataset' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(290,39): error TS2339: Property 'analyticsDataset' does not exist on type 'PrismaService'.
+
+src/modules/analytics/analytics.service.ts(315,24): error TS2339: Property 'analyticsDataset' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(329,23): error TS2339: Property 'analyticsDataset' does not exist on type 'PrismaService'.
+
+src/modules/analytics/analytics.service.ts(344,23): error TS2339: Property 'analyticsDataset' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(364,25): error TS2339: Property 'analyticsCachedData' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(373,25): error TS2339: Property 'analyticsCachedData' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(391,24): error TS2339: Property 'analyticsReport' does not exist on type 'PrismaService'.
+
+src/modules/analytics/analytics.service.ts(401,24): error TS2339: Property 'analyticsReport' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(407,38): error TS2339: Property 'analyticsReport' does not exist on type 'PrismaService'.
+
+src/modules/analytics/analytics.service.ts(422,24): error TS2339: Property 'analyticsReport' does not exist on type 'PrismaService'.
+src/modules/analytics/analytics.service.ts(437,23): error TS2339: Property 'analyticsReport' does not exist on type 'PrismaService'.
+
+src/modules/analytics/analytics.service.ts(452,23): error TS2339: Property 'analyticsReport' does not exist on type 'PrismaService'.
+
+src/modules/appointments/appointments.module.ts(3,40): error TS2307: Cannot find module './appointments.controller' or its corresponding type declarations.
+src/modules/appointments/appointments.module.ts(5,33): error TS2307: Cannot find module './staff.controller' or its corresponding type declarations.
+src/modules/appointments/appointments.module.ts(6,33): error TS2307: Cannot find module './services.service' or its corresponding type declarations.
+src/modules/appointments/appointments.module.ts(7,36): error TS2307: Cannot find module './services.controller' or its corresponding type declarations.
+
+src/modules/appointments/appointments.module.ts(8,34): error TS2307: Cannot find module './locations.service' or its corresponding type declarations.
+src/modules/appointments/appointments.module.ts(9,37): error TS2307: Cannot find module './locations.controller' or its corresponding type declarations.
+
+src/modules/appointments/appointments.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'Appointment'.
+src/modules/appointments/appointments.service.ts(3,23): error TS2305: Module '"@prisma/client"' has no exported member 'AppointmentStatus'.
+
+src/modules/appointments/appointments.service.ts(15,39): error TS2339: Property 'service' does not exist on type 'PrismaService'.
+src/modules/appointments/appointments.service.ts(24,37): error TS2339: Property 'staff' does not exist on type 'PrismaService'.
+
+src/modules/appointments/appointments.service.ts(33,44): error TS2339: Property 'staffToService' does not exist on type 'PrismaService'.
+
+src/modules/appointments/appointments.service.ts(48,41): error TS2339: Property 'contact' does not exist on type 'PrismaService'.
+src/modules/appointments/appointments.service.ts(59,42): error TS2339: Property 'location' does not exist on type 'PrismaService'.
+
+src/modules/appointments/appointments.service.ts(70,54): error TS2339: Property 'appointment' does not exist on type 'PrismaService'.
+src/modules/appointments/appointments.service.ts(99,24): error TS2339: Property 'appointment' does not exist on type 'PrismaService'.
+src/modules/appointments/appointments.service.ts(148,24): error TS2339: Property 'appointment' does not exist on type 'PrismaService'.
+
+src/modules/appointments/appointments.service.ts(163,43): error TS2339: Property 'appointment' does not exist on type 'PrismaService'.
+src/modules/appointments/appointments.service.ts(189,41): error TS2339: Property 'service' does not exist on type 'PrismaService'.
+
+src/modules/appointments/appointments.service.ts(199,48): error TS2339: Property 'staffToService' does not exist on type 'PrismaService'.
+src/modules/appointments/appointments.service.ts(216,39): error TS2339: Property 'staff' does not exist on type 'PrismaService'.
+src/modules/appointments/appointments.service.ts(227,41): error TS2339: Property 'contact' does not exist on type 'PrismaService'.
+
+src/modules/appointments/appointments.service.ts(238,42): error TS2339: Property 'location' does not exist on type 'PrismaService'.
+src/modules/appointments/appointments.service.ts(249,52): error TS2339: Property 'appointment' does not exist on type 'PrismaService'.
+
+src/modules/appointments/appointments.service.ts(263,56): error TS2339: Property 'appointment' does not exist on type 'PrismaService'.
+
+src/modules/appointments/appointments.service.ts(301,24): error TS2339: Property 'appointment' does not exist on type 'PrismaService'.
+
+src/modules/appointments/appointments.service.ts(317,24): error TS2339: Property 'appointment' does not exist on type 'PrismaService'.
+
+src/modules/appointments/appointments.service.ts(326,24): error TS2339: Property 'appointment' does not exist on type 'PrismaService'.
+
+src/modules/appointments/appointments.service.ts(341,24): error TS2339: Property 'appointmentReminder' does not exist on type 'PrismaService'.
+
+src/modules/appointments/dto/create-appointment.dto.ts(7,10): error TS2305: Module '"@prisma/client"' has no exported member 'AppointmentStatus'.
+
+src/modules/appointments/dto/create-service.dto.ts(32,4): error TS2304: Cannot find name 'IsPositive'.
+
+src/modules/appointments/dto/update-appointment.dto.ts(7,10): error TS2305: Module '"@prisma/client"' has no exported member 'AppointmentStatus'.
+
+src/modules/appointments/staff.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'Staff'.
+
+src/modules/appointments/staff.service.ts(14,45): error TS2339: Property 'staff' does not exist on type 'PrismaService'.
+
+src/modules/appointments/staff.service.ts(26,37): error TS2339: Property 'staff' does not exist on type 'PrismaService'.
+
+src/modules/appointments/staff.service.ts(36,42): error TS2339: Property 'service' does not exist on type 'PrismaService'.
+
+src/modules/appointments/staff.service.ts(50,23): error TS2339: Property 'staffToService' does not exist on type 'PrismaService'.
+
+src/modules/appointments/staff.service.ts(64,24): error TS2339: Property 'staff' does not exist on type 'PrismaService'.
+
+src/modules/appointments/staff.service.ts(78,37): error TS2339: Property 'staff' does not exist on type 'PrismaService'.
+src/modules/appointments/staff.service.ts(117,47): error TS2339: Property 'staff' does not exist on type 'PrismaService'.
+
+src/modules/appointments/staff.service.ts(131,23): error TS2339: Property 'staff' does not exist on type 'PrismaService'.
+
+src/modules/appointments/staff.service.ts(139,42): error TS2339: Property 'service' does not exist on type 'PrismaService'.
+src/modules/appointments/staff.service.ts(151,25): error TS2339: Property 'staffToService' does not exist on type 'PrismaService'.
+src/modules/appointments/staff.service.ts(158,23): error TS2339: Property 'staffToService' does not exist on type 'PrismaService'.
+
+src/modules/appointments/staff.service.ts(176,52): error TS2339: Property 'appointment' does not exist on type 'PrismaService'.
+src/modules/appointments/staff.service.ts(189,24): error TS2339: Property 'staff' does not exist on type 'PrismaService'.
+
+src/modules/appointments/staff.service.ts(221,55): error TS2339: Property 'staffAvailability' does not exist on type 'PrismaService'.
+
+src/modules/appointments/staff.service.ts(246,24): error TS2339: Property 'staffAvailability' does not exist on type 'PrismaService'.
+
+src/modules/appointments/staff.service.ts(257,44): error TS2339: Property 'staffAvailability' does not exist on type 'PrismaService'.
+
+src/modules/appointments/staff.service.ts(270,24): error TS2339: Property 'staffAvailability' does not exist on type 'PrismaService'.
+
+src/modules/appointments/staff.service.ts(294,54): error TS2339: Property 'appointment' does not exist on type 'PrismaService'.
+src/modules/appointments/staff.service.ts(318,24): error TS2339: Property 'staffTimeOff' does not exist on type 'PrismaService'.
+
+src/modules/appointments/staff.service.ts(329,39): error TS2339: Property 'staffTimeOff' does not exist on type 'PrismaService'.
+
+src/modules/appointments/staff.service.ts(342,24): error TS2339: Property 'staffTimeOff' does not exist on type 'PrismaService'.
+
+src/modules/auth/auth.controller.ts(9,2): error TS2304: Cannot find name 'ApiTags'.
+
+src/modules/auth/auth.controller.ts(14,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/auth/auth.controller.ts(15,4): error TS2552: Cannot find name 'ApiResponse'. Did you mean 'Response'?
+src/modules/auth/auth.controller.ts(16,4): error TS2552: Cannot find name 'ApiResponse'. Did you mean 'Response'?
+
+src/modules/auth/auth.controller.ts(23,4): error TS2304: Cannot find name 'ApiOperation'.
+src/modules/auth/auth.controller.ts(24,4): error TS2552: Cannot find name 'ApiResponse'. Did you mean 'Response'?
+
+src/modules/auth/auth.controller.ts(25,4): error TS2552: Cannot find name 'ApiResponse'. Did you mean 'Response'?
+
+src/modules/auth/auth.controller.ts(31,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/auth/auth.controller.ts(32,4): error TS2552: Cannot find name 'ApiResponse'. Did you mean 'Response'?
+
+src/modules/auth/auth.controller.ts(33,4): error TS2552: Cannot find name 'ApiResponse'. Did you mean 'Response'?
+
+src/modules/auth/auth.controller.ts(34,4): error TS2304: Cannot find name 'ApiBearerAuth'.
+
+src/modules/campaigns/campaigns.controller.ts(1,10): error TS2300: Duplicate identifier 'Controller'.
+
+src/modules/campaigns/campaigns.controller.ts(1,22): error TS2300: Duplicate identifier 'Get'.
+
+src/modules/campaigns/campaigns.controller.ts(1,27): error TS2300: Duplicate identifier 'Post'.
+src/modules/campaigns/campaigns.controller.ts(1,33): error TS2300: Duplicate identifier 'Body'.
+src/modules/campaigns/campaigns.controller.ts(1,39): error TS2300: Duplicate identifier 'Patch'.
+src/modules/campaigns/campaigns.controller.ts(1,46): error TS2300: Duplicate identifier 'Param'.
+
+src/modules/campaigns/campaigns.controller.ts(1,53): error TS2300: Duplicate identifier 'Delete'.
+
+src/modules/campaigns/campaigns.controller.ts(1,61): error TS2300: Duplicate identifier 'Query'.
+
+src/modules/campaigns/campaigns.controller.ts(1,68): error TS2300: Duplicate identifier 'UseGuards'.
+
+src/modules/campaigns/campaigns.controller.ts(1,103): error TS2300: Duplicate identifier 'BadRequestException'.
+
+src/modules/campaigns/campaigns.controller.ts(6,10): error TS2300: Duplicate identifier 'CampaignsService'.
+
+src/modules/campaigns/campaigns.controller.ts(8,3): error TS2300: Duplicate identifier 'Controller'.
+
+src/modules/campaigns/campaigns.controller.ts(9,3): error TS2300: Duplicate identifier 'Get'.
+
+src/modules/campaigns/campaigns.controller.ts(10,3): error TS2300: Duplicate identifier 'Post'.
+
+src/modules/campaigns/campaigns.controller.ts(11,3): error TS2300: Duplicate identifier 'Body'.
+
+src/modules/campaigns/campaigns.controller.ts(12,3): error TS2300: Duplicate identifier 'Patch'.
+src/modules/campaigns/campaigns.controller.ts(13,3): error TS2300: Duplicate identifier 'Param'.
+
+src/modules/campaigns/campaigns.controller.ts(14,3): error TS2300: Duplicate identifier 'Delete'.
+
+src/modules/campaigns/campaigns.controller.ts(15,3): error TS2300: Duplicate identifier 'Query'.
+
+src/modules/campaigns/campaigns.controller.ts(16,3): error TS2300: Duplicate identifier 'UseGuards'.
+
+src/modules/campaigns/campaigns.controller.ts(17,3): error TS2300: Duplicate identifier 'BadRequestException'.
+src/modules/campaigns/campaigns.controller.ts(19,10): error TS2300: Duplicate identifier 'CampaignsService'.
+
+src/modules/campaigns/campaigns.controller.ts(272,7): error TS2554: Expected 2 arguments, but got 5.
+
+src/modules/campaigns/campaigns.service.ts(178,43): error TS2339: Property 'SENT' does not exist on type 'typeof CampaignStatus'.
+src/modules/chat/chat.controller.ts(1,10): error TS2300: Duplicate identifier 'Controller'.
+
+src/modules/chat/chat.controller.ts(1,22): error TS2300: Duplicate identifier 'Get'.
+
+src/modules/chat/chat.controller.ts(1,27): error TS2300: Duplicate identifier 'Post'.
+
+src/modules/chat/chat.controller.ts(1,33): error TS2300: Duplicate identifier 'Body'.
+
+src/modules/chat/chat.controller.ts(1,39): error TS2300: Duplicate identifier 'Patch'.
+
+src/modules/chat/chat.controller.ts(1,46): error TS2300: Duplicate identifier 'Param'.
+
+src/modules/chat/chat.controller.ts(1,61): error TS2300: Duplicate identifier 'Query'.
+src/modules/chat/chat.controller.ts(1,68): error TS2300: Duplicate identifier 'UseGuards'.
+
+src/modules/chat/chat.controller.ts(1,79): error TS2300: Duplicate identifier 'Request'.
+src/modules/chat/chat.controller.ts(1,103): error TS2300: Duplicate identifier 'BadRequestException'.
+
+src/modules/chat/chat.controller.ts(6,10): error TS2300: Duplicate identifier 'ChatService'.
+
+src/modules/chat/chat.controller.ts(8,3): error TS2300: Duplicate identifier 'Controller'.
+
+src/modules/chat/chat.controller.ts(9,3): error TS2300: Duplicate identifier 'Get'.
+
+src/modules/chat/chat.controller.ts(10,3): error TS2300: Duplicate identifier 'Post'.
+
+src/modules/chat/chat.controller.ts(11,3): error TS2300: Duplicate identifier 'Body'.
+src/modules/chat/chat.controller.ts(12,3): error TS2300: Duplicate identifier 'Param'.
+src/modules/chat/chat.controller.ts(13,3): error TS2300: Duplicate identifier 'Query'.
+
+src/modules/chat/chat.controller.ts(14,3): error TS2300: Duplicate identifier 'Patch'.
+
+src/modules/chat/chat.controller.ts(15,3): error TS2300: Duplicate identifier 'UseGuards'.
+
+src/modules/chat/chat.controller.ts(16,3): error TS2300: Duplicate identifier 'Request'.
+src/modules/chat/chat.controller.ts(17,3): error TS2300: Duplicate identifier 'BadRequestException'.
+
+src/modules/chat/chat.controller.ts(19,10): error TS2300: Duplicate identifier 'ChatService'.
+
+src/modules/chat/chat.service.ts(143,9): error TS2353: Object literal may only specify known properties, and 'tags' does not exist in type 'ChatConversationInclude<DefaultArgs>'.
+src/modules/chat/chat.service.ts(211,37): error TS2322: Type 'null' is not assignable to type 'string | NestedStringFilter<"Client"> | undefined'.
+
+src/modules/chat/chat.service.ts(279,35): error TS2339: Property 'chatTag' does not exist on type 'PrismaService'.
+
+src/modules/chat/chat.service.ts(288,43): error TS2551: Property 'chatConversationTag' does not exist on type 'PrismaService'. Did you mean 'chatConversation'?
+
+src/modules/chat/chat.service.ts(302,23): error TS2551: Property 'chatConversationTag' does not exist on type 'PrismaService'. Did you mean 'chatConversation'?
+src/modules/chat/chat.service.ts(315,23): error TS2551: Property 'chatConversationTag' does not exist on type 'PrismaService'. Did you mean 'chatConversation'?
+
+src/modules/chat/chat.service.ts(337,24): error TS2339: Property 'chatNote' does not exist on type 'PrismaService'.
+
+src/modules/chat/whatsapp.controller.ts(1,10): error TS2300: Duplicate identifier 'Controller'.
+
+src/modules/chat/whatsapp.controller.ts(1,22): error TS2300: Duplicate identifier 'Get'.
+
+src/modules/chat/whatsapp.controller.ts(1,27): error TS2300: Duplicate identifier 'Post'.
+
+src/modules/chat/whatsapp.controller.ts(1,33): error TS2300: Duplicate identifier 'Body'.
+
+src/modules/chat/whatsapp.controller.ts(1,39): error TS2300: Duplicate identifier 'Patch'.
+src/modules/chat/whatsapp.controller.ts(1,46): error TS2300: Duplicate identifier 'Param'.
+
+src/modules/chat/whatsapp.controller.ts(1,53): error TS2300: Duplicate identifier 'Delete'.
+src/modules/chat/whatsapp.controller.ts(1,61): error TS2300: Duplicate identifier 'Query'.
+src/modules/chat/whatsapp.controller.ts(1,68): error TS2300: Duplicate identifier 'UseGuards'.
+
+src/modules/chat/whatsapp.controller.ts(6,10): error TS2724: '"./whatsapp.service"' has no exported member named 'WhatsappService'. Did you mean 'WhatsAppService'?
+src/modules/chat/whatsapp.controller.ts(8,3): error TS2300: Duplicate identifier 'Controller'.
+
+src/modules/chat/whatsapp.controller.ts(9,3): error TS2300: Duplicate identifier 'Get'.
+
+src/modules/chat/whatsapp.controller.ts(10,3): error TS2300: Duplicate identifier 'Post'.
+src/modules/chat/whatsapp.controller.ts(11,3): error TS2300: Duplicate identifier 'Body'.
+
+src/modules/chat/whatsapp.controller.ts(12,3): error TS2300: Duplicate identifier 'Patch'.
+src/modules/chat/whatsapp.controller.ts(13,3): error TS2300: Duplicate identifier 'Param'.
+
+src/modules/chat/whatsapp.controller.ts(14,3): error TS2300: Duplicate identifier 'Delete'.
+src/modules/chat/whatsapp.controller.ts(15,3): error TS2300: Duplicate identifier 'Query'.
+src/modules/chat/whatsapp.controller.ts(16,3): error TS2300: Duplicate identifier 'UseGuards'.
+
+src/modules/chat/whatsapp.controller.ts(19,10): error TS2724: '"./dto/create-whatsapp-account.dto"' has no exported member named 'CreateWhatsappAccountDto'. Did you mean 'CreateWhatsAppAccountDto'?
+
+src/modules/chat/whatsapp.service.ts(3,10): error TS2724: '"./dto/create-whatsapp-account.dto"' has no exported member named 'CreateWhatsappAccountDto'. Did you mean 'CreateWhatsAppAccountDto'?
+
+src/modules/contacts/contacts.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'Contact'.
+
+src/modules/contacts/contacts.service.ts(3,19): error TS2305: Module '"@prisma/client"' has no exported member 'ContactTag'.
+src/modules/contacts/contacts.service.ts(3,31): error TS2305: Module '"@prisma/client"' has no exported member 'ContactCustomField'.
+src/modules/contacts/contacts.service.ts(21,39): error TS2339: Property 'contact' does not exist on type 'PrismaService'.
+src/modules/contacts/contacts.service.ts(41,24): error TS2339: Property 'contact' does not exist on type 'PrismaService'.
+
+src/modules/contacts/contacts.service.ts(62,39): error TS2339: Property 'contact' does not exist on type 'PrismaService'.
+
+src/modules/contacts/contacts.service.ts(113,39): error TS2339: Property 'contact' does not exist on type 'PrismaService'.
+
+src/modules/contacts/contacts.service.ts(166,24): error TS2339: Property 'contact' does not exist on type 'PrismaService'.
+
+src/modules/contacts/contacts.service.ts(173,24): error TS2339: Property 'contactTag' does not exist on type 'PrismaService'.
+
+src/modules/contacts/contacts.service.ts(182,24): error TS2339: Property 'contactTag' does not exist on type 'PrismaService'.
+src/modules/contacts/contacts.service.ts(188,35): error TS2339: Property 'contactTag' does not exist on type 'PrismaService'.
+
+src/modules/contacts/contacts.service.ts(206,24): error TS2339: Property 'contactTag' does not exist on type 'PrismaService'.
+
+src/modules/contacts/contacts.service.ts(216,24): error TS2339: Property 'contactTag' does not exist on type 'PrismaService'.
+
+src/modules/contacts/contacts.service.ts(227,23): error TS2339: Property 'contactToTag' does not exist on type 'PrismaService'.
+src/modules/contacts/contacts.service.ts(248,23): error TS2339: Property 'contactToTag' does not exist on type 'PrismaService'.
+src/modules/contacts/contacts.service.ts(268,24): error TS2339: Property 'contact' does not exist on type 'PrismaService'.
+src/modules/contacts/contacts.service.ts(299,24): error TS2339: Property 'contact' does not exist on type 'PrismaService'.
+
+src/modules/contacts/contacts.service.ts(330,24): error TS2339: Property 'contactCustomField' does not exist on type 'PrismaService'.
+src/modules/contacts/contacts.service.ts(340,24): error TS2339: Property 'contactCustomField' does not exist on type 'PrismaService'.
+
+src/modules/contacts/contacts.service.ts(346,43): error TS2339: Property 'contactCustomField' does not exist on type 'PrismaService'.
+
+src/modules/contacts/contacts.service.ts(364,24): error TS2339: Property 'contactCustomField' does not exist on type 'PrismaService'.
+
+src/modules/contacts/contacts.service.ts(377,24): error TS2339: Property 'contactCustomField' does not exist on type 'PrismaService'.
+
+src/modules/contacts/contacts.service.ts(386,46): error TS2339: Property 'contact' does not exist on type 'PrismaService'.
+
+src/modules/contacts/contacts.service.ts(417,46): error TS2339: Property 'contact' does not exist on type 'PrismaService'.
+
+src/modules/contacts/contacts.service.ts(455,46): error TS2339: Property 'contact' does not exist on type 'PrismaService'.
+
+src/modules/contacts/contacts.service.ts(554,29): error TS2345: Argument of type '{ row: number; error: any; }' is not assignable to parameter of type 'never'.
+src/modules/contacts/contacts.service.ts(644,25): error TS2345: Argument of type '{ type: string; value: any; contacts: any; }' is not assignable to parameter of type 'never'.
+
+src/modules/contacts/contacts.service.ts(655,25): error TS2345: Argument of type '{ type: string; value: any; contacts: any; }' is not assignable to parameter of type 'never'.
+
+src/modules/contacts/contacts.service.ts(679,47): error TS2339: Property 'contact' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$use" | "$transaction" | "$extends">'.
+src/modules/contacts/contacts.service.ts(689,44): error TS2339: Property 'contactToTag' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$use" | "$transaction" | "$extends">'.
+
+src/modules/contacts/contacts.service.ts(700,26): error TS2339: Property 'contactToTag' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$use" | "$transaction" | "$extends">'.
+src/modules/contacts/contacts.service.ts(719,22): error TS2339: Property 'contact' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$use" | "$transaction" | "$extends">'.
+
+src/modules/contacts/contacts.service.ts(739,22): error TS2339: Property 'contact' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$use" | "$transaction" | "$extends">'.
+
+src/modules/contacts/contacts.service.ts(745,21): error TS2339: Property 'contact' does not exist on type 'Omit<PrismaClient<PrismaClientOptions, never, DefaultArgs>, "$on" | "$connect" | "$disconnect" | "$use" | "$transaction" | "$extends">'.
+
+src/modules/deals/deals.module.ts(3,33): error TS2307: Cannot find module './deals.controller' or its corresponding type declarations.
+
+src/modules/deals/deals.module.ts(5,37): error TS2307: Cannot find module './pipelines.controller' or its corresponding type declarations.
+
+src/modules/deals/deals.module.ts(6,31): error TS2307: Cannot find module './stages.service' or its corresponding type declarations.
+
+src/modules/deals/deals.module.ts(7,34): error TS2307: Cannot find module './stages.controller' or its corresponding type declarations.
+
+src/modules/deals/deals.module.ts(8,30): error TS2307: Cannot find module './notes.service' or its corresponding type declarations.
+src/modules/deals/deals.module.ts(9,33): error TS2307: Cannot find module './notes.controller' or its corresponding type declarations.
+
+src/modules/deals/deals.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'Deal'.
+src/modules/deals/deals.service.ts(15,40): error TS2339: Property 'pipeline' does not exist on type 'PrismaService'.
+
+src/modules/deals/deals.service.ts(24,37): error TS2339: Property 'stage' does not exist on type 'PrismaService'.
+
+src/modules/deals/deals.service.ts(34,41): error TS2339: Property 'contact' does not exist on type 'PrismaService'.
+
+src/modules/deals/deals.service.ts(61,24): error TS2339: Property 'deal' does not exist on type 'PrismaService'.
+
+src/modules/deals/deals.service.ts(119,24): error TS2339: Property 'deal' does not exist on type 'PrismaService'.
+
+src/modules/deals/deals.service.ts(141,36): error TS2339: Property 'deal' does not exist on type 'PrismaService'.
+src/modules/deals/deals.service.ts(201,42): error TS2339: Property 'pipeline' does not exist on type 'PrismaService'.
+
+src/modules/deals/deals.service.ts(212,45): error TS2339: Property 'deal' does not exist on type 'PrismaService'.
+
+src/modules/deals/deals.service.ts(219,39): error TS2339: Property 'stage' does not exist on type 'PrismaService'.
+
+src/modules/deals/deals.service.ts(230,41): error TS2339: Property 'contact' does not exist on type 'PrismaService'.
+
+src/modules/deals/deals.service.ts(246,37): error TS2322: Type 'null' is not assignable to type 'string | NestedStringFilter<"Client"> | undefined'.
+
+src/modules/deals/deals.service.ts(256,24): error TS2339: Property 'deal' does not exist on type 'PrismaService'.
+
+src/modules/deals/deals.service.ts(279,24): error TS2339: Property 'deal' does not exist on type 'PrismaService'.
+
+src/modules/deals/deals.service.ts(289,37): error TS2339: Property 'stage' does not exist on type 'PrismaService'.
+src/modules/deals/deals.service.ts(297,24): error TS2339: Property 'deal' does not exist on type 'PrismaService'.
+
+src/modules/deals/deals.service.ts(325,37): error TS2322: Type 'null' is not assignable to type 'string | NestedStringFilter<"Client"> | undefined'.
+
+src/modules/deals/deals.service.ts(335,24): error TS2339: Property 'dealActivity' does not exist on type 'PrismaService'.
+
+src/modules/deals/deals.service.ts(347,40): error TS2339: Property 'dealActivity' does not exist on type 'PrismaService'.
+
+src/modules/deals/deals.service.ts(360,24): error TS2339: Property 'dealActivity' does not exist on type 'PrismaService'.
+src/modules/deals/pipelines.service.ts(3,10): error TS2305: Module '"@prisma/client"' has no exported member 'Pipeline'.
+src/modules/deals/pipelines.service.ts(12,40): error TS2339: Property 'pipeline' does not exist on type 'PrismaService'.
+src/modules/deals/pipelines.service.ts(41,24): error TS2339: Property 'pipeline' does not exist on type 'PrismaService'.
+
+src/modules/deals/pipelines.service.ts(62,40): error TS2339: Property 'pipeline' does not exist on type 'PrismaService'.
+
+src/modules/deals/pipelines.service.ts(104,24): error TS2339: Property 'pipeline' does not exist on type 'PrismaService'.
+src/modules/deals/pipelines.service.ts(122,41): error TS2339: Property 'deal' does not exist on type 'PrismaService'.
+
+src/modules/deals/pipelines.service.ts(130,24): error TS2339: Property 'pipeline' does not exist on type 'PrismaService'.
+
+src/modules/forms/dto/create-form-field.dto.ts(6,10): error TS2305: Module '"@prisma/client"' has no exported member 'FormFieldType'.
+src/modules/forms/dto/create-form-webhook.dto.ts(6,10): error TS2305: Module '"@prisma/client"' has no exported member 'WebhookMethod'.
+src/modules/forms/dto/create-form.dto.ts(6,10): error TS2305: Module '"@prisma/client"' has no exported member 'FormStatus'.
+
+src/modules/forms/dto/update-form.dto.ts(6,10): error TS2305: Module '"@prisma/client"' has no exported member 'FormStatus'.
+src/modules/forms/forms-embed.controller.ts(22,36): error TS2339: Property 'form' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms-embed.controller.ts(82,36): error TS2339: Property 'form' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.controller.ts(6,10): error TS2300: Duplicate identifier 'FormsService'.
+src/modules/forms/forms.controller.ts(8,10): error TS2300: Duplicate identifier 'FormsService'.
+
+src/modules/forms/forms.service.ts(8,10): error TS2305: Module '"@prisma/client"' has no exported member 'Form'.
+src/modules/forms/forms.service.ts(8,16): error TS2305: Module '"@prisma/client"' has no exported member 'FormField'.
+src/modules/forms/forms.service.ts(8,27): error TS2305: Module '"@prisma/client"' has no exported member 'FormStep'.
+
+src/modules/forms/forms.service.ts(8,37): error TS2305: Module '"@prisma/client"' has no exported member 'FormSubmission'.
+
+src/modules/forms/forms.service.ts(8,53): error TS2305: Module '"@prisma/client"' has no exported member 'FormWebhook'.
+src/modules/forms/forms.service.ts(16,24): error TS2339: Property 'form' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.service.ts(34,24): error TS2339: Property 'form' does not exist on type 'PrismaService'.
+src/modules/forms/forms.service.ts(49,36): error TS2339: Property 'form' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.service.ts(78,24): error TS2339: Property 'form' does not exist on type 'PrismaService'.
+src/modules/forms/forms.service.ts(97,23): error TS2339: Property 'form' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.service.ts(104,24): error TS2339: Property 'formField' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.service.ts(128,24): error TS2339: Property 'formField' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.service.ts(135,23): error TS2339: Property 'formField' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.service.ts(142,24): error TS2339: Property 'formStep' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.service.ts(155,24): error TS2339: Property 'formStep' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.service.ts(162,23): error TS2339: Property 'formStep' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.service.ts(169,24): error TS2339: Property 'formWebhook' does not exist on type 'PrismaService'.
+src/modules/forms/forms.service.ts(183,24): error TS2339: Property 'formWebhook' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.service.ts(190,23): error TS2339: Property 'formWebhook' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.service.ts(200,24): error TS2339: Property 'formSubmission' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.service.ts(219,42): error TS2339: Property 'formSubmission' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.service.ts(246,36): error TS2339: Property 'form' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.service.ts(267,24): error TS2339: Property 'formSubmission' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.service.ts(299,42): error TS2339: Property 'formSubmission' does not exist on type 'PrismaService'.
+
+src/modules/forms/forms.service.ts(307,23): error TS2339: Property 'formSubmission' does not exist on type 'PrismaService'.
+
+src/modules/payment/dto/update-payment-method.dto.ts(8,57): error TS2304: Cannot find name 'CreatePaymentMethodDto'.
+src/modules/payment/dto/update-payment.dto.ts(8,51): error TS2304: Cannot find name 'CreatePaymentDto'.
+
+src/modules/payment/dto/update-plan.dto.ts(8,48): error TS2304: Cannot find name 'CreatePlanDto'.
+
+src/modules/payment/dto/update-subscription.dto.ts(8,56): error TS2304: Cannot find name 'CreateSubscriptionDto'.
+src/modules/payment/payment.controller.ts(88,23): error TS2345: Argument of type 'string[]' is not assignable to parameter of type 'string'.
+src/modules/payment/payment.controller.ts(138,23): error TS2345: Argument of type 'string[]' is not assignable to parameter of type 'string'.
+src/modules/payment/payment.controller.ts(151,23): error TS2345: Argument of type 'string[]' is not assignable to parameter of type 'string'.
+
+src/modules/payment/payment.controller.ts(162,23): error TS2345: Argument of type 'string[]' is not assignable to parameter of type 'string'.
+
+src/modules/payment/payment.controller.ts(240,23): error TS2345: Argument of type 'string[]' is not assignable to parameter of type 'string'.
+
+src/modules/payment/payment.controller.ts(252,23): error TS2345: Argument of type 'string[]' is not assignable to parameter of type 'string'.
+
+src/modules/payment/payment.controller.ts(313,23): error TS2345: Argument of type 'string[]' is not assignable to parameter of type 'string'.
+
+src/modules/payment/payment.controller.ts(325,23): error TS2345: Argument of type 'string[]' is not assignable to parameter of type 'string'.
+src/modules/payment/payment.controller.ts(400,23): error TS2345: Argument of type 'string[]' is not assignable to parameter of type 'string'.
+
+src/modules/payment/payment.controller.ts(418,23): error TS2345: Argument of type 'string[]' is not assignable to parameter of type 'string'.
+
+src/modules/payment/payment.controller.ts(470,23): error TS2345: Argument of type 'string[]' is not assignable to parameter of type 'string'.
+src/modules/payment/payment.service.ts(22,24): error TS2339: Property 'plan' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(31,20): error TS2694: Namespace '"/app/node_modules/.prisma/client/index".Prisma' has no exported member 'PlanWhereInput'.
+
+src/modules/payment/payment.service.ts(32,22): error TS2724: '"/app/node_modules/.prisma/client/index".Prisma' has no exported member named 'PlanOrderByWithRelationInput'. Did you mean 'TenantOrderByWithRelationInput'?
+src/modules/payment/payment.service.ts(37,24): error TS2339: Property 'plan' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(46,36): error TS2339: Property 'plan' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(61,24): error TS2339: Property 'plan' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(65,33): error TS2339: Property 'features' does not exist on type 'UpdatePlanDto'.
+
+src/modules/payment/payment.service.ts(75,45): error TS2339: Property 'subscription' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(83,24): error TS2339: Property 'plan' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(102,24): error TS2339: Property 'subscription' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(108,20): error TS2694: Namespace '"/app/node_modules/.prisma/client/index".Prisma' has no exported member 'SubscriptionWhereInput'.
+
+src/modules/payment/payment.service.ts(109,22): error TS2724: '"/app/node_modules/.prisma/client/index".Prisma' has no exported member named 'SubscriptionOrderByWithRelationInput'. Did you mean 'CouponOrderByWithRelationInput'?
+src/modules/payment/payment.service.ts(112,22): error TS2694: Namespace '"/app/node_modules/.prisma/client/index".Prisma' has no exported member 'SubscriptionInclude'.
+
+src/modules/payment/payment.service.ts(115,24): error TS2339: Property 'subscription' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(125,44): error TS2339: Property 'subscription' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(146,24): error TS2339: Property 'subscription' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(157,40): error TS2339: Property 'invoice' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(165,24): error TS2339: Property 'subscription' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(185,47): error TS2339: Property 'invoice' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(193,24): error TS2339: Property 'invoice' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(199,20): error TS2694: Namespace '"/app/node_modules/.prisma/client/index".Prisma' has no exported member 'InvoiceWhereInput'.
+
+src/modules/payment/payment.service.ts(200,22): error TS2724: '"/app/node_modules/.prisma/client/index".Prisma' has no exported member named 'InvoiceOrderByWithRelationInput'. Did you mean 'OrderOrderByWithRelationInput'?
+
+src/modules/payment/payment.service.ts(203,22): error TS2694: Namespace '"/app/node_modules/.prisma/client/index".Prisma' has no exported member 'InvoiceInclude'.
+
+src/modules/payment/payment.service.ts(206,24): error TS2339: Property 'invoice' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(216,39): error TS2339: Property 'invoice' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(241,24): error TS2339: Property 'invoice' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(252,40): error TS2339: Property 'payment' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(260,24): error TS2339: Property 'invoice' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(279,39): error TS2339: Property 'payment' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(288,42): error TS2339: Property 'payment' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(299,27): error TS2339: Property 'invoice' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(313,20): error TS2694: Namespace '"/app/node_modules/.prisma/client/index".Prisma' has no exported member 'PaymentWhereInput'.
+
+src/modules/payment/payment.service.ts(314,22): error TS2724: '"/app/node_modules/.prisma/client/index".Prisma' has no exported member named 'PaymentOrderByWithRelationInput'. Did you mean 'TenantOrderByWithRelationInput'?
+
+src/modules/payment/payment.service.ts(317,22): error TS2694: Namespace '"/app/node_modules/.prisma/client/index".Prisma' has no exported member 'PaymentInclude'.
+
+src/modules/payment/payment.service.ts(320,24): error TS2339: Property 'payment' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(330,39): error TS2339: Property 'payment' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(350,24): error TS2339: Property 'payment' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(365,42): error TS2339: Property 'payment' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(377,27): error TS2339: Property 'invoice' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(387,24): error TS2339: Property 'payment' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(406,27): error TS2339: Property 'paymentMethod' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(414,27): error TS2339: Property 'paymentMethod' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(424,24): error TS2339: Property 'paymentMethod' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(430,20): error TS2694: Namespace '"/app/node_modules/.prisma/client/index".Prisma' has no exported member 'PaymentMethodWhereInput'.
+
+src/modules/payment/payment.service.ts(431,22): error TS2724: '"/app/node_modules/.prisma/client/index".Prisma' has no exported member named 'PaymentMethodOrderByWithRelationInput'. Did you mean 'TenantOrderByWithRelationInput'?
+
+src/modules/payment/payment.service.ts(436,24): error TS2339: Property 'paymentMethod' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(445,45): error TS2339: Property 'paymentMethod' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(465,32): error TS2339: Property 'isDefault' does not exist on type 'UpdatePaymentMethodDto'.
+
+src/modules/payment/payment.service.ts(467,27): error TS2339: Property 'paymentMethod' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(476,27): error TS2339: Property 'paymentMethod' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(487,24): error TS2339: Property 'paymentMethod' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(497,24): error TS2339: Property 'paymentMethod' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(504,24): error TS2339: Property 'subscription' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(522,24): error TS2339: Property 'subscription' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(548,25): error TS2694: Namespace '"/app/node_modules/.prisma/client/index".Prisma' has no exported member 'InvoiceWhereInput'.
+
+src/modules/payment/payment.service.ts(566,24): error TS2339: Property 'invoice' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(593,25): error TS2694: Namespace '"/app/node_modules/.prisma/client/index".Prisma' has no exported member 'InvoiceWhereInput'.
+
+src/modules/payment/payment.service.ts(611,24): error TS2339: Property 'invoice' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(630,24): error TS2339: Property 'paymentMethod' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(639,24): error TS2339: Property 'paymentMethod' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(662,25): error TS2694: Namespace '"/app/node_modules/.prisma/client/index".Prisma' has no exported member 'InvoiceWhereInput'.
+
+src/modules/payment/payment.service.ts(676,24): error TS2339: Property 'invoice' does not exist on type 'PrismaService'.
+
+src/modules/payment/payment.service.ts(703,25): error TS2694: Namespace '"/app/node_modules/.prisma/client/index".Prisma' has no exported member 'InvoiceWhereInput'.
+src/modules/payment/payment.service.ts(716,24): error TS2339: Property 'invoice' does not exist on type 'PrismaService'.
+src/modules/payment/payment.service.ts(743,25): error TS2694: Namespace '"/app/node_modules/.prisma/client/index".Prisma' has no exported member 'PaymentWhereInput'.
+
+src/modules/payment/payment.service.ts(765,40): error TS2339: Property 'payment' does not exist on type 'PrismaService'.
+src/modules/phone-sms/phone-sms.service.ts(17,24): error TS2339: Property 'phoneNumber' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(32,24): error TS2339: Property 'phoneNumber' does not exist on type 'PrismaService'.
+src/modules/phone-sms/phone-sms.service.ts(39,43): error TS2339: Property 'phoneNumber' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(53,24): error TS2339: Property 'phoneNumber' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(65,24): error TS2339: Property 'phoneNumber' does not exist on type 'PrismaService'.
+src/modules/phone-sms/phone-sms.service.ts(72,24): error TS2339: Property 'call' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(135,24): error TS2339: Property 'call' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(150,36): error TS2339: Property 'call' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(172,24): error TS2339: Property 'call' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(181,24): error TS2339: Property 'call' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(190,24): error TS2339: Property 'call' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(205,24): error TS2339: Property 'sMSConversation' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(235,24): error TS2339: Property 'sMSConversation' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(255,44): error TS2339: Property 'sMSConversation' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(281,24): error TS2339: Property 'sMSConversation' does not exist on type 'PrismaService'.
+src/modules/phone-sms/phone-sms.service.ts(290,24): error TS2339: Property 'sMSConversation' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(306,44): error TS2339: Property 'sMSConversation' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(318,39): error TS2339: Property 'sMSMessage' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(354,23): error TS2339: Property 'sMSConversation' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(366,24): error TS2339: Property 'sMSMessage' does not exist on type 'PrismaService'.
+src/modules/phone-sms/phone-sms.service.ts(373,39): error TS2339: Property 'sMSMessage' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(381,24): error TS2339: Property 'sMSMessage' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(389,24): error TS2339: Property 'sMSTemplate' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(405,24): error TS2339: Property 'sMSTemplate' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(412,40): error TS2339: Property 'sMSTemplate' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(426,24): error TS2339: Property 'sMSTemplate' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(439,24): error TS2339: Property 'sMSTemplate' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(449,40): error TS2339: Property 'bulkSMSCampaign' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(470,23): error TS2339: Property 'bulkSMSRecipient' does not exist on type 'PrismaService'.
+src/modules/phone-sms/phone-sms.service.ts(495,24): error TS2339: Property 'bulkSMSCampaign' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(517,40): error TS2339: Property 'bulkSMSCampaign' does not exist on type 'PrismaService'.
+src/modules/phone-sms/phone-sms.service.ts(546,24): error TS2339: Property 'bulkSMSCampaign' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(555,24): error TS2339: Property 'bulkSMSCampaign' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(567,24): error TS2339: Property 'bulkSMSCampaign' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(578,21): error TS2339: Property 'bulkSMSRecipient' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(604,41): error TS2339: Property 'bulkSMSRecipient' does not exist on type 'PrismaService'.
+
+src/modules/phone-sms/phone-sms.service.ts(615,24): error TS2339: Property 'bulkSMSRecipient' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews-embed.controller.ts(6,37): error TS2307: Cannot find module './reviews-embed.service' or its corresponding type declarations.
+src/modules/reviews/reviews-embed.controller.ts(18,6): error TS2348: Value of type '{ new (init?: HeadersInit | undefined): Headers; prototype: Headers; }' is not callable. Did you mean to include 'new'?
+
+src/modules/reviews/reviews-embed.controller.ts(19,6): error TS2348: Value of type '{ new (init?: HeadersInit | undefined): Headers; prototype: Headers; }' is not callable. Did you mean to include 'new'?
+src/modules/reviews/reviews-embed.controller.ts(50,6): error TS2348: Value of type '{ new (init?: HeadersInit | undefined): Headers; prototype: Headers; }' is not callable. Did you mean to include 'new'?
+
+src/modules/reviews/reviews-embed.controller.ts(51,6): error TS2348: Value of type '{ new (init?: HeadersInit | undefined): Headers; prototype: Headers; }' is not callable. Did you mean to include 'new'?
+
+src/modules/reviews/reviews.controller.ts(1,10): error TS2300: Duplicate identifier 'Controller'.
+
+src/modules/reviews/reviews.controller.ts(1,22): error TS2300: Duplicate identifier 'Get'.
+
+src/modules/reviews/reviews.controller.ts(1,27): error TS2300: Duplicate identifier 'Post'.
+src/modules/reviews/reviews.controller.ts(1,33): error TS2300: Duplicate identifier 'Body'.
+
+src/modules/reviews/reviews.controller.ts(1,39): error TS2300: Duplicate identifier 'Patch'.
+src/modules/reviews/reviews.controller.ts(1,46): error TS2300: Duplicate identifier 'Param'.
+
+src/modules/reviews/reviews.controller.ts(1,53): error TS2300: Duplicate identifier 'Delete'.
+
+src/modules/reviews/reviews.controller.ts(1,61): error TS2300: Duplicate identifier 'Query'.
+
+src/modules/reviews/reviews.controller.ts(1,68): error TS2300: Duplicate identifier 'UseGuards'.
+
+src/modules/reviews/reviews.controller.ts(1,79): error TS2300: Duplicate identifier 'Request'.
+
+src/modules/reviews/reviews.controller.ts(6,10): error TS2300: Duplicate identifier 'ReviewsService'.
+
+src/modules/reviews/reviews.controller.ts(8,3): error TS2300: Duplicate identifier 'Controller'.
+
+src/modules/reviews/reviews.controller.ts(9,3): error TS2300: Duplicate identifier 'Get'.
+
+src/modules/reviews/reviews.controller.ts(10,3): error TS2300: Duplicate identifier 'Post'.
+src/modules/reviews/reviews.controller.ts(11,3): error TS2300: Duplicate identifier 'Body'.
+src/modules/reviews/reviews.controller.ts(12,3): error TS2300: Duplicate identifier 'Patch'.
+
+src/modules/reviews/reviews.controller.ts(13,3): error TS2300: Duplicate identifier 'Param'.
+
+src/modules/reviews/reviews.controller.ts(14,3): error TS2300: Duplicate identifier 'Delete'.
+
+src/modules/reviews/reviews.controller.ts(15,3): error TS2300: Duplicate identifier 'UseGuards'.
+
+src/modules/reviews/reviews.controller.ts(16,3): error TS2300: Duplicate identifier 'Query'.
+
+src/modules/reviews/reviews.controller.ts(17,3): error TS2300: Duplicate identifier 'Request'.
+
+src/modules/reviews/reviews.controller.ts(20,10): error TS2300: Duplicate identifier 'ReviewsService'.
+
+src/modules/reviews/reviews.service.ts(19,38): error TS2339: Property 'review' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(99,24): error TS2339: Property 'review' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(124,38): error TS2339: Property 'review' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(160,7): error TS2322: Type 'null' is not assignable to type 'string | undefined'.
+src/modules/reviews/reviews.service.ts(166,45): error TS2339: Property 'review' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(186,25): error TS2339: Property 'reviewToTag' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(202,24): error TS2339: Property 'review' does not exist on type 'PrismaService'.
+src/modules/reviews/reviews.service.ts(211,24): error TS2339: Property 'review' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(222,23): error TS2339: Property 'reviewToTag' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(230,24): error TS2339: Property 'reviewTag' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(242,24): error TS2339: Property 'reviewTag' does not exist on type 'PrismaService'.
+src/modules/reviews/reviews.service.ts(249,35): error TS2339: Property 'reviewTag' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(263,24): error TS2339: Property 'reviewTag' does not exist on type 'PrismaService'.
+src/modules/reviews/reviews.service.ts(275,24): error TS2339: Property 'reviewTag' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(282,24): error TS2339: Property 'reviewService' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(294,24): error TS2339: Property 'reviewService' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(301,39): error TS2339: Property 'reviewService' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(315,24): error TS2339: Property 'reviewService' does not exist on type 'PrismaService'.
+src/modules/reviews/reviews.service.ts(327,24): error TS2339: Property 'reviewService' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(334,24): error TS2339: Property 'reviewLocation' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(346,24): error TS2339: Property 'reviewLocation' does not exist on type 'PrismaService'.
+src/modules/reviews/reviews.service.ts(353,40): error TS2339: Property 'reviewLocation' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(367,24): error TS2339: Property 'reviewLocation' does not exist on type 'PrismaService'.
+src/modules/reviews/reviews.service.ts(379,24): error TS2339: Property 'reviewLocation' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(386,24): error TS2339: Property 'reviewWidget' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(407,24): error TS2339: Property 'reviewWidget' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(414,38): error TS2339: Property 'reviewWidget' does not exist on type 'PrismaService'.
+src/modules/reviews/reviews.service.ts(428,24): error TS2339: Property 'reviewWidget' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(449,24): error TS2339: Property 'reviewWidget' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(457,38): error TS2339: Property 'reviewWidget' does not exist on type 'PrismaService'.
+src/modules/reviews/reviews.service.ts(515,39): error TS2339: Property 'review' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(570,42): error TS2339: Property 'review' does not exist on type 'PrismaService'.
+
+src/modules/reviews/reviews.service.ts(578,44): error TS2339: Property 'review' does not exist on type 'PrismaService'.
+src/modules/reviews/reviews.service.ts(592,50): error TS2339: Property 'review' does not exist on type 'PrismaService'.
+
+src/modules/settings/settings.controller.ts(33,2): error TS2304: Cannot find name 'ApiTags'.
+
+src/modules/settings/settings.controller.ts(36,2): error TS2304: Cannot find name 'ApiBearerAuth'.
+src/modules/settings/settings.controller.ts(43,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(44,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(45,4): error TS2304: Cannot find name 'ApiResponse'.
+
+src/modules/settings/settings.controller.ts(54,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(55,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(56,4): error TS2304: Cannot find name 'ApiResponse'.
+
+src/modules/settings/settings.controller.ts(64,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(65,4): error TS2304: Cannot find name 'ApiResponse'.
+
+src/modules/settings/settings.controller.ts(66,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(88,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(89,4): error TS2304: Cannot find name 'ApiResponse'.
+
+src/modules/settings/settings.controller.ts(90,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(112,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(113,4): error TS2304: Cannot find name 'ApiResponse'.
+
+src/modules/settings/settings.controller.ts(114,4): error TS2304: Cannot find name 'ApiQuery'.
+src/modules/settings/settings.controller.ts(127,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(128,4): error TS2304: Cannot find name 'ApiResponse'.
+
+src/modules/settings/settings.controller.ts(129,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(136,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(137,4): error TS2304: Cannot find name 'ApiResponse'.
+
+src/modules/settings/settings.controller.ts(138,4): error TS2304: Cannot find name 'ApiResponse'.
+
+src/modules/settings/settings.controller.ts(158,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(159,4): error TS2304: Cannot find name 'ApiResponse'.
+
+src/modules/settings/settings.controller.ts(160,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(177,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(178,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(179,4): error TS2304: Cannot find name 'ApiResponse'.
+
+src/modules/settings/settings.controller.ts(201,4): error TS2304: Cannot find name 'ApiOperation'.
+src/modules/settings/settings.controller.ts(202,4): error TS2304: Cannot find name 'ApiResponse'.
+
+src/modules/settings/settings.controller.ts(210,4): error TS2304: Cannot find name 'ApiOperation'.
+src/modules/settings/settings.controller.ts(211,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(212,4): error TS2304: Cannot find name 'ApiParam'.
+src/modules/settings/settings.controller.ts(223,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(224,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(225,4): error TS2304: Cannot find name 'ApiParam'.
+
+src/modules/settings/settings.controller.ts(247,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(248,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(249,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(261,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(262,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(269,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(270,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(271,4): error TS2304: Cannot find name 'ApiParam'.
+
+src/modules/settings/settings.controller.ts(281,4): error TS2304: Cannot find name 'ApiOperation'.
+src/modules/settings/settings.controller.ts(282,4): error TS2304: Cannot find name 'ApiResponse'.
+
+src/modules/settings/settings.controller.ts(283,4): error TS2304: Cannot find name 'ApiParam'.
+src/modules/settings/settings.controller.ts(296,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(297,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(298,4): error TS2304: Cannot find name 'ApiResponse'.
+
+src/modules/settings/settings.controller.ts(320,4): error TS2304: Cannot find name 'ApiOperation'.
+src/modules/settings/settings.controller.ts(321,4): error TS2304: Cannot find name 'ApiResponse'.
+
+src/modules/settings/settings.controller.ts(322,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(330,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(331,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(332,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(354,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(355,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(356,4): error TS2304: Cannot find name 'ApiQuery'.
+
+src/modules/settings/settings.controller.ts(357,4): error TS2304: Cannot find name 'ApiQuery'.
+src/modules/settings/settings.controller.ts(358,4): error TS2304: Cannot find name 'ApiQuery'.
+
+src/modules/settings/settings.controller.ts(359,4): error TS2304: Cannot find name 'ApiQuery'.
+src/modules/settings/settings.controller.ts(360,4): error TS2304: Cannot find name 'ApiQuery'.
+
+src/modules/settings/settings.controller.ts(361,4): error TS2304: Cannot find name 'ApiQuery'.
+src/modules/settings/settings.controller.ts(362,4): error TS2304: Cannot find name 'ApiQuery'.
+src/modules/settings/settings.controller.ts(390,4): error TS2304: Cannot find name 'ApiOperation'.
+
+src/modules/settings/settings.controller.ts(391,4): error TS2304: Cannot find name 'ApiResponse'.
+src/modules/settings/settings.controller.ts(392,4): error TS2304: Cannot find name 'ApiResponse'.
+
+src/modules/settings/settings.service.ts(25,48): error TS2339: Property 'generalSettings' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(33,24): error TS2339: Property 'generalSettings' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(39,40): error TS2339: Property 'generalSettings' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(54,24): error TS2339: Property 'generalSettings' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(62,24): error TS2339: Property 'integrationSettings' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(71,40): error TS2339: Property 'integrationSettings' does not exist on type 'PrismaService'.
+
+src/modules/settings/settings.service.ts(83,24): error TS2339: Property 'integrationSettings' does not exist on type 'PrismaService'.
+
+src/modules/settings/settings.service.ts(89,24): error TS2339: Property 'integrationSettings' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(101,24): error TS2339: Property 'integrationSettings' does not exist on type 'PrismaService'.
+
+src/modules/settings/settings.service.ts(114,24): error TS2339: Property 'integrationSettings' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(122,48): error TS2339: Property 'moduleSettings' does not exist on type 'PrismaService'.
+
+src/modules/settings/settings.service.ts(135,24): error TS2339: Property 'moduleSettings' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(144,40): error TS2339: Property 'moduleSettings' does not exist on type 'PrismaService'.
+
+src/modules/settings/settings.service.ts(156,40): error TS2339: Property 'moduleSettings' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(179,24): error TS2339: Property 'moduleSettings' does not exist on type 'PrismaService'.
+
+src/modules/settings/settings.service.ts(188,24): error TS2339: Property 'moduleSettings' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(212,24): error TS2339: Property 'moduleSettings' does not exist on type 'PrismaService'.
+
+src/modules/settings/settings.service.ts(229,48): error TS2339: Property 'notificationSettings' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(242,24): error TS2339: Property 'notificationSettings' does not exist on type 'PrismaService'.
+
+src/modules/settings/settings.service.ts(248,40): error TS2339: Property 'notificationSettings' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(260,40): error TS2339: Property 'notificationSettings' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(285,24): error TS2339: Property 'notificationSettings' does not exist on type 'PrismaService'.
+
+src/modules/settings/settings.service.ts(294,24): error TS2339: Property 'notificationSettings' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(315,24): error TS2339: Property 'notificationSettings' does not exist on type 'PrismaService'.
+
+src/modules/settings/settings.service.ts(329,48): error TS2339: Property 'securitySettings' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(337,24): error TS2339: Property 'securitySettings' does not exist on type 'PrismaService'.
+
+src/modules/settings/settings.service.ts(343,40): error TS2339: Property 'securitySettings' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(367,24): error TS2339: Property 'securitySettings' does not exist on type 'PrismaService'.
+
+src/modules/settings/settings.service.ts(375,24): error TS2339: Property 'auditLog' does not exist on type 'PrismaService'.
+
+src/modules/settings/settings.service.ts(405,25): error TS2694: Namespace '"/app/node_modules/.prisma/client/index".Prisma' has no exported member 'AuditLogWhereInput'.
+src/modules/settings/settings.service.ts(432,37): error TS2339: Property 'auditLog' does not exist on type 'PrismaService'.
+
+src/modules/settings/settings.service.ts(435,36): error TS2339: Property 'auditLog' does not exist on type 'PrismaService'.
+src/modules/settings/settings.service.ts(466,35): error TS2339: Property 'auditLog' does not exist on type 'PrismaService'.
+
+src/modules/shop/shop-embed.controller.ts(108,7): error TS2322: Type '"ACTIVE"' is not assignable to type 'ProductStatus | undefined'.
+src/modules/shop/shop-embed.controller.ts(280,27): error TS2339: Property 'description' does not exist on type '{ products: ({ product: { description: string | null; name: string; clientId: string; id: string; createdAt: Date; updatedAt: Date; status: string; sku: string | null; price: Decimal; inventory: number | null; isFeatured: boolean; images: string[]; }; } & { ...; })[]; categories: ({ ...; } & { ...; })[]; } & { ...; }'.
+src/modules/shop/shop.controller.ts(1,10): error TS2300: Duplicate identifier 'Controller'.
+src/modules/shop/shop.controller.ts(1,22): error TS2300: Duplicate identifier 'Get'.
+
+src/modules/shop/shop.controller.ts(1,27): error TS2300: Duplicate identifier 'Post'.
+src/modules/shop/shop.controller.ts(1,33): error TS2300: Duplicate identifier 'Body'.
+
+src/modules/shop/shop.controller.ts(1,39): error TS2300: Duplicate identifier 'Patch'.
+src/modules/shop/shop.controller.ts(1,46): error TS2300: Duplicate identifier 'Param'.
+
+src/modules/shop/shop.controller.ts(1,53): error TS2300: Duplicate identifier 'Delete'.
+src/modules/shop/shop.controller.ts(1,61): error TS2300: Duplicate identifier 'Query'.
+
+src/modules/shop/shop.controller.ts(1,68): error TS2300: Duplicate identifier 'UseGuards'.
+src/modules/shop/shop.controller.ts(1,103): error TS2300: Duplicate identifier 'BadRequestException'.
+
+src/modules/shop/shop.controller.ts(6,10): error TS2300: Duplicate identifier 'ShopService'.
+src/modules/shop/shop.controller.ts(8,3): error TS2300: Duplicate identifier 'Controller'.
+
+src/modules/shop/shop.controller.ts(9,3): error TS2300: Duplicate identifier 'Get'.
+src/modules/shop/shop.controller.ts(10,3): error TS2300: Duplicate identifier 'Post'.
+
+src/modules/shop/shop.controller.ts(11,3): error TS2300: Duplicate identifier 'Body'.
+src/modules/shop/shop.controller.ts(12,3): error TS2300: Duplicate identifier 'Patch'.
+
+src/modules/shop/shop.controller.ts(13,3): error TS2300: Duplicate identifier 'Param'.
+src/modules/shop/shop.controller.ts(14,3): error TS2300: Duplicate identifier 'Delete'.
+
+src/modules/shop/shop.controller.ts(15,3): error TS2300: Duplicate identifier 'Query'.
+src/modules/shop/shop.controller.ts(16,3): error TS2300: Duplicate identifier 'UseGuards'.
+src/modules/shop/shop.controller.ts(17,3): error TS2300: Duplicate identifier 'BadRequestException'.
+
+src/modules/shop/shop.controller.ts(19,10): error TS2300: Duplicate identifier 'ShopService'.
+
+src/modules/shop/shop.service.ts(43,11): error TS2322: Type '{ options: Prisma.JsonObject; productId: string; name: string; sku?: string; barcode?: string; price?: number; inventory?: number; allowBackorder?: boolean; trackInventory?: boolean; imageUrls?: string[]; }' is not assignable to type '(Without<ProductVariantCreateInput, ProductVariantUncheckedCreateInput> & ProductVariantUncheckedCreateInput) | (Without<...> & ProductVariantCreateInput)'.
+  Type '{ options: Prisma.JsonObject; productId: string; name: string; sku?: string; barcode?: string; price?: number; inventory?: number; allowBackorder?: boolean; trackInventory?: boolean; imageUrls?: string[]; }' is not assignable to type 'Without<ProductVariantCreateInput, ProductVariantUncheckedCreateInput> & ProductVariantUncheckedCreateInput'.
+    Type '{ options: Prisma.JsonObject; productId: string; name: string; sku?: string; barcode?: string; price?: number; inventory?: number; allowBackorder?: boolean; trackInventory?: boolean; imageUrls?: string[]; }' is not assignable to type 'ProductVariantUncheckedCreateInput'.
+      Types of property 'price' are incompatible.
+        Type 'number | undefined' is not assignable to type 'string | number | Decimal | DecimalJsLike'.
+          Type 'undefined' is not assignable to type 'string | number | Decimal | DecimalJsLike'.
+
+src/modules/shop/shop.service.ts(192,13): error TS2322: Type '{ options: Prisma.JsonObject; productId: string; name: string; sku?: string; barcode?: string; price?: number; inventory?: number; allowBackorder?: boolean; trackInventory?: boolean; imageUrls?: string[]; }' is not assignable to type '(Without<ProductVariantCreateInput, ProductVariantUncheckedCreateInput> & ProductVariantUncheckedCreateInput) | (Without<...> & ProductVariantCreateInput)'.
+  Type '{ options: Prisma.JsonObject; productId: string; name: string; sku?: string; barcode?: string; price?: number; inventory?: number; allowBackorder?: boolean; trackInventory?: boolean; imageUrls?: string[]; }' is not assignable to type 'Without<ProductVariantCreateInput, ProductVariantUncheckedCreateInput> & ProductVariantUncheckedCreateInput'.
+    Type '{ options: Prisma.JsonObject; productId: string; name: string; sku?: string; barcode?: string; price?: number; inventory?: number; allowBackorder?: boolean; trackInventory?: boolean; imageUrls?: string[]; }' is not assignable to type 'ProductVariantUncheckedCreateInput'.
+      Types of property 'price' are incompatible.
+        Type 'number | undefined' is not assignable to type 'string | number | Decimal | DecimalJsLike'.
+          Type 'undefined' is not assignable to type 'string | number | Decimal | DecimalJsLike'.
+src/modules/shop/shop.service.ts(340,9): error TS2322: Type '{ name: string; id: string; createdAt: Date; updatedAt: Date; options: JsonValue; sku: string | null; price: Decimal; inventory: number | null; productId: string; } | undefined' is not assignable to type 'null'.
+  Type 'undefined' is not assignable to type 'null'.
+
+src/modules/shop/shop.service.ts(347,30): error TS2339: Property 'price' does not exist on type 'never'.
+src/modules/shop/shop.service.ts(352,23): error TS2345: Argument of type '{ quantity: number; price: any; total: number; productName: string; variantName: any; productOptions: any; productId: string; variantId: any; }' is not assignable to parameter of type 'never'.
+
+src/modules/shop/shop.service.ts(357,31): error TS2339: Property 'name' does not exist on type 'never'.
+src/modules/shop/shop.service.ts(358,34): error TS2339: Property 'options' does not exist on type 'never'.
+src/modules/shop/shop.service.ts(360,29): error TS2339: Property 'id' does not exist on type 'never'.
+
+src/modules/shop/shop.service.ts(419,7): error TS2322: Type '{ orderNumber: string; status: OrderStatus; subtotal: number; discountTotal: number; shippingTotal: number; taxTotal: number; total: number; items: { create: never[]; }; events: { create: { ...; }; }; ... 10 more ...; clientId: string; }' is not assignable to type '(Without<OrderCreateInput, OrderUncheckedCreateInput> & OrderUncheckedCreateInput) | (Without<...> & OrderCreateInput)'.
+  Type '{ orderNumber: string; status: OrderStatus; subtotal: number; discountTotal: number; shippingTotal: number; taxTotal: number; total: number; items: { create: never[]; }; events: { create: { ...; }; }; ... 10 more ...; clientId: string; }' is not assignable to type 'Without<OrderCreateInput, OrderUncheckedCreateInput> & OrderUncheckedCreateInput'.
+    Type '{ orderNumber: string; status: OrderStatus; subtotal: number; discountTotal: number; shippingTotal: number; taxTotal: number; total: number; items: { create: never[]; }; events: { create: { ...; }; }; ... 10 more ...; clientId: string; }' is not assignable to type 'OrderUncheckedCreateInput'.
+      Types of property 'shippingAddress' are incompatible.
+        Type 'AddressDto' is not assignable to type 'NullableJsonNullValueInput | InputJsonValue | undefined'.
+          Type 'AddressDto' is not assignable to type 'InputJsonObject'.
+            Index signature for type 'string' is missing in type 'AddressDto'.
+src/modules/shop/shop.service.ts(492,9): error TS2353: Object literal may only specify known properties, and 'contact' does not exist in type 'OrderInclude<DefaultArgs>'.
+[builder 8/8] RUN npm run build || true  ✔ 5s
+
+[runner 3/6] COPY --from=builder /app/dist ./dist
+
+[runner 3/6] COPY --from=builder /app/dist ./dist  ✔ 36ms
+
+[runner 4/6] COPY --from=builder /app/node_modules ./node_modules
+
+[runner 4/6] COPY --from=builder /app/node_modules ./node_modules  ✔ 2s
+
+[runner 5/6] COPY --from=builder /app/package*.json ./
+
+[runner 5/6] COPY --from=builder /app/package*.json ./  ✔ 367ms
+
+[runner 6/6] COPY --from=builder /app/prisma ./prisma
+
+[runner 6/6] COPY --from=builder /app/prisma ./prisma  ✔ 13ms
+
+importing to docker
+
+[auth] sharing credentials for production-europe-west4-drams3a.railway-registry.com
+
+[auth] sharing credentials for production-europe-west4-drams3a.railway-registry.com  ✔ 0ms
+
+importing to docker  ✔ 6s
+
+Build time: 58.25 seconds
+
+ 
+
+====================
+
+Starting Healthcheck
+
+====================
+
+
+Path: /health
+
+Retry window: 5m0s
+
+ 
+
+Attempt #1 failed with service unavailable. Continuing to retry for 4m58s
+
+Attempt #2 failed with service unavailable. Continuing to retry for 4m52s
+
+Attempt #3 failed with service unavailable. Continuing to retry for 4m40s
+
+Attempt #4 failed with service unavailable. Continuing to retry for 4m36s
+
+Attempt #5 failed with service unavailable. Continuing to retry for 4m28s
+
+Attempt #6 failed with service unavailable. Continuing to retry for 4m11s
+
+Attempt #7 failed with service unavailable. Continuing to retry for 3m41s
+
+Attempt #8 failed with service unavailable. Continuing to retry for 3m11s
+
+Attempt #9 failed with service unavailable. Continuing to retry for 2m41s
+
+Attempt #10 failed with service unavailable. Continuing to retry for 2m11s
+
+Attempt #11 failed with service unavailable. Continuing to retry for 1m40s
+
+Attempt #12 failed with service unavailable. Continuing to retry for 1m10s
+
+Attempt #13 failed with service unavailable. Continuing to retry for 40s
+
+Attempt #14 failed with service unavailable. Continuing to retry for 10s
+
+ 
+
+1/1 replicas never became healthy!
+
+Healthcheck failed!

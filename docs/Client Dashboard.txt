@@ -1,0 +1,63 @@
+Overview
+all modules he have access
+Settings (Integrations & Module Configuration)
+Purpose:
+Provide clients with a centralized area to configure all essential business information, connect integrations, and manage settings for each active module.
+Key Features
+•   Centralized Settings Dashboard:
+•   Accessible from the main navigation.
+•   Organized with tabs or sections for each module (Appointments, Shop, Phone & SMS, Reviews, Forms, Marketing, Chat, Contacts, etc.).
+•   General business info: company name, logo, contact details, timezone, branding.
+•   Integrations Tab:
+•   Connect and manage third-party integrations (Google Calendar, Outlook, Zoom, Microsoft Teams, Twilio/Vonage, WhatsApp, Facebook, Instagram, payment gateways, etc.).
+•   Step-by-step connection wizards and status indicators.
+•   API keys and webhook URLs management.
+•   Test connection and troubleshooting tools.
+•   Module-Specific Settings:
+•   Configure options unique to each module (e.g., appointment types, notification templates, shop tax/shipping, chat widget appearance, review moderation rules).
+•   Enable/disable features per module.
+•   User Management:
+•   Add/edit/remove users and assign roles/permissions.
+•   Set notification preferences.
+•   Security & Compliance:
+•   Password and authentication settings.
+•   Privacy and consent settings (GDPR, opt-in/out).
+•   Audit log for critical changes.
+________________________________________
+Summary:
+The Settings module ensures that clients can easily manage all business information, connect required integrations, and fine-tune each module for their needs—making onboarding and ongoing management simple and efficient.
+
+
+Purpose:
+Allow clients to view, track, and manage their upcoming payments, invoices, and payment history within the CRM.
+Key Features
+•   Upcoming Payments:
+•   Dashboard showing next payment due date, amount, and payment method.
+•   Automated reminders for upcoming or overdue payments.
+•   Integration with payment gateways (Stripe, PayPal, etc.).
+•   Payment History:
+•   List of all past payments, invoices, and receipts.
+•   Downloadable invoices and receipts.
+•   Filter by date, amount, or status.
+•   Subscription & Billing Management:
+•   View and manage current subscription plan.
+•   Upgrade/downgrade plan, manage add-ons or modules.
+•   Update billing information and payment methods.
+•   Agency/Admin View:
+•   Agencies can view and manage payments for all their clients.
+•   Admins can track CRM usage and billing across tenants.
+•   Security & Compliance:
+•   PCI-compliant payment processing.
+•   Role-based access for financial data.
+________________________________________
+
+Mobile-Ready Design
+•   Mobile Application Support:
+The entire CRM (Upzento) will be designed with responsive layouts, mobile-first UI/UX, and API-first backend architecture to ensure seamless future development of mobile applications (iOS/Android).
+•   API Coverage:
+All CRM features and modules will be accessible via secure REST/GraphQL APIs for easy integration with mobile apps.
+•   Consistent Experience:
+Ensure feature parity and a consistent user experience across web and mobile platforms.
+________________________________________
+Summary:
+Upzento CRM will include robust payment tracking for clients and agencies, and will be fully prepared for mobile application development, ensuring scalability and accessibility across all devices.

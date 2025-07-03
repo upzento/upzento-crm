@@ -1,0 +1,232 @@
+[Region: us-west1]
+
+=========================
+
+Using Detected Dockerfile
+
+=========================
+
+
+context: cdmv-
+
+[internal] load build definition from Dockerfile
+
+[internal] load build definition from Dockerfile  ✔ 0ms
+
+[internal] load build definition from Dockerfile
+
+[internal] load build definition from Dockerfile  ✔ 9ms
+
+[internal] load metadata for docker.io/library/node:18-alpine
+
+[auth] library/node:pull token for registry-1.docker.io
+
+[auth] library/node:pull token for registry-1.docker.io  ✔ 0ms
+
+[internal] load metadata for docker.io/library/node:18-alpine  ✔ 471ms
+
+[internal] load .dockerignore
+
+[internal] load .dockerignore  ✔ 0ms
+
+[internal] load .dockerignore
+
+[internal] load .dockerignore  ✔ 8ms
+
+[runner 5/6] COPY --from=builder /app/package*.json ./
+
+[runner 4/6] COPY --from=builder /app/node_modules ./node_modules
+
+[runner 3/6] COPY --from=builder /app/.next ./.next
+
+[builder 8/8] RUN npm run build || echo "Build completed with warnings"
+
+[builder 7/8] RUN node update-ui-components.js || echo "UI components update completed with warnings"
+
+[builder 1/8] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
+
+[builder 5/8] COPY . .
+
+[builder 4/8] RUN npm install
+
+[builder 3/8] COPY package*.json ./
+
+[internal] load build context
+
+[builder 2/8] WORKDIR /app
+
+[runner 6/6] COPY --from=builder /app/public ./public
+
+[builder 6/8] RUN node fix-frontend-encoding.js || echo "No encoding issues found"
+
+[builder 1/8] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
+
+[internal] load build context
+
+[internal] load build context  ✔ 0ms
+
+[builder 1/8] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e  ✔ 5ms
+
+[internal] load build context
+
+[internal] load build context  ✔ 33ms
+
+[builder 2/8] WORKDIR /app  ✔ 0ms – CACHED
+
+[builder 3/8] COPY package*.json ./  ✔ 0ms – CACHED
+
+[builder 4/8] RUN npm install – CACHED
+
+[builder 4/8] RUN npm install  ✔ 0ms – CACHED
+
+[builder 5/8] COPY . .
+
+[builder 5/8] COPY . .  ✔ 128ms
+
+[builder 6/8] RUN node fix-frontend-encoding.js || echo "No encoding issues found"
+
+Scanning for UTF-16LE files...
+
+Converted 0 files from UTF-16LE to UTF-8
+
+[builder 6/8] RUN node fix-frontend-encoding.js || echo "No encoding issues found"  ✔ 146ms
+
+[builder 7/8] RUN node update-ui-components.js || echo "UI components update completed with warnings"
+
+Created utils.ts
+
+Created button.tsx
+
+Created card.tsx
+
+Created table.tsx
+
+Created input.tsx
+
+Created dropdown-menu.tsx
+All UI components updated successfully!
+
+[builder 7/8] RUN node update-ui-components.js || echo "UI components update completed with warnings"  ✔ 202ms
+
+[builder 8/8] RUN npm run build || echo "Build completed with warnings"
+> upzento-crm-frontend@0.1.0 build
+> next build
+
+
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
+
+This information is used to shape Next.js' roadmap and prioritize features.
+You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
+
+https://nextjs.org/telemetry
+
+
+- info Creating an optimized production build...
+
+Failed to compile.
+
+./src/app/admin/agencies/page.tsx
+Module not found: Can't resolve 'lucide-react'
+
+https://nextjs.org/docs/messages/module-not-found
+
+./src/app/admin/clients/page.tsx
+Module not found: Can't resolve 'lucide-react'
+
+https://nextjs.org/docs/messages/module-not-found
+
+./src/app/admin/layout.tsx
+Module not found: Can't resolve 'lucide-react'
+
+https://nextjs.org/docs/messages/module-not-found
+
+./src/app/admin/page.tsx
+Module not found: Can't resolve '@/components/ui/tabs'
+
+https://nextjs.org/docs/messages/module-not-found
+
+./src/app/admin/page.tsx
+Module not found: Can't resolve 'lucide-react'
+
+https://nextjs.org/docs/messages/module-not-found
+
+
+
+
+> Build failed because of webpack errors
+
+Build completed with warnings
+
+[builder 8/8] RUN npm run build || echo "Build completed with warnings"  ✔ 11s
+
+[builder 2/8] WORKDIR /app – CACHED
+
+[builder 2/8] WORKDIR /app  ✔ 0ms – CACHED
+
+[runner 3/6] COPY --from=builder /app/.next ./.next
+
+[runner 3/6] COPY --from=builder /app/.next ./.next  ✔ 153ms
+
+[runner 4/6] COPY --from=builder /app/node_modules ./node_modules
+
+[runner 4/6] COPY --from=builder /app/node_modules ./node_modules  ✔ 2s
+
+[runner 5/6] COPY --from=builder /app/package*.json ./
+
+[runner 5/6] COPY --from=builder /app/package*.json ./  ✔ 523ms
+
+[runner 6/6] COPY --from=builder /app/public ./public
+
+[runner 6/6] COPY --from=builder /app/public ./public  ✔ 16ms
+
+exporting to docker image format
+exporting to image
+
+[auth] sharing credentials for production-europe-west4-drams3a.railway-registry.com
+
+[auth] sharing credentials for production-europe-west4-drams3a.railway-registry.com  ✔ 0ms
+
+importing to docker
+
+importing to docker  ✔ 7s
+
+Build time: 44.73 seconds
+
+ 
+
+====================
+
+Starting Healthcheck
+
+====================
+
+
+Path: /
+
+Retry window: 5m0s
+
+ 
+
+Attempt #1 failed with service unavailable. Continuing to retry for 4m57s
+
+Attempt #3 failed with service unavailable. Continuing to retry for 4m52s
+
+Attempt #4 failed with service unavailable. Continuing to retry for 4m48s
+
+Attempt #5 failed with service unavailable. Continuing to retry for 4m29s
+
+Attempt #6 failed with service unavailable. Continuing to retry for 4m13s
+
+Attempt #7 failed with service unavailable. Continuing to retry for 3m43s
+
+Attempt #8 failed with service unavailable. Continuing to retry for 3m13s
+
+Attempt #9 failed with service unavailable. Continuing to retry for 2m43s
+
+Attempt #10 failed with service unavailable. Continuing to retry for 2m13s
+
+Attempt #11 failed with service unavailable. Continuing to retry for 1m42s
+
+Attempt #12 failed with service unavailable. Continuing to retry for 1m12s
+
+Attempt #13 failed with service unavailable. Continuing to retry for 42s

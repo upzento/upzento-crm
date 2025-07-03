@@ -1,0 +1,136 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Light Theme Colors */
+    --background: 240 98% 98%; /* #F8F9FE */
+    --foreground: 235 24% 14%; /* #1A1C2E */
+    
+    --card: 0 0% 100%; /* #FFFFFF */
+    --card-foreground: 235 24% 14%; /* #1A1C2E */
+    
+    --primary: 224 100% 62%; /* #3D5AFE */
+    --primary-foreground: 0 0% 100%; /* #FFFFFF */
+    
+    --secondary: 348 100% 59%; /* #FF4081 */
+    --secondary-foreground: 0 0% 100%; /* #FFFFFF */
+    
+    --accent: 50 100% 50%; /* #FFD700 */
+    --accent-foreground: 235 24% 14%; /* #1A1C2E */
+    
+    --muted: 235 10% 92%; /* #E8E9F0 */
+    --muted-foreground: 235 8% 44%; /* #5F6180 */
+    
+    --success: 142 100% 45%; /* #00E676 */
+    --error: 14 100% 50%; /* #FF3D00 */
+    --warning: 55 100% 50%; /* #FFEA00 */
+  }
+  
+  .dark {
+    /* Dark Theme Colors */
+    --background: 235 38% 10%; /* #0F1123 */
+    --foreground: 0 0% 100%; /* #FFFFFF */
+    
+    --card: 235 24% 14%; /* #1A1C2E */
+    --card-foreground: 0 0% 100%; /* #FFFFFF */
+    
+    --primary: 224 100% 62%; /* #3D5AFE */
+    --primary-foreground: 0 0% 100%; /* #FFFFFF */
+    
+    --secondary: 348 100% 59%; /* #FF4081 */
+    --secondary-foreground: 0 0% 100%; /* #FFFFFF */
+    
+    --accent: 50 100% 50%; /* #FFD700 */
+    --accent-foreground: 235 24% 14%; /* #1A1C2E */
+    
+    --muted: 235 24% 24%; /* #2A2D47 */
+    --muted-foreground: 235 16% 76%; /* #B0B0C0 */
+    
+    --success: 142 100% 45%; /* #00E676 */
+    --error: 14 100% 50%; /* #FF3D00 */
+    --warning: 55 100% 50%; /* #FFEA00 */
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-light-bg text-light-text-primary dark:bg-dark-bg dark:text-dark-text-primary;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  /* Typography styles */
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-space font-semibold;
+  }
+  
+  h1 {
+    @apply text-4xl mb-6;
+  }
+  
+  h2 {
+    @apply text-3xl mb-5;
+  }
+  
+  h3 {
+    @apply text-2xl mb-4;
+  }
+  
+  h4 {
+    @apply text-xl mb-3;
+  }
+  
+  h5 {
+    @apply text-lg mb-2;
+  }
+  
+  h6 {
+    @apply text-base mb-2;
+  }
+  
+  code {
+    @apply font-mono text-sm bg-muted dark:bg-muted p-1 rounded-md;
+  }
+}
+
+/* Custom animations */
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 0 5px rgba(61, 90, 254, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 15px rgba(61, 90, 254, 0.8), 0 0 30px rgba(61, 90, 254, 0.4);
+  }
+}
+
+@layer components {
+  .cosmic-card {
+    @apply bg-light-surface dark:bg-dark-surface rounded-cosmic p-6
+           shadow-stellar dark:shadow-cosmic
+           transition-all duration-300 hover:shadow-stellar-hover dark:hover:shadow-cosmic-hover;
+  }
+  
+  .cosmic-button {
+    @apply bg-primary text-white rounded-cosmic px-4 py-2
+           transition-all duration-300 hover:translate-y-[-2px]
+           hover:shadow-[0_0_16px_rgba(61,90,254,0.5)]
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50;
+  }
+  
+  .cosmic-input {
+    @apply bg-light-bg dark:bg-dark-surface
+           border border-muted dark:border-muted
+           rounded-cosmic px-4 py-2
+           focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50
+           transition-colors duration-200;
+  }
+  
+  .glow-effect {
+    @apply animate-[glow_2s_ease-in-out_infinite];
+  }
+} 

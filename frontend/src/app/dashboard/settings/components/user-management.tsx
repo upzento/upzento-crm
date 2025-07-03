@@ -1,0 +1,11 @@
+'use client';
+
+import { useState } from 'react';
+
+export default function UserManagement() {
+  return (
+    <div>
+      <p>User management component will be implemented here.</p>
+    </div>
+  );
+}
