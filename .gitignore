@@ -40,6 +40,14 @@ lerna-debug.log*
 /coverage
 /.nyc_output
 /test
+/test-app
+/test-*
+**/test-*
+**/test.*
+**/*.test.*
+
+# Test HTML files
+/frontend/public/index.html
 
 # Prisma
 /prisma/migrations

@@ -1,8 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   reactStrictMode: true,
-  output: 'standalone',
-  swcMinify: true,
   eslint: {
     // Warning: This allows production builds to successfully complete even if
     // your project has ESLint errors.
@@ -23,7 +21,9 @@ const nextConfig = {
     skipTypeCheck: true,
     // Ignore missing modules during build
     esmExternals: 'loose',
-  }
+  },
+  // Disable static export errors
+  outputFileTracing: false
 }
 
 module.exports = nextConfig

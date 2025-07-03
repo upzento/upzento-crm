@@ -9,6 +9,8 @@ dist/
 build/
 .next/
 out/
+test/
+test-app/
 
 # Environment variables
 .env
