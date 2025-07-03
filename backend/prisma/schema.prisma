@@ -53,6 +53,9 @@ model Client {
   // Relationships
   agency      Agency    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
   users       User[]
+  campaigns   Campaign[]
+  chatWidgets ChatWidget[]
+  chatConversations ChatConversation[]
 }
 
 // User management model
@@ -74,6 +77,126 @@ model User {
   tenant      Tenant?   @relation(fields: [tenantId], references: [id], onDelete: SetNull)
   agency      Agency?   @relation(fields: [agencyId], references: [id], onDelete: SetNull)
   client      Client?   @relation(fields: [clientId], references: [id], onDelete: SetNull)
+  
+  // Chat relationships
+  assignedConversations ChatConversation[] @relation("AssignedAgent")
+  sentMessages ChatMessage[] @relation("MessageSender")
+}
+
+// Campaign models
+model Campaign {
+  id              String          @id @default(uuid())
+  name            String
+  description     String?
+  type            String
+  status          String          @default("draft")
+  clientId        String
+  createdById     String?
+  scheduledAt     DateTime?
+  sentAt          DateTime?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relationships
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  analytics       CampaignAnalytics?
+  segments        CampaignToSegment[]
+}
+
+model CampaignAnalytics {
+  id              String          @id @default(uuid())
+  campaignId      String          @unique
+  sent            Int             @default(0)
+  delivered       Int             @default(0)
+  opened          Int             @default(0)
+  clicked         Int             @default(0)
+  replied         Int             @default(0)
+  bounced         Int             @default(0)
+  unsubscribed    Int             @default(0)
+  conversions     Int             @default(0)
+  revenue         Float           @default(0)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relationships
+  campaign        Campaign        @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+}
+
+model CampaignSegment {
+  id              String          @id @default(uuid())
+  name            String
+  description     String?
+  filterRules     Json?
+  clientId        String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relationships
+  campaigns       CampaignToSegment[]
+}
+
+model CampaignToSegment {
+  campaignId      String
+  segmentId       String
+  createdAt       DateTime        @default(now())
+
+  // Relationships
+  campaign        Campaign        @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  segment         CampaignSegment @relation(fields: [segmentId], references: [id], onDelete: Cascade)
+
+  @@id([campaignId, segmentId])
+}
+
+// Chat models
+model ChatWidget {
+  id              String          @id @default(uuid())
+  name            String
+  clientId        String
+  primaryColor    String          @default("#3B82F6")
+  welcomeMessage  String          @default("Hello! How can we help you today?")
+  offlineMessage  String          @default("We're currently offline. Leave a message and we'll get back to you.")
+  position        String          @default("right")
+  isActive        Boolean         @default(true)
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relationships
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  conversations   ChatConversation[]
+}
+
+model ChatConversation {
+  id              String          @id @default(uuid())
+  visitorName     String?
+  visitorEmail    String?
+  widgetId        String?
+  clientId        String
+  status          ChatConversationStatus @default(OPEN)
+  source          ChatSource      @default(WEBSITE)
+  assignedToId    String?
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relationships
+  widget          ChatWidget?     @relation(fields: [widgetId], references: [id], onDelete: SetNull)
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  assignedTo      User?           @relation("AssignedAgent", fields: [assignedToId], references: [id], onDelete: SetNull)
+  messages        ChatMessage[]
+}
+
+model ChatMessage {
+  id              String          @id @default(uuid())
+  conversationId  String
+  content         String
+  isFromVisitor   Boolean         @default(false)
+  read            Boolean         @default(false)
+  sentById        String?
+  attachments     Json?
+  createdAt       DateTime        @default(now())
+
+  // Relationships
+  conversation    ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sentBy          User?           @relation("MessageSender", fields: [sentById], references: [id], onDelete: SetNull)
 }
 
 // Enums
@@ -86,4 +209,17 @@ enum Role {
   CLIENT_OWNER
   CLIENT_ADMIN
   CLIENT_USER
+}
+
+enum ChatConversationStatus {
+  OPEN
+  CLOSED
+  PENDING
+}
+
+enum ChatSource {
+  WEBSITE
+  WHATSAPP
+  FACEBOOK
+  EMAIL
 }
