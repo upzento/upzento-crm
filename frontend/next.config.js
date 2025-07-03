@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
+  reactStrictMode: false,
+  swcMinify: false,
   eslint: {
     // Warning: This allows production builds to successfully complete even if
     // your project has ESLint errors.
@@ -13,7 +14,7 @@ const nextConfig = {
   },
   webpack: (config, { isServer }) => {
     // Ignore module not found errors
-    config.ignoreWarnings = [/Module not found/];
+    config.ignoreWarnings = [/Module not found/, /Critical dependency/];
     return config;
   },
   experimental: {
@@ -23,7 +24,11 @@ const nextConfig = {
     esmExternals: 'loose',
   },
   // Disable static export errors
-  outputFileTracing: false
+  outputFileTracing: false,
+  // Disable image optimization
+  images: {
+    unoptimized: true,
+  }
 }
 
 module.exports = nextConfig
