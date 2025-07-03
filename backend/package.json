@@ -4,7 +4,8 @@
   "description": "Backend API for Upzento CRM - a multi-tenant CRM platform",
   "main": "dist/main.js",
   "engines": {
-    "node": ">=18.0.0"
+    "node": "20.18.1",
+    "npm": ">=9.0.0"
   },
   "scripts": {
     "prebuild": "rimraf dist",
