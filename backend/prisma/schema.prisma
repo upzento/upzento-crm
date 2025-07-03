@@ -56,6 +56,11 @@ model Client {
   campaigns   Campaign[]
   chatWidgets ChatWidget[]
   chatConversations ChatConversation[]
+  products    Product[]
+  productCategories ProductCategory[]
+  orders      Order[]
+  coupons     Coupon[]
+  shopWidgets ShopWidget[]
 }
 
 // User management model
@@ -81,6 +86,9 @@ model User {
   // Chat relationships
   assignedConversations ChatConversation[] @relation("AssignedAgent")
   sentMessages ChatMessage[] @relation("MessageSender")
+  
+  // Shop relationships
+  orders      Order[]
 }
 
 // Campaign models
@@ -197,6 +205,197 @@ model ChatMessage {
   // Relationships
   conversation    ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
   sentBy          User?           @relation("MessageSender", fields: [sentById], references: [id], onDelete: SetNull)
+}
+
+// Shop models
+model Product {
+  id              String          @id @default(uuid())
+  name            String
+  description     String?
+  price           Decimal
+  sku             String?
+  status          String          @default("ACTIVE")
+  isFeatured      Boolean         @default(false)
+  images          String[]
+  inventory       Int?
+  clientId        String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relationships
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  categories      ProductToCategory[]
+  variants        ProductVariant[]
+  orderItems      OrderItem[]
+  coupons         CouponToProduct[]
+}
+
+model ProductCategory {
+  id              String          @id @default(uuid())
+  name            String
+  description     String?
+  image           String?
+  parentId        String?
+  clientId        String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relationships
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  parent          ProductCategory? @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children        ProductCategory[] @relation("CategoryHierarchy")
+  products        ProductToCategory[]
+  coupons         CouponToCategory[]
+}
+
+model ProductToCategory {
+  productId       String
+  categoryId      String
+  createdAt       DateTime        @default(now())
+
+  // Relationships
+  product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category        ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([productId, categoryId])
+}
+
+model ProductVariant {
+  id              String          @id @default(uuid())
+  name            String
+  price           Decimal
+  sku             String?
+  inventory       Int?
+  options         Json?
+  productId       String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relationships
+  product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems      OrderItem[]
+}
+
+model Order {
+  id              String          @id @default(uuid())
+  orderNumber     String          @unique
+  status          String          @default("PENDING")
+  customerName    String?
+  customerEmail   String?
+  contactId       String?
+  userId          String?
+  couponCode      String?
+  subtotal        Decimal
+  discountTotal   Decimal         @default(0)
+  shippingTotal   Decimal         @default(0)
+  taxTotal        Decimal         @default(0)
+  total           Decimal
+  shippingAddress Json?
+  billingAddress  Json?
+  paymentMethod   String?
+  paymentStatus   String?
+  clientId        String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relationships
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  user            User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items           OrderItem[]
+  events          OrderEvent[]
+  coupon          Coupon?         @relation(fields: [couponCode], references: [code], onDelete: SetNull)
+}
+
+model OrderItem {
+  id              String          @id @default(uuid())
+  orderId         String
+  productId       String?
+  variantId       String?
+  quantity        Int
+  price           Decimal
+  total           Decimal
+  productName     String
+  variantName     String?
+  productOptions  Json?
+  createdAt       DateTime        @default(now())
+
+  // Relationships
+  order           Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product         Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variant         ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+}
+
+model OrderEvent {
+  id              String          @id @default(uuid())
+  orderId         String
+  type            String
+  data            Json?
+  createdAt       DateTime        @default(now())
+
+  // Relationships
+  order           Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+}
+
+model Coupon {
+  id              String          @id @default(uuid())
+  code            String          @unique
+  type            String          // PERCENTAGE, FIXED_AMOUNT, FREE_SHIPPING
+  value           Decimal?        // Percentage or fixed amount value
+  minOrderAmount  Decimal?
+  maxUses         Int?
+  usageCount      Int             @default(0)
+  startDate       DateTime?
+  endDate         DateTime?
+  isActive        Boolean         @default(true)
+  clientId        String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relationships
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  products        CouponToProduct[]
+  categories      CouponToCategory[]
+  orders          Order[]
+}
+
+model CouponToProduct {
+  couponId        String
+  productId       String
+  createdAt       DateTime        @default(now())
+
+  // Relationships
+  coupon          Coupon          @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  @@id([couponId, productId])
+}
+
+model CouponToCategory {
+  couponId        String
+  categoryId      String
+  createdAt       DateTime        @default(now())
+
+  // Relationships
+  coupon          Coupon          @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  category        ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([couponId, categoryId])
+}
+
+model ShopWidget {
+  id              String          @id @default(uuid())
+  name            String
+  type            String          @default("PRODUCTS")
+  isActive        Boolean         @default(true)
+  theme           Json?
+  settings        Json?
+  allowedDomains  String[]        @default([])
+  clientId        String
+  createdAt       DateTime        @default(now())
+  updatedAt       DateTime        @updatedAt
+
+  // Relationships
+  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
 }
 
 // Enums

@@ -63,9 +63,10 @@ export class UsersService {
         role: true,
         agencyId: true,
         clientId: true,
+        tenantId: true,
+        password: true,
         createdAt: true,
         updatedAt: true,
-        password: false, // Exclude password
       },
     });
   }

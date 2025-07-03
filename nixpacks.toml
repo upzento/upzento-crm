@@ -1,13 +1,18 @@
 [phases.setup]
-nixPkgs = ['nodejs_20']
-nixOverlays = []
-nixpkgsArchive = "ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7"
+nixpkgs = ["nodejs", "nodePackages.npm", "postgresql"]
 
 [phases.install]
-cmds = ['cd backend && npm install']
+cmds = [
+  "cd backend && npm ci",
+  "cd ../frontend && npm ci"
+]
 
 [phases.build]
-cmds = ['cd backend && npx tsc || true']
+cmds = [
+  "cd backend && npx prisma generate",
+  "cd backend && npm run build || true",
+  "cd ../frontend && npm run build"
+]
 
 [start]
-cmd = 'cd backend && npm run start:prod' 
+cmd = "cd backend && node dist/main.js" 

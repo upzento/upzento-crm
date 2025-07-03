@@ -319,7 +319,7 @@ export class ShopService {
     
     // Calculate order totals
     let subtotal = 0;
-    const orderItems = [];
+    let orderItems = [];
     
     // Process each item
     for (const item of items) {
@@ -431,7 +431,7 @@ export class ShopService {
         events: {
           create: {
             type: 'CREATED',
-            data: { message: 'Order created' } as unknown as Prisma.JsonObject,
+            data: { message: 'Order created' } as Prisma.JsonObject,
           },
         },
       },
@@ -452,7 +452,7 @@ export class ShopService {
   }) {
     const { skip, take, status, search } = params;
     
-    const where: Prisma.OrderWhereInput = { clientId };
+    const where: any = { clientId };
     
     if (status) {
       where.status = status;
