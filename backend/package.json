@@ -23,7 +23,7 @@
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
-    "postinstall": "npm run prisma:generate"
+    "postinstall": "npm run prisma:generate || echo 'Skipping prisma generate'"
   },
   "keywords": [
     "crm",
