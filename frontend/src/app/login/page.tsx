@@ -87,7 +87,7 @@ export default function LoginPage() {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 className="cosmic-input w-full"
-                placeholder="â¢â¢â¢â¢â¢â¢â¢â¢"
+                placeholder="••••••••"
                 required
               />
             </div>

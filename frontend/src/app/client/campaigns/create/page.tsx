@@ -260,11 +260,11 @@ export default function CreateCampaignPage() {
                 <div className="bg-muted/50 p-4 rounded-md">
                   <h3 className="text-lg font-medium mb-2">SMS Campaign Guidelines</h3>
                   <ul className="space-y-1 text-sm">
-                    <li>â¢ Keep messages concise (160 characters for a single SMS)</li>
-                    <li>â¢ Include opt-out instructions (e.g., "Reply STOP to unsubscribe")</li>
-                    <li>â¢ Identify yourself clearly at the beginning of the message</li>
-                    <li>â¢ Avoid using all caps, excessive punctuation, or special characters</li>
-                    <li>â¢ Include a clear call-to-action</li>
+                    <li>• Keep messages concise (160 characters for a single SMS)</li>
+                    <li>• Include opt-out instructions (e.g., "Reply STOP to unsubscribe")</li>
+                    <li>• Identify yourself clearly at the beginning of the message</li>
+                    <li>• Avoid using all caps, excessive punctuation, or special characters</li>
+                    <li>• Include a clear call-to-action</li>
                   </ul>
                 </div>
               )}

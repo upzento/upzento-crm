@@ -288,8 +288,8 @@ export default function CreateDealPage() {
                     </SelectTrigger>
                     <SelectContent>
                       <SelectItem value="USD">USD ($)</SelectItem>
-                      <SelectItem value="EUR">EUR (â¬)</SelectItem>
-                      <SelectItem value="GBP">GBP (Â£)</SelectItem>
+                      <SelectItem value="EUR">EUR (€)</SelectItem>
+                      <SelectItem value="GBP">GBP (£)</SelectItem>
                       <SelectItem value="CAD">CAD ($)</SelectItem>
                       <SelectItem value="AUD">AUD ($)</SelectItem>
                     </SelectContent>

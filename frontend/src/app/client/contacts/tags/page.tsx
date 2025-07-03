@@ -395,11 +395,11 @@ export default function TagsPage() {
             <div className="bg-muted/50 p-4 rounded-md">
               <h3 className="text-lg font-medium mb-2">Tag Best Practices</h3>
               <ul className="space-y-1 text-sm">
-                <li>â¢ Use consistent naming conventions for your tags</li>
-                <li>â¢ Create tags for industry, lead status, and customer segments</li>
-                <li>â¢ Avoid creating too many tags that serve similar purposes</li>
-                <li>â¢ Regularly review and clean up unused tags</li>
-                <li>â¢ Use distinctive colors for different tag categories</li>
+                <li>• Use consistent naming conventions for your tags</li>
+                <li>• Create tags for industry, lead status, and customer segments</li>
+                <li>• Avoid creating too many tags that serve similar purposes</li>
+                <li>• Regularly review and clean up unused tags</li>
+                <li>• Use distinctive colors for different tag categories</li>
               </ul>
             </div>
           </div>

@@ -305,11 +305,11 @@ export default function ImportPage() {
             <div className="bg-muted/50 p-4 rounded-md">
               <h3 className="text-lg font-medium mb-2">CSV File Requirements</h3>
               <ul className="space-y-1 text-sm">
-                <li>â¢ File must be in CSV format</li>
-                <li>â¢ First row should contain column headers</li>
-                <li>â¢ Required fields: First Name, Last Name, Email</li>
-                <li>â¢ Maximum file size: 10MB</li>
-                <li>â¢ Maximum 5,000 contacts per import</li>
+                <li>• File must be in CSV format</li>
+                <li>• First row should contain column headers</li>
+                <li>• Required fields: First Name, Last Name, Email</li>
+                <li>• Maximum file size: 10MB</li>
+                <li>• Maximum 5,000 contacts per import</li>
               </ul>
               <div className="mt-4">
                 <Button variant="outline" size="sm" asChild>

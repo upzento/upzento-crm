@@ -454,11 +454,11 @@ export default function SettingsPage() {
                       Full access to all features and settings
                     </p>
                     <ul className="text-sm space-y-1">
-                      <li>â Manage team members</li>
-                      <li>â Edit all content</li>
-                      <li>â Access billing and payments</li>
-                      <li>â Manage integrations</li>
-                      <li>â View analytics</li>
+                      <li>✓ Manage team members</li>
+                      <li>✓ Edit all content</li>
+                      <li>✓ Access billing and payments</li>
+                      <li>✓ Manage integrations</li>
+                      <li>✓ View analytics</li>
                     </ul>
                   </div>
                   
@@ -468,11 +468,11 @@ export default function SettingsPage() {
                       Can edit content but cannot manage team or billing
                     </p>
                     <ul className="text-sm space-y-1">
-                      <li>â Manage team members</li>
-                      <li>â Edit all content</li>
-                      <li>â Access billing and payments</li>
-                      <li>â Manage integrations</li>
-                      <li>â View analytics</li>
+                      <li>✗ Manage team members</li>
+                      <li>✓ Edit all content</li>
+                      <li>✗ Access billing and payments</li>
+                      <li>✓ Manage integrations</li>
+                      <li>✓ View analytics</li>
                     </ul>
                   </div>
                   
@@ -482,11 +482,11 @@ export default function SettingsPage() {
                       Read-only access to content and analytics
                     </p>
                     <ul className="text-sm space-y-1">
-                      <li>â Manage team members</li>
-                      <li>â Edit all content</li>
-                      <li>â Access billing and payments</li>
-                      <li>â Manage integrations</li>
-                      <li>â View analytics</li>
+                      <li>✗ Manage team members</li>
+                      <li>✗ Edit all content</li>
+                      <li>✗ Access billing and payments</li>
+                      <li>✗ Manage integrations</li>
+                      <li>✓ View analytics</li>
                     </ul>
                   </div>
                 </div>
