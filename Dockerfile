@@ -20,6 +20,9 @@ RUN cd backend && npm ci --no-fund --prefer-offline --no-audit --ignore-scripts 
 # Copy source code
 COPY . .
 
+# Fix frontend encoding issues
+RUN node fix-frontend-encoding.js
+
 # Generate Prisma client (not through cache)
 RUN cd backend && \
     mkdir -p /tmp/prisma && \
