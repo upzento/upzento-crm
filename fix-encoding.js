@@ -9,11 +9,16 @@ function fixFileEncoding(filePath) {
     // Read the file with binary encoding
     let content = fs.readFileSync(filePath, "binary");
     
-    // Replace any non-ASCII characters with their ASCII equivalents or remove them
-    content = content.replace(/[^\x00-\x7F]/g, "");
+    // Clean up the content while preserving code structure
+    // Instead of removing all non-ASCII, we'll replace with appropriate characters
+    content = content
+      // Replace common UTF-16/UTF-8 BOM and other problematic sequences
+      .replace(/^\uFEFF/, '') // BOM
+      .replace(/[^\x20-\x7E\r\n\t]/g, '') // Keep only printable ASCII, newlines and tabs
+      .replace(/\u0000/g, ''); // Remove null bytes
     
-    // Write it back with ASCII encoding
-    fs.writeFileSync(filePath, content, "ascii");
+    // Write it back with UTF-8 encoding
+    fs.writeFileSync(filePath, content, "utf8");
     
     console.log("Fixed: " + filePath);
   } catch (error) {
