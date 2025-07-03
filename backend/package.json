@@ -3,7 +3,11 @@
   "version": "0.1.0",
   "description": "Backend API for Upzento CRM - a multi-tenant CRM platform",
   "main": "dist/main.js",
+  "engines": {
+    "node": ">=18.0.0"
+  },
   "scripts": {
+    "prebuild": "rimraf dist",
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "nest start",
@@ -17,7 +21,8 @@
     "prisma:generate": "prisma generate",
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
-    "prisma:studio": "prisma studio"
+    "prisma:studio": "prisma studio",
+    "postinstall": "npm run prisma:generate"
   },
   "keywords": [
     "crm",
@@ -44,6 +49,7 @@
     "passport-jwt": "^4.0.1",
     "passport-local": "^1.0.0",
     "reflect-metadata": "^0.1.13",
+    "rimraf": "^5.0.0",
     "rxjs": "^7.8.0",
     "papaparse": "^5.4.1",
     "csv-parser": "^3.0.0"

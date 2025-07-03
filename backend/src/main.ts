@@ -23,11 +23,6 @@ async function bootstrap() {
   // API prefix
   app.setGlobalPrefix('api');
 
-  // Health check endpoint
-  app.get('/health', (req, res) => {
-    res.status(200).send('OK');
-  });
-
   // Start the server
   const port = process.env.PORT || 3001;
   await app.listen(port);
