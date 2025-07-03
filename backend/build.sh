@@ -11,8 +11,8 @@ npm install
 echo "Generating Prisma client..."
 npx prisma generate || echo "WARNING: Prisma generate failed but continuing build"
 
-# Build the application with --skipLibCheck to ignore TypeScript errors
+# Build the application using npm script
 echo "Building the application..."
-npx nest build --webpack --webpackConfigPath webpack-hmr.config.js || npx nest build --skipLibCheck
+npm run build
 
 echo "Build completed successfully!"
