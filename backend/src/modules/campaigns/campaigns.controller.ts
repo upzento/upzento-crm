@@ -1,3 +1,9 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request, ParseUUIDPipe, BadRequestException, NotFoundException } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
+import { RequiresTenantType } from '../auth/decorators/tenant-type.decorator';
+import { CampaignsService } from './campaigns.service';
 import {
   Controller,
   Get,
@@ -17,8 +23,8 @@ import { CreateCampaignSegmentDto } from './dto/create-campaign-segment.dto';
 import { CreateCampaignTemplateDto } from './dto/create-campaign-template.dto';
 import { CreateAutomationWorkflowDto } from './dto/create-automation-workflow.dto';
 import { CreateABTestDto } from './dto/create-ab-test.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
+
+
 
 @Controller('campaigns')
 @UseGuards(JwtAuthGuard, TenantContextGuard)

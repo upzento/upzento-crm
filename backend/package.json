@@ -9,7 +9,7 @@
   },
   "scripts": {
     "prebuild": "rimraf dist",
-    "build": "nest build",
+    "build": "nest build --webpack --webpackConfigPath webpack-hmr.config.js --skipLibCheck",
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "nest start",
     "start:dev": "nest start --watch",
@@ -46,6 +46,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.0",
     "csv-parser": "^3.0.0",
+    "glob": "^11.0.3",
     "papaparse": "^5.4.1",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",

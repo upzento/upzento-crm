@@ -1,3 +1,9 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request, ParseUUIDPipe, BadRequestException, NotFoundException } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
+import { RequiresTenantType } from '../auth/decorators/tenant-type.decorator';
+import { AnalyticsService } from './analytics.service';
 import {
   Controller,
   Get,
@@ -15,8 +21,8 @@ import { CreateDashboardDto } from './dto/create-dashboard.dto';
 import { CreateWidgetDto } from './dto/create-widget.dto';
 import { CreateDatasetDto } from './dto/create-dataset.dto';
 import { CreateReportDto } from './dto/create-report.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
+
+
 
 @Controller('analytics')
 @UseGuards(JwtAuthGuard, TenantContextGuard)

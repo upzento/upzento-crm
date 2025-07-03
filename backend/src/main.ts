@@ -29,7 +29,7 @@ async function bootstrap() {
   // Start the server
   const port = process.env.PORT || 3001;
   await app.listen(port);
-  console.log(Application is running on port );
+  console.log(`Application is running on port ${port}`);
 }
 
 bootstrap();

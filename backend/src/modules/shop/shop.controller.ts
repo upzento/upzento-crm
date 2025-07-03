@@ -1,3 +1,9 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request, ParseUUIDPipe, BadRequestException, NotFoundException } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
+import { RequiresTenantType } from '../auth/decorators/tenant-type.decorator';
+import { ShopService } from './shop.service';
 import {
   Controller,
   Get,
@@ -18,8 +24,8 @@ import { CreateOrderDto, OrderStatus } from './dto/create-order.dto';
 import { UpdateOrderDto } from './dto/update-order.dto';
 import { CreateCouponDto } from './dto/create-coupon.dto';
 import { CreateShopWidgetDto } from './dto/create-shop-widget.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
+
+
 
 @Controller('shop')
 @UseGuards(JwtAuthGuard, TenantContextGuard)

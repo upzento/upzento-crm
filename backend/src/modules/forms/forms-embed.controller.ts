@@ -1,9 +1,10 @@
 import { Controller, Get, Post, Body, Param, Headers, Req, NotFoundException, BadRequestException } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
 import { FormsService } from './forms.service';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreateSubmissionDto } from './dto/create-submission.dto';
-import { Request } from 'express';
 
+@ApiTags('forms-embed')
 @Controller('forms-embed')
 export class FormsEmbedController {
   constructor(
@@ -13,6 +14,9 @@ export class FormsEmbedController {
 
   // Get form structure for embedding
   @Get(':id')
+  @ApiOperation({ summary: 'Get embeddable form by ID' })
+  @ApiResponse({ status: 200, description: 'Form retrieved successfully' })
+  @ApiResponse({ status: 404, description: 'Form not found' })
   async getEmbeddedForm(@Param('id') id: string, @Headers('origin') origin: string) {
     // Find the form
     const form = await this.prisma.form.findUnique({
@@ -65,11 +69,14 @@ export class FormsEmbedController {
 
   // Submit form data
   @Post(':id/submit')
+  @ApiOperation({ summary: 'Submit form data' })
+  @ApiResponse({ status: 201, description: 'Form submission created successfully' })
+  @ApiResponse({ status: 404, description: 'Form not found' })
   async submitForm(
     @Param('id') id: string,
     @Body() submissionDto: CreateSubmissionDto,
     @Headers('origin') origin: string,
-    @Req() request: Request,
+    @Req() request: any,
   ) {
     // Find the form
     const form = await this.prisma.form.findUnique({

@@ -1,15 +1,8 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  Query,
-  Request,
-} from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request, ParseUUIDPipe, BadRequestException, NotFoundException } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
+import { RequiresTenantType } from '../auth/decorators/tenant-type.decorator';
 import { PhoneSmsService } from './phone-sms.service';
 import { CreatePhoneNumberDto } from './dto/create-phone-number.dto';
 import { UpdatePhoneNumberDto } from './dto/update-phone-number.dto';
@@ -18,16 +11,18 @@ import { CreateSmsMessageDto } from './dto/create-sms-message.dto';
 import { CreateSmsConversationDto } from './dto/create-sms-conversation.dto';
 import { CreateSmsTemplateDto } from './dto/create-sms-template.dto';
 import { CreateBulkSmsCampaignDto } from './dto/create-bulk-sms-campaign.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
 
+@ApiTags('phone-sms')
 @Controller('phone-sms')
 @UseGuards(JwtAuthGuard, TenantContextGuard)
+@ApiBearerAuth()
 export class PhoneSmsController {
   constructor(private readonly phoneSmsService: PhoneSmsService) {}
 
   // Phone Number endpoints
   @Post('phone-numbers')
+  @ApiOperation({ summary: 'Create a new phone number' })
+  @ApiResponse({ status: 201, description: 'Phone number created successfully' })
   createPhoneNumber(@Body() createPhoneNumberDto: CreatePhoneNumberDto) {
     return this.phoneSmsService.createPhoneNumber(createPhoneNumberDto);
   }

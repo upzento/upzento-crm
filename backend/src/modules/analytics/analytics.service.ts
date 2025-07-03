@@ -42,7 +42,7 @@ export class AnalyticsService {
     });
 
     if (!integration) {
-      throw new NotFoundException(Integration with ID  not found);
+      throw new NotFoundException(`Integration with ID ${id} not found`);
     }
 
     return integration;
@@ -89,7 +89,7 @@ export class AnalyticsService {
     
     return {
       id,
-      message: Integration  synced successfully,
+      message: `Integration ${id} synced successfully`,
       lastSync: new Date(),
     };
   }
@@ -131,7 +131,7 @@ export class AnalyticsService {
     });
 
     if (!dashboard) {
-      throw new NotFoundException(Dashboard with ID  not found);
+      throw new NotFoundException(`Dashboard with ID ${id} not found`);
     }
 
     return dashboard;
@@ -219,7 +219,7 @@ export class AnalyticsService {
     });
 
     if (!widget) {
-      throw new NotFoundException(Widget with ID  not found);
+      throw new NotFoundException(`Widget with ID ${id} not found`);
     }
 
     return widget;
@@ -297,7 +297,7 @@ export class AnalyticsService {
     });
 
     if (!dataset) {
-      throw new NotFoundException(Dataset with ID  not found);
+      throw new NotFoundException(`Dataset with ID ${id} not found`);
     }
 
     return dataset;
@@ -381,7 +381,7 @@ export class AnalyticsService {
 
     return {
       id,
-      message: Dataset  refreshed successfully,
+      message: `Dataset ${id} refreshed successfully`,
       lastUpdated: new Date(),
     };
   }
@@ -409,7 +409,7 @@ export class AnalyticsService {
     });
 
     if (!report) {
-      throw new NotFoundException(Report with ID  not found);
+      throw new NotFoundException(`Report with ID ${id} not found`);
     }
 
     return report;
@@ -456,7 +456,7 @@ export class AnalyticsService {
 
     return {
       id,
-      message: Report  generated and sent successfully,
+      message: `Report ${id} generated and sent successfully`,
       lastSent: new Date(),
       recipients: report.recipients,
       format: report.format,

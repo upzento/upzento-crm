@@ -1,6 +1,5 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
-import { ChatWidget } from '@prisma/client';
 import { CreateWidgetDto } from './dto/create-widget.dto';
 import { UpdateWidgetDto } from './dto/update-widget.dto';
 
@@ -8,72 +7,61 @@ import { UpdateWidgetDto } from './dto/update-widget.dto';
 export class WidgetsService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createWidgetDto: CreateWidgetDto, clientId: string): Promise<ChatWidget> {
+  async create(createWidgetDto: CreateWidgetDto, clientId: string) {
     return this.prisma.chatWidget.create({
       data: {
         ...createWidgetDto,
-        clientId
-      }
-    });
-  }
-
-  async findAll(clientId: string): Promise<ChatWidget[]> {
-    return this.prisma.chatWidget.findMany({
-      where: { clientId },
-      include: {
-        _count: {
-          select: {
-            conversations: true
-          }
-        }
+        clientId,
       },
-      orderBy: {
-        createdAt: 'desc'
-      }
     });
   }
 
-  async findOne(id: string, clientId: string): Promise<ChatWidget> {
-    const widget = await this.prisma.chatWidget.findFirst({
-      where: { id, clientId },
-      include: {
-        conversations: {
-          take: 5,
-          orderBy: {
-            updatedAt: 'desc'
-          },
-          include: {
-            _count: {
-              select: {
-                messages: true
-              }
-            }
-          }
-        }
-      }
+  async findAll(clientId: string) {
+    return this.prisma.chatWidget.findMany({
+      where: {
+        clientId,
+      },
     });
-    
+  }
+
+  async findOne(id: string, clientId: string) {
+    const widget = await this.prisma.chatWidget.findFirst({
+      where: {
+        id,
+        clientId,
+      },
+    });
+
     if (!widget) {
-      throw new NotFoundException(`Widget with ID ${id} not found`);
+      throw new Error(`Widget with ID ${id} not found`);
     }
-    
+
     return widget;
   }
 
-  async update(id: string, updateWidgetDto: UpdateWidgetDto, clientId: string): Promise<ChatWidget> {
+  async update(id: string, updateWidgetDto: UpdateWidgetDto, clientId: string) {
+    await this.findOne(id, clientId);
+
+    return this.prisma.chatWidget.update({
+      where: { id },
+      data: updateWidgetDto,
+    });
+  }
+
+  async remove(id: string, clientId: string) {
+    await this.findOne(id, clientId);
+    
+    return this.prisma.chatWidget.delete({
+      where: { id },
+    });
+  }
+
+  async toggle(id: string, isActive: boolean, clientId: string) {
     await this.findOne(id, clientId);
     
     return this.prisma.chatWidget.update({
       where: { id },
-      data: updateWidgetDto
-    });
-  }
-
-  async remove(id: string, clientId: string): Promise<ChatWidget> {
-    await this.findOne(id, clientId);
-    
-    return this.prisma.chatWidget.delete({
-      where: { id }
+      data: { isActive },
     });
   }
 

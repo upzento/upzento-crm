@@ -1,3 +1,9 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request, ParseUUIDPipe, BadRequestException, NotFoundException } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
+import { RequiresTenantType } from '../auth/decorators/tenant-type.decorator';
+import { Shop-embedService } from './shop-embed.service';
 import {
   Controller,
   Get,

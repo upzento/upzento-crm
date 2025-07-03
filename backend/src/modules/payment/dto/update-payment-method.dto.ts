@@ -1,4 +1,8 @@
 import { PartialType } from '@nestjs/mapped-types';
-import { CreatePaymentMethodDto } from './create-payment-method.dto';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsDate, IsArray, IsEnum, IsEmail, IsNotEmpty } from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+
+
+
 
 export class UpdatePaymentMethodDto extends PartialType(CreatePaymentMethodDto) {}

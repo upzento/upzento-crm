@@ -1,23 +1,9 @@
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Patch,
-  Param,
-  Delete,
-  UseGuards,
-  Query,
-  ParseUUIDPipe,
-  Request,
-  BadRequestException,
-} from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
-import { PaymentService } from './payment.service';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, ParseUUIDPipe, Request, BadRequestException } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiProperty, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
 import { RequiresTenantType } from '../auth/decorators/tenant-type.decorator';
-
+import { PaymentService } from './payment.service';
 import { CreatePlanDto } from './dto/create-plan.dto';
 import { UpdatePlanDto } from './dto/update-plan.dto';
 import { CreateSubscriptionDto } from './dto/create-subscription.dto';

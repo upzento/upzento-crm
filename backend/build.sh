@@ -29,3 +29,8 @@ if [ $? -ne 0 ]; then
 fi
 
 echo "Build process completed!"
+
+# Simple build script that uses tsc with skipLibCheck
+echo "Building backend with tsc..."
+npx tsc --skipLibCheck
+echo "Build completed!"

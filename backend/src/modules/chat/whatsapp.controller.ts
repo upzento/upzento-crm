@@ -1,3 +1,9 @@
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request, ParseUUIDPipe, BadRequestException, NotFoundException } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
+import { RequiresTenantType } from '../auth/decorators/tenant-type.decorator';
+import { WhatsappService } from './whatsapp.service';
 import {
   Controller,
   Get,
@@ -11,8 +17,8 @@ import {
 } from '@nestjs/common';
 import { WhatsAppService } from './whatsapp.service';
 import { CreateWhatsappAccountDto } from './dto/create-whatsapp-account.dto';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
+
+
 
 @Controller('chat/whatsapp')
 @UseGuards(JwtAuthGuard, TenantContextGuard)

@@ -12,9 +12,11 @@ import {
   ParseUUIDPipe,
   ParseArrayPipe,
   HttpCode,
-  HttpStatus
+  HttpStatus,
+  BadRequestException,
+  NotFoundException
 } from '@nestjs/common';
-import { ApiProperty } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
 import { ContactsService } from './contacts.service';
 import { CreateContactDto } from './dto/create-contact.dto';
 import { UpdateContactDto } from './dto/update-contact.dto';
