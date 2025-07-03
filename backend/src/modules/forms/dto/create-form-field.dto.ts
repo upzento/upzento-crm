@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum, IsObject, IsUUID, IsBoolean, IsNumber } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsDate, IsArray, IsEnum, IsObject, IsNotEmpty } from 'class-validator';
 import { FormFieldType } from '@prisma/client';
 
 export class CreateFormFieldDto {

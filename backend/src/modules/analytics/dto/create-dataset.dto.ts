@@ -1,12 +1,4 @@
-import { 
-  IsString, 
-  IsOptional, 
-  IsEnum, 
-  IsInt,
-  IsUUID,
-  IsObject,
-  Min
-} from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsDate, IsArray, IsEnum, IsObject, IsNotEmpty } from 'class-validator';
 
 export enum DataType {
   TIME_SERIES = 'TIME_SERIES',

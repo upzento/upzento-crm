@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsUUID, IsInt, IsEmail, IsEnum, IsArray, Min, Max } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsDate, IsArray, IsEnum, IsObject, IsNotEmpty } from 'class-validator';
 
 export enum ReviewSource {
   DIRECT = 'DIRECT',

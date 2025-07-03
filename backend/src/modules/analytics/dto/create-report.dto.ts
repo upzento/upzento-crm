@@ -1,12 +1,4 @@
-import { 
-  IsString, 
-  IsOptional, 
-  IsEnum, 
-  IsArray,
-  IsUUID,
-  IsObject,
-  IsEmail
-} from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsDate, IsArray, IsEnum, IsObject, IsNotEmpty } from 'class-validator';
 
 export enum ReportFormat {
   PDF = 'PDF',

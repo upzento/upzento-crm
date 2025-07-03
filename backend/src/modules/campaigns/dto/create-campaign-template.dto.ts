@@ -1,9 +1,4 @@
-import { 
-  IsString, 
-  IsOptional, 
-  IsEnum, 
-  IsUUID
-} from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsDate, IsArray, IsEnum, IsObject, IsNotEmpty } from 'class-validator';
 import { MessageType } from './create-campaign-message.dto';
 
 export class CreateCampaignTemplateDto {

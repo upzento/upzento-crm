@@ -1,4 +1,4 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsDate, IsArray, IsEnum, IsObject, IsNotEmpty } from 'class-validator';
 import { OrderStatus, PaymentStatus, ShippingStatus } from './create-order.dto';
 
 export class UpdateOrderDto {

@@ -1,14 +1,4 @@
-import { 
-  IsString, 
-  IsOptional, 
-  IsNumber, 
-  IsEnum, 
-  IsBoolean, 
-  IsArray, 
-  IsUUID, 
-  IsDateString,
-  Min
-} from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsDate, IsArray, IsEnum, IsObject, IsNotEmpty } from 'class-validator';
 
 export enum CouponType {
   PERCENTAGE = 'PERCENTAGE',

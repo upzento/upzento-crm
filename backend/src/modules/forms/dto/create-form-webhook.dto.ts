@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsEnum, IsObject, IsUUID, IsBoolean } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsDate, IsArray, IsEnum, IsObject, IsNotEmpty } from 'class-validator';
 import { WebhookMethod } from '@prisma/client';
 
 export class CreateFormWebhookDto {

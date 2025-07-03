@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsUUID, IsInt, IsEnum, IsArray, Min, Max } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsDate, IsArray, IsEnum, IsObject, IsNotEmpty } from 'class-validator';
 import { PartialType } from '@nestjs/mapped-types';
 import { CreateReviewDto } from './create-review.dto';
 

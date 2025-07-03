@@ -1,4 +1,4 @@
-import { IsString, IsOptional, IsUUID, IsEnum, IsInt, IsDate, IsDateString } from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsDate, IsArray, IsEnum, IsObject, IsNotEmpty } from 'class-validator';
 
 export enum CallDirection {
   INBOUND = 'INBOUND',

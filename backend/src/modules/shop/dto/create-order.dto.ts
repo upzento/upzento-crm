@@ -1,14 +1,4 @@
-import { 
-  IsString, 
-  IsOptional, 
-  IsNumber, 
-  IsEnum, 
-  IsArray, 
-  IsUUID, 
-  IsEmail,
-  Min,
-  ValidateNested
-} from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsDate, IsArray, IsEnum, IsObject, IsNotEmpty } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export enum OrderStatus {

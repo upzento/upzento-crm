@@ -1,11 +1,4 @@
-import { 
-  IsString, 
-  IsOptional, 
-  IsEnum, 
-  IsBoolean, 
-  IsUUID,
-  IsObject
-} from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsDate, IsArray, IsEnum, IsObject, IsNotEmpty } from 'class-validator';
 
 export enum IntegrationType {
   GOOGLE_ANALYTICS = 'GOOGLE_ANALYTICS',

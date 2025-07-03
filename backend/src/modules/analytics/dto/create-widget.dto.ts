@@ -1,9 +1,4 @@
-import { 
-  IsString, 
-  IsEnum, 
-  IsUUID,
-  IsObject
-} from 'class-validator';
+import { IsString, IsNumber, IsOptional, IsBoolean, IsDate, IsArray, IsEnum, IsObject, IsNotEmpty } from 'class-validator';
 
 export enum WidgetType {
   BAR_CHART = 'BAR_CHART',
