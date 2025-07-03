@@ -25,6 +25,9 @@
     "prisma:migrate:dev": "prisma migrate dev",
     "prisma:migrate:deploy": "prisma migrate deploy",
     "prisma:studio": "prisma studio",
+    "prisma:seed": "node prisma/seed.js",
+    "db:setup": "node setup-database.js",
+    "db:setup:seed": "node setup-database.js --seed",
     "start:health": "node health-check.js"
   },
   "keywords": [
@@ -103,5 +106,8 @@
     ],
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
+  },
+  "prisma": {
+    "seed": "node prisma/seed.js"
   }
 }
