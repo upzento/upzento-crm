@@ -1,81 +1,55 @@
-'use client';
+"use client";
 
-import { createContext, useContext, useEffect, useState } from 'react';
+import * as React from "react";
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+import { type ThemeProviderProps } from "next-themes/dist/types";
 
-type Theme = 'dark' | 'light';
+// Create a CSS variables for our cosmic theme
+const createCssVariables = () => {
+  if (typeof document === "undefined") return;
 
-type ThemeProviderProps = {
-  children: React.ReactNode;
-  defaultTheme?: Theme;
-  storageKey?: string;
+  const root = document.documentElement;
+  
+  // Dark Theme (Default)
+  root.style.setProperty("--background", "#0F1123");
+  root.style.setProperty("--surface", "#1A1C2E");
+  root.style.setProperty("--primary", "#3D5AFE");
+  root.style.setProperty("--secondary", "#FF4081");
+  root.style.setProperty("--accent", "#FFD700");
+  root.style.setProperty("--error", "#FF3D00");
+  root.style.setProperty("--success", "#00E676");
+  root.style.setProperty("--warning", "#FFEA00");
+  root.style.setProperty("--text-primary", "#FFFFFF");
+  root.style.setProperty("--text-secondary", "#B0B0C0");
+
+  // Add CSS variables for gradients
+  root.style.setProperty(
+    "--cosmic-gradient",
+    "linear-gradient(to right, #3D5AFE, #AA00FF)"
+  );
+  root.style.setProperty(
+    "--nebula-gradient",
+    "linear-gradient(to right, #FF4081, #AA00FF)"
+  );
+  root.style.setProperty(
+    "--aurora-gradient",
+    "linear-gradient(to right, #00E676, #3D5AFE)"
+  );
 };
 
-type ThemeProviderState = {
-  theme: Theme;
-  setTheme: (theme: Theme) => void;
-  toggleTheme: () => void;
-};
-
-const initialState: ThemeProviderState = {
-  theme: 'dark',
-  setTheme: () => null,
-  toggleTheme: () => null,
-};
-
-const ThemeProviderContext = createContext<ThemeProviderState>(initialState);
-
-export function ThemeProvider({
-  children,
-  defaultTheme = 'dark',
-  storageKey = 'upzento-theme',
-  ...props
-}: ThemeProviderProps) {
-  const [theme, setTheme] = useState<Theme>(defaultTheme);
-
-  useEffect(() => {
-    const savedTheme = localStorage.getItem(storageKey) as Theme | null;
-    
-    if (savedTheme) {
-      setTheme(savedTheme);
-    } else {
-      // Check system preference
-      const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-      setTheme(systemPrefersDark ? 'dark' : 'light');
-    }
-  }, [storageKey]);
-
-  useEffect(() => {
-    const root = window.document.documentElement;
-    
-    root.classList.remove('light', 'dark');
-    root.classList.add(theme);
-    
-    localStorage.setItem(storageKey, theme);
-  }, [theme, storageKey]);
-
-  const toggleTheme = () => {
-    setTheme(theme === 'dark' ? 'light' : 'dark');
-  };
-
-  const value = {
-    theme,
-    setTheme,
-    toggleTheme,
-  };
+export function ThemeProvider({ children, ...props }: ThemeProviderProps) {
+  React.useEffect(() => {
+    createCssVariables();
+  }, []);
 
   return (
-    <ThemeProviderContext.Provider {...props} value={value}>
+    <NextThemesProvider
+      attribute="class"
+      defaultTheme="dark"
+      enableSystem
+      {...props}
+    >
       {children}
-    </ThemeProviderContext.Provider>
+    </NextThemesProvider>
   );
-}
-
-export const useTheme = () => {
-  const context = useContext(ThemeProviderContext);
-  
-  if (context === undefined) {
-    throw new Error('useTheme must be used within a ThemeProvider');
-  }
-  
-  return context;
-}; 
+} 

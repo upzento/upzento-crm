@@ -88,7 +88,7 @@ export function DropdownMenuContent({
   return open ? (
     <div
       className={cn(
-        "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-popover p-1 text-popover-foreground shadow-md",
+        "z-50 min-w-[8rem] overflow-hidden rounded-md border bg-surface p-1 text-text-primary shadow-md backdrop-blur-sm",
         {
           "left-0": align === "start",
           "right-0": align === "end",
@@ -110,7 +110,7 @@ export function DropdownMenuLabel({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("px-2 py-1.5 text-sm font-semibold", className)}
+      className={cn("px-2 py-1.5 text-sm font-semibold text-text-primary", className)}
       {...props}
     />
   );
@@ -122,7 +122,7 @@ export function DropdownMenuSeparator({
 }: React.HTMLAttributes<HTMLDivElement>) {
   return (
     <div
-      className={cn("-mx-1 my-1 h-px bg-muted", className)}
+      className={cn("-mx-1 my-1 h-px bg-surface/60", className)}
       {...props}
     />
   );
@@ -135,7 +135,7 @@ export function DropdownMenuItem({
   return (
     <button
       className={cn(
-        "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground data-[disabled]:pointer-events-none data-[disabled]:opacity-50",
+        "relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-primary/20 focus:text-text-primary data-[disabled]:pointer-events-none data-[disabled]:opacity-50 hover:bg-primary/10",
         className
       )}
       {...props}

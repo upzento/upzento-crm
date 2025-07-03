@@ -9,25 +9,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        // Dark theme colors
-        'dark-bg': '#0F1123',
-        'dark-surface': '#1A1C2E',
-        'dark-text-primary': '#FFFFFF',
-        'dark-text-secondary': '#B0B0C0',
-        
-        // Light theme colors
-        'light-bg': '#F8F9FE',
-        'light-surface': '#FFFFFF',
-        'light-text-primary': '#1A1C2E',
-        'light-text-secondary': '#5F6180',
-        
-        // Brand colors (shared between themes)
-        'primary': '#3D5AFE',
-        'secondary': '#FF4081',
-        'accent': '#FFD700',
-        'success': '#00E676',
-        'error': '#FF3D00',
-        'warning': '#FFEA00',
+        border: "hsl(var(--border))",
+        background: "hsl(var(--background))",
+        surface: "hsl(var(--surface))",
+        primary: "hsl(var(--primary))",
+        secondary: "hsl(var(--secondary))",
+        accent: "hsl(var(--accent))",
+        error: "hsl(var(--error))",
+        success: "hsl(var(--success))",
+        warning: "hsl(var(--warning))",
+        "text-primary": "hsl(var(--text-primary))",
+        "text-secondary": "hsl(var(--text-secondary))",
         
         // Additional cosmic palette
         'cosmic-blue': {

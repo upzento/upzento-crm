@@ -10,7 +10,7 @@ export default function ClientProviders({
   children: React.ReactNode;
 }) {
   return (
-    <ThemeProvider defaultTheme="dark" storageKey="upzento-theme">
+    <ThemeProvider>
       <AuthProvider>
         {children}
       </AuthProvider>

@@ -118,12 +118,12 @@ export default function ClientsPage() {
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight">Client Management</h1>
-        <Button>
+        <Button variant="cosmic">
           <Plus className="mr-2 h-4 w-4" /> Add Client
         </Button>
       </div>
       
-      <Card>
+      <Card gradient>
         <CardHeader>
           <CardTitle>Clients</CardTitle>
           <CardDescription>
@@ -134,7 +134,7 @@ export default function ClientsPage() {
           <div className="flex items-center justify-between py-4">
             <div className="flex items-center gap-4">
               <div className="relative w-full max-w-sm">
-                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
+                <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-text-secondary" />
                 <Input
                   placeholder="Search clients..."
                   className="pl-8"
@@ -143,7 +143,7 @@ export default function ClientsPage() {
                 />
               </div>
               <select
-                className="border rounded-md px-3 py-2"
+                className="border rounded-md px-3 py-2 bg-surface text-text-primary border-input"
                 value={agencyFilter}
                 onChange={(e) => setAgencyFilter(e.target.value)}
               >
@@ -175,7 +175,7 @@ export default function ClientsPage() {
                     <TableCell className="font-medium">{client.name}</TableCell>
                     <TableCell>
                       <div className="flex items-center">
-                        <Building2 className="mr-2 h-4 w-4 text-muted-foreground" />
+                        <Building2 className="mr-2 h-4 w-4 text-text-secondary" />
                         {client.agency}
                       </div>
                     </TableCell>
@@ -184,8 +184,8 @@ export default function ClientsPage() {
                     <TableCell>
                       <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
                         client.status === 'active' 
-                          ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300' 
-                          : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'
+                          ? 'bg-success/20 text-success' 
+                          : 'bg-error/20 text-error'
                       }`}>
                         {client.status}
                       </span>
@@ -212,7 +212,7 @@ export default function ClientsPage() {
                             <Building2 className="mr-2 h-4 w-4" /> Change Agency
                           </DropdownMenuItem>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem className="text-red-600">
+                          <DropdownMenuItem className="text-error">
                             <Trash2 className="mr-2 h-4 w-4" /> Delete Client
                           </DropdownMenuItem>
                         </DropdownMenuContent>
