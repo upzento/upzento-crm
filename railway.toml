@@ -1,0 +1,8 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "cd backend && npx tsc"
+
+[deploy]
+startCommand = "cd backend && node dist/main.js"
+healthcheckPath = "/api/health"
+healthcheckTimeout = 100 

@@ -4,10 +4,10 @@ nixOverlays = []
 nixpkgsArchive = "ffeebf0acf3ae8b29f8c7049cd911b9636efd7e7"
 
 [phases.install]
-cmds = ['npm install']
+cmds = ['cd backend && npm install']
 
 [phases.build]
-cmds = ['chmod +x build.sh', './build.sh']
+cmds = ['cd backend && npx tsc || true']
 
 [start]
-cmd = 'npm start' 
+cmd = 'cd backend && npm run start:prod' 
