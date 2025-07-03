@@ -3,19 +3,11 @@ import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiQuery, A
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
 import { RequiresTenantType } from '../auth/decorators/tenant-type.decorator';
-import { Reviews-embedService } from './reviews-embed.service';
-import {
-  Controller,
-  Get,
-  Post,
-  Body,
-  Param,
-  Headers,
-  BadRequestException,
-} from '@nestjs/common';
+import { ReviewsEmbedService } from './reviews-embed.service';
 import { ReviewsService } from './reviews.service';
 import { CreateReviewDto } from './dto/create-review.dto';
 
+@ApiTags('reviews-embed')
 @Controller('reviews-embed')
 export class ReviewsEmbedController {
   constructor(private readonly reviewsService: ReviewsService) {}

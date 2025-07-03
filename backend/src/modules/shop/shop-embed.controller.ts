@@ -1,20 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request, ParseUUIDPipe, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request, ParseUUIDPipe, BadRequestException, NotFoundException, Headers, ForbiddenException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
 import { RequiresTenantType } from '../auth/decorators/tenant-type.decorator';
-import { Shop-embedService } from './shop-embed.service';
-import {
-  Controller,
-  Get,
-  Param,
-  Query,
-  Headers,
-  NotFoundException,
-  ForbiddenException,
-} from '@nestjs/common';
 import { ShopService } from './shop.service';
 
+@ApiTags('shop-embed')
 @Controller('shop-embed')
 export class ShopEmbedController {
   constructor(private readonly shopService: ShopService) {}
