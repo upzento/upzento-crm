@@ -17,10 +17,10 @@
     --warning: 45 100% 51%;
     --text-primary: 234 29% 15%;
     --text-secondary: 231 19% 44%;
-
+    
     --radius: 0.5rem;
   }
-
+  
   .dark {
     /* Dark Theme (Default) */
     --background: 234 34% 10%;
@@ -38,17 +38,17 @@
   * {
     @apply border-border;
   }
-
+  
   body {
     @apply bg-background text-text-primary;
     font-family: 'Space Grotesk', sans-serif;
   }
-
+  
   h1, h2, h3, h4, h5, h6 {
     font-family: 'Space Grotesk', sans-serif;
     font-weight: 600;
   }
-
+  
   code, pre {
     font-family: 'JetBrains Mono', monospace;
   }
@@ -62,7 +62,7 @@
   .cosmic-card-gradient {
     @apply border-0 bg-gradient-to-r from-primary/10 to-secondary/10 border-l-4 border-l-primary;
   }
-
+  
   .cosmic-button {
     @apply bg-primary text-white hover:bg-primary/90 shadow-sm hover:shadow-md transition-all duration-300 hover:translate-y-[-2px];
   }
@@ -74,7 +74,7 @@
   .nebula-button-gradient {
     @apply bg-gradient-to-r from-secondary to-[#AA00FF] text-white hover:shadow-[0_0_16px_rgba(255,64,129,0.5)] transition-all duration-300 hover:translate-y-[-2px];
   }
-
+  
   .aurora-button-gradient {
     @apply bg-gradient-to-r from-success to-primary text-white hover:shadow-[0_0_16px_rgba(0,230,118,0.5)] transition-all duration-300 hover:translate-y-[-2px];
   }
