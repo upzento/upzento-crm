@@ -260,4 +260,83 @@ export const contactsApi = {
     apiClient.get(`/contacts/${contactId}/activity-stats`),
 };
 
-export default apiClient; 
+export default apiClient;
+
+export class ApiClient {
+  private baseUrl: string;
+  private headers: Record<string, string>;
+
+  constructor() {
+    this.baseUrl = process.env.NEXT_PUBLIC_API_URL || '/api';
+    this.headers = {
+      'Content-Type': 'application/json',
+    };
+  }
+
+  private async request(
+    method: string,
+    endpoint: string,
+    data?: any
+  ): Promise<any> {
+    const url = `${this.baseUrl}${endpoint}`;
+    const options: RequestInit = {
+      method,
+      headers: this.headers,
+      credentials: 'include',
+    };
+
+    if (data) {
+      options.body = JSON.stringify(data);
+    }
+
+    try {
+      const response = await fetch(url, options);
+
+      if (!response.ok) {
+        const error = await response.json();
+        throw new Error(error.message || 'API request failed');
+      }
+
+      const contentType = response.headers.get('content-type');
+      if (contentType && contentType.includes('application/json')) {
+        return await response.json();
+      }
+
+      return await response.text();
+    } catch (error) {
+      console.error('API request error:', error);
+      throw error;
+    }
+  }
+
+  // Set authorization token
+  setAuthToken(token: string) {
+    this.headers['Authorization'] = `Bearer ${token}`;
+  }
+
+  // Clear authorization token
+  clearAuthToken() {
+    delete this.headers['Authorization'];
+  }
+
+  // HTTP Methods
+  async get(endpoint: string) {
+    return this.request('GET', endpoint);
+  }
+
+  async post(endpoint: string, data?: any) {
+    return this.request('POST', endpoint, data);
+  }
+
+  async put(endpoint: string, data?: any) {
+    return this.request('PUT', endpoint, data);
+  }
+
+  async patch(endpoint: string, data?: any) {
+    return this.request('PATCH', endpoint, data);
+  }
+
+  async delete(endpoint: string) {
+    return this.request('DELETE', endpoint);
+  }
+} 

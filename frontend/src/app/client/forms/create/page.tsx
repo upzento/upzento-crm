@@ -29,6 +29,7 @@ const templates = [
     fields: [
       { type: 'text', label: 'Name', required: true },
       { type: 'email', label: 'Email', required: true },
+      { type: 'phone', label: 'Phone', required: false },
       { type: 'textarea', label: 'Message', required: true }
     ]
   },
@@ -40,7 +41,13 @@ const templates = [
     fields: [
       { type: 'text', label: 'Name', required: true },
       { type: 'email', label: 'Email', required: true },
-      { type: 'rating', label: 'How satisfied are you?', required: true },
+      { type: 'rating', label: 'How satisfied are you with our service?', required: true },
+      { type: 'select', label: 'How did you hear about us?', required: true, options: [
+        { label: 'Search Engine', value: 'search' },
+        { label: 'Social Media', value: 'social' },
+        { label: 'Referral', value: 'referral' },
+        { label: 'Other', value: 'other' }
+      ]},
       { type: 'textarea', label: 'What could we improve?', required: false }
     ]
   },
@@ -54,6 +61,155 @@ const templates = [
       { type: 'email', label: 'Email', required: true },
       { type: 'password', label: 'Password', required: true },
       { type: 'password', label: 'Confirm Password', required: true }
+    ]
+  },
+  {
+    id: 'appointment',
+    name: 'Appointment Booking',
+    description: 'Schedule appointments and consultations',
+    icon: '📅',
+    fields: [
+      { type: 'text', label: 'Name', required: true },
+      { type: 'email', label: 'Email', required: true },
+      { type: 'phone', label: 'Phone', required: true },
+      { type: 'date', label: 'Preferred Date', required: true },
+      { type: 'select', label: 'Preferred Time', required: true, options: [
+        { label: 'Morning (9AM-12PM)', value: 'morning' },
+        { label: 'Afternoon (1PM-5PM)', value: 'afternoon' },
+        { label: 'Evening (6PM-8PM)', value: 'evening' }
+      ]},
+      { type: 'select', label: 'Service Type', required: true, options: [
+        { label: 'Initial Consultation', value: 'consultation' },
+        { label: 'Follow-up', value: 'followup' },
+        { label: 'General Appointment', value: 'general' }
+      ]},
+      { type: 'textarea', label: 'Additional Notes', required: false }
+    ]
+  },
+  {
+    id: 'event',
+    name: 'Event Registration',
+    description: 'Event signup with ticket selection',
+    icon: '🎫',
+    fields: [
+      { type: 'text', label: 'Full Name', required: true },
+      { type: 'email', label: 'Email', required: true },
+      { type: 'phone', label: 'Phone', required: true },
+      { type: 'select', label: 'Ticket Type', required: true, options: [
+        { label: 'General Admission', value: 'general' },
+        { label: 'VIP', value: 'vip' },
+        { label: 'Group (5+ people)', value: 'group' }
+      ]},
+      { type: 'number', label: 'Number of Tickets', required: true },
+      { type: 'checkbox', label: 'Dietary Preferences', required: false, options: [
+        { label: 'Vegetarian', value: 'vegetarian' },
+        { label: 'Vegan', value: 'vegan' },
+        { label: 'Gluten-free', value: 'gluten-free' }
+      ]},
+      { type: 'textarea', label: 'Special Requirements', required: false }
+    ]
+  },
+  {
+    id: 'job',
+    name: 'Job Application',
+    description: 'Career application with file upload',
+    icon: '💼',
+    fields: [
+      { type: 'text', label: 'Full Name', required: true },
+      { type: 'email', label: 'Email', required: true },
+      { type: 'phone', label: 'Phone', required: true },
+      { type: 'select', label: 'Position Applied For', required: true, options: [
+        { label: 'Software Developer', value: 'developer' },
+        { label: 'Product Manager', value: 'pm' },
+        { label: 'UI/UX Designer', value: 'designer' },
+        { label: 'Sales Representative', value: 'sales' }
+      ]},
+      { type: 'file', label: 'Resume/CV', required: true },
+      { type: 'file', label: 'Cover Letter', required: false },
+      { type: 'textarea', label: 'Why do you want to work with us?', required: true }
+    ]
+  },
+  {
+    id: 'support',
+    name: 'Support Ticket',
+    description: 'Customer support request form',
+    icon: '🎫',
+    fields: [
+      { type: 'text', label: 'Name', required: true },
+      { type: 'email', label: 'Email', required: true },
+      { type: 'select', label: 'Issue Type', required: true, options: [
+        { label: 'Technical Problem', value: 'technical' },
+        { label: 'Billing Issue', value: 'billing' },
+        { label: 'Feature Request', value: 'feature' },
+        { label: 'General Question', value: 'general' }
+      ]},
+      { type: 'text', label: 'Subject', required: true },
+      { type: 'textarea', label: 'Issue Description', required: true },
+      { type: 'file', label: 'Attachments', required: false }
+    ]
+  },
+  {
+    id: 'order',
+    name: 'Product Order',
+    description: 'E-commerce order form with calculations',
+    icon: '🛒',
+    fields: [
+      { type: 'text', label: 'Full Name', required: true },
+      { type: 'email', label: 'Email', required: true },
+      { type: 'phone', label: 'Phone', required: true },
+      { type: 'text', label: 'Shipping Address', required: true },
+      { type: 'select', label: 'Product', required: true, options: [
+        { label: 'Basic Package ($99)', value: 'basic' },
+        { label: 'Premium Package ($199)', value: 'premium' },
+        { label: 'Enterprise Package ($499)', value: 'enterprise' }
+      ]},
+      { type: 'number', label: 'Quantity', required: true },
+      { type: 'calculation', label: 'Total', required: true },
+      { type: 'select', label: 'Shipping Method', required: true, options: [
+        { label: 'Standard Shipping ($10)', value: 'standard' },
+        { label: 'Express Shipping ($25)', value: 'express' }
+      ]}
+    ]
+  },
+  {
+    id: 'feedback',
+    name: 'Product Feedback',
+    description: 'Detailed product feedback form',
+    icon: '💭',
+    fields: [
+      { type: 'text', label: 'Name', required: true },
+      { type: 'email', label: 'Email', required: true },
+      { type: 'select', label: 'Product Name', required: true, options: [
+        { label: 'Product A', value: 'product_a' },
+        { label: 'Product B', value: 'product_b' },
+        { label: 'Product C', value: 'product_c' }
+      ]},
+      { type: 'rating', label: 'Product Quality', required: true },
+      { type: 'rating', label: 'Value for Money', required: true },
+      { type: 'rating', label: 'Customer Service', required: true },
+      { type: 'textarea', label: 'What do you like most?', required: true },
+      { type: 'textarea', label: 'What could be improved?', required: false }
+    ]
+  },
+  {
+    id: 'newsletter',
+    name: 'Newsletter Signup',
+    description: 'Email newsletter subscription form',
+    icon: '📧',
+    fields: [
+      { type: 'text', label: 'Name', required: true },
+      { type: 'email', label: 'Email', required: true },
+      { type: 'checkbox', label: 'Interests', required: true, options: [
+        { label: 'Company News', value: 'news' },
+        { label: 'Product Updates', value: 'products' },
+        { label: 'Industry Insights', value: 'insights' },
+        { label: 'Events & Webinars', value: 'events' }
+      ]},
+      { type: 'select', label: 'Email Frequency', required: true, options: [
+        { label: 'Daily', value: 'daily' },
+        { label: 'Weekly', value: 'weekly' },
+        { label: 'Monthly', value: 'monthly' }
+      ]}
     ]
   }
 ]

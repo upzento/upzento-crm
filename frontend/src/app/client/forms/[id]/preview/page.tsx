@@ -2,102 +2,26 @@
 
 import React, { useState } from 'react';
 import { useParams } from 'next/navigation';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { MultiStepFormRenderer } from '@/components/forms/multi-step-form-renderer';
+import { FormEmbed } from '@/components/forms/form-embed';
+import { formService } from '@/lib/services/form-service';
 import { Copy, ExternalLink } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
-
-// Mock data - replace with API call
-const mockForm = {
-  id: '1',
-  name: 'Contact Form',
-  description: 'Contact form for customer inquiries',
-  steps: [
-    {
-      id: 'step-1',
-      title: 'Contact Information',
-      description: 'Please provide your contact details',
-      layout: 'grid',
-      alignment: 'left',
-      fields: [
-        {
-          id: 'name',
-          type: 'text',
-          label: 'Full Name',
-          placeholder: 'Enter your name',
-          required: true,
-        },
-        {
-          id: 'email',
-          type: 'email',
-          label: 'Email Address',
-          placeholder: 'Enter your email',
-          required: true,
-        },
-        {
-          id: 'phone',
-          type: 'phone',
-          label: 'Phone Number',
-          placeholder: 'Enter your phone number',
-          required: false,
-        },
-      ],
-    },
-    {
-      id: 'step-2',
-      title: 'Message',
-      description: 'What would you like to tell us?',
-      layout: 'rows',
-      alignment: 'left',
-      fields: [
-        {
-          id: 'subject',
-          type: 'text',
-          label: 'Subject',
-          placeholder: 'Enter message subject',
-          required: true,
-        },
-        {
-          id: 'message',
-          type: 'textarea',
-          label: 'Message',
-          placeholder: 'Enter your message',
-          required: true,
-        },
-      ],
-    },
-  ],
-};
+import { toast } from '@/components/ui/use-toast';
 
 export default function FormPreviewPage() {
   const params = useParams();
   const formId = params.id as string;
-  const { toast } = useToast();
   const [activeTab, setActiveTab] = useState('preview');
 
-  const handleFormSubmit = async (data: any) => {
-    // TODO: Implement form submission
-    console.log('Form submitted:', data);
-    toast({
-      title: 'Success',
-      description: 'Form submitted successfully!',
-    });
-  };
-
-  const getEmbedCode = () => {
-    return `<iframe
-  src="https://app.upzento.com/embed/forms/${formId}"
-  width="100%"
-  height="600"
-  frameborder="0"
-></iframe>`;
-  };
-
-  const handleCopyEmbed = async () => {
+  const handleCopyEmbed = async (type: 'iframe' | 'script') => {
     try {
-      await navigator.clipboard.writeText(getEmbedCode());
+      const code = type === 'iframe' 
+        ? formService.getEmbedCode(formId)
+        : formService.getEmbedScript(formId);
+      
+      await navigator.clipboard.writeText(code);
       toast({
         title: 'Success',
         description: 'Embed code copied to clipboard!',
@@ -119,11 +43,11 @@ export default function FormPreviewPage() {
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-2xl font-bold">{mockForm.name}</h1>
-          <p className="text-muted-foreground">{mockForm.description}</p>
+          <h1 className="text-2xl font-bold">Form Preview</h1>
+          <p className="text-muted-foreground">Preview and get embed code for your form</p>
         </div>
         <div className="flex gap-2">
-          <Button variant="outline" onClick={handleCopyEmbed}>
+          <Button variant="outline" onClick={() => handleCopyEmbed('iframe')}>
             <Copy className="h-4 w-4 mr-2" />
             Copy Embed Code
           </Button>
@@ -144,34 +68,69 @@ export default function FormPreviewPage() {
           <Card>
             <CardContent className="p-6">
               <div className="max-w-2xl mx-auto">
-                <MultiStepFormRenderer
-                  steps={mockForm.steps}
-                  onSubmit={handleFormSubmit}
-                />
+                <FormEmbed formId={formId} mode="preview" />
               </div>
             </CardContent>
           </Card>
         </TabsContent>
 
         <TabsContent value="embed">
-          <Card>
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                <p className="text-sm text-muted-foreground">
-                  Copy and paste this code into your website where you want the form to appear.
-                </p>
-                <pre className="bg-muted p-4 rounded-lg overflow-x-auto">
-                  <code>{getEmbedCode()}</code>
-                </pre>
-                <div className="flex gap-2">
-                  <Button onClick={handleCopyEmbed}>
+          <div className="grid gap-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>IFrame Embed</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    Copy and paste this code into your website where you want the form to appear.
+                  </p>
+                  <pre className="bg-muted p-4 rounded-lg overflow-x-auto">
+                    <code>{formService.getEmbedCode(formId)}</code>
+                  </pre>
+                  <Button onClick={() => handleCopyEmbed('iframe')}>
                     <Copy className="h-4 w-4 mr-2" />
                     Copy Code
                   </Button>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>JavaScript Embed</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <p className="text-sm text-muted-foreground">
+                    For more flexibility, use our JavaScript embed code. This allows the form to adapt to your website's styles.
+                  </p>
+                  <pre className="bg-muted p-4 rounded-lg overflow-x-auto">
+                    <code>{formService.getEmbedScript(formId)}</code>
+                  </pre>
+                  <Button onClick={() => handleCopyEmbed('script')}>
+                    <Copy className="h-4 w-4 mr-2" />
+                    Copy Code
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card>
+              <CardHeader>
+                <CardTitle>Domain Verification</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-sm text-muted-foreground">
+                  For security reasons, you need to verify your domain before embedding the form.
+                  Add this TXT record to your domain's DNS settings:
+                </p>
+                <pre className="bg-muted p-4 rounded-lg mt-4 overflow-x-auto">
+                  <code>upzento-verify={formId}</code>
+                </pre>
+              </CardContent>
+            </Card>
+          </div>
         </TabsContent>
       </Tabs>
     </div>

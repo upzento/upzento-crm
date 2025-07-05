@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,9 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, ArrowRight, Send } from 'lucide-react';
+import { formService } from '@/lib/services/form-service';
+import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
+import { toast } from '@/components/ui/use-toast';
 
 interface FormField {
   id: string;
@@ -31,17 +34,26 @@ interface FormStep {
 }
 
 interface MultiStepFormRendererProps {
+  formId: string;
   steps: FormStep[];
   onSubmit: (data: any) => void;
 }
 
-export const MultiStepFormRenderer: React.FC<MultiStepFormRendererProps> = ({
+const FormRenderer: React.FC<MultiStepFormRendererProps> = ({
+  formId,
   steps,
   onSubmit,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const { executeRecaptcha } = useGoogleReCaptcha();
+
+  useEffect(() => {
+    // Track form view
+    formService.trackFormView(formId);
+  }, [formId]);
 
   const validateStep = () => {
     const currentFields = steps[currentStep].fields;
@@ -74,9 +86,50 @@ export const MultiStepFormRenderer: React.FC<MultiStepFormRendererProps> = ({
     setCurrentStep(prev => Math.max(prev - 1, 0));
   };
 
-  const handleSubmit = () => {
+  const handleSubmit = async () => {
     if (validateStep()) {
-      onSubmit(formData);
+      try {
+        // Execute reCAPTCHA
+        let captchaToken;
+        if (executeRecaptcha) {
+          captchaToken = await executeRecaptcha('form_submission');
+        }
+
+        // Track form submission
+        await formService.trackFormSubmission(formId, formData);
+
+        // Submit form data
+        const response = await formService.submitForm({
+          formId,
+          data: formData,
+          captchaToken,
+          metadata: {
+            userAgent: navigator.userAgent,
+            referrer: document.referrer,
+            submittedAt: new Date().toISOString(),
+          },
+        });
+
+        // Show success message
+        toast({
+          title: 'Success',
+          description: 'Form submitted successfully!',
+        });
+
+        // Handle redirect if configured
+        if (response.redirectUrl) {
+          window.location.href = response.redirectUrl;
+        }
+
+        onSubmit(response);
+      } catch (error) {
+        console.error('Form submission error:', error);
+        toast({
+          title: 'Error',
+          description: 'Failed to submit form. Please try again.',
+          variant: 'destructive',
+        });
+      }
     }
   };
 
@@ -224,4 +277,17 @@ export const MultiStepFormRenderer: React.FC<MultiStepFormRendererProps> = ({
       </CardContent>
     </Card>
   );
-}; 
+};
+
+export const MultiStepFormRenderer: React.FC<MultiStepFormRendererProps> = (props) => (
+  <GoogleReCaptchaProvider
+    reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
+    scriptProps={{
+      async: true,
+      defer: true,
+      appendTo: 'body',
+    }}
+  >
+    <FormRenderer {...props} />
+  </GoogleReCaptchaProvider>
+); 
