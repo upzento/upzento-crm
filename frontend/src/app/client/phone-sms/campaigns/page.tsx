@@ -32,7 +32,8 @@ import {
   PauseCircle, 
   PlayCircle,
   ChevronRight,
-  FileText
+  FileText,
+  Download
 } from 'lucide-react';
 
 // Mock data for campaigns

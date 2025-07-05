@@ -163,6 +163,514 @@ export default function AnalyticsPage() {
             <TabsTrigger value="conversions">Conversions</TabsTrigger>
             <TabsTrigger value="dashboards">Dashboards</TabsTrigger>
           </TabsList>
+          
+          <TabsContent value="overview" className="mt-0 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium">Total Visitors</CardTitle>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    className="h-4 w-4 text-muted-foreground"
+                  >
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                    <circle cx="9" cy="7" r="4" />
+                    <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                    <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+                  </svg>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{kpiData.visitors.value.toLocaleString()}</div>
+                  <p className={`text-xs ${kpiData.visitors.trend === "up" ? "text-green-500" : "text-red-500"}`}>
+                    {kpiData.visitors.trend === "up" ? "+" : "-"}{Math.abs(kpiData.visitors.change)}% from last period
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium">Page Views</CardTitle>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    className="h-4 w-4 text-muted-foreground"
+                  >
+                    <rect width="20" height="14" x="2" y="5" rx="2" />
+                    <path d="M2 10h20" />
+                  </svg>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{kpiData.pageviews.value.toLocaleString()}</div>
+                  <p className={`text-xs ${kpiData.pageviews.trend === "up" ? "text-green-500" : "text-red-500"}`}>
+                    {kpiData.pageviews.trend === "up" ? "+" : "-"}{Math.abs(kpiData.pageviews.change)}% from last period
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    className="h-4 w-4 text-muted-foreground"
+                  >
+                    <path d="M12 2v20" />
+                    <path d="m17 5-5-3-5 3" />
+                    <path d="m17 19-5 3-5-3" />
+                  </svg>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{kpiData.conversionRate.value}%</div>
+                  <p className={`text-xs ${kpiData.conversionRate.trend === "up" ? "text-green-500" : "text-red-500"}`}>
+                    {kpiData.conversionRate.trend === "up" ? "+" : "-"}{Math.abs(kpiData.conversionRate.change)}% from last period
+                  </p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between pb-2">
+                  <CardTitle className="text-sm font-medium">Bounce Rate</CardTitle>
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    className="h-4 w-4 text-muted-foreground"
+                  >
+                    <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
+                  </svg>
+                </CardHeader>
+                <CardContent>
+                  <div className="text-2xl font-bold">{kpiData.bounceRate.value}%</div>
+                  <p className={`text-xs ${kpiData.bounceRate.trend === "down" ? "text-green-500" : "text-red-500"}`}>
+                    {kpiData.bounceRate.trend === "down" ? "-" : "+"}{Math.abs(kpiData.bounceRate.change)}% from last period
+                  </p>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Traffic Sources</CardTitle>
+                  <CardDescription>
+                    Visitor acquisition channels over time
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="px-2">
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <AreaChart
+                        data={trafficData}
+                        margin={{
+                          top: 10,
+                          right: 30,
+                          left: 0,
+                          bottom: 0,
+                        }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Area type="monotone" dataKey="website" stackId="1" stroke="#3b82f6" fill="#3b82f6" />
+                        <Area type="monotone" dataKey="social" stackId="1" stroke="#8b5cf6" fill="#8b5cf6" />
+                        <Area type="monotone" dataKey="email" stackId="1" stroke="#ec4899" fill="#ec4899" />
+                        <Area type="monotone" dataKey="referral" stackId="1" stroke="#f97316" fill="#f97316" />
+                      </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Conversion Rate</CardTitle>
+                  <CardDescription>
+                    Website conversion rate over time
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="px-2">
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart
+                        data={conversionData}
+                        margin={{
+                          top: 10,
+                          right: 30,
+                          left: 0,
+                          bottom: 0,
+                        }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey="rate" stroke="#3b82f6" activeDot={{ r: 8 }} />
+                      </LineChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Traffic Channels</CardTitle>
+                  <CardDescription>
+                    Distribution of visitor acquisition channels
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px] flex items-center justify-center">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={channelData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {channelData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Device Breakdown</CardTitle>
+                  <CardDescription>
+                    Visitors by device type
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={deviceData}
+                        margin={{
+                          top: 20,
+                          right: 30,
+                          left: 20,
+                          bottom: 5,
+                        }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="value" name="Percentage" fill="#3b82f6" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="traffic" className="mt-0 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Traffic Analysis</CardTitle>
+                <CardDescription>
+                  Detailed breakdown of website traffic sources and patterns
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[400px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      data={trafficData}
+                      margin={{
+                        top: 20,
+                        right: 30,
+                        left: 20,
+                        bottom: 5,
+                      }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis dataKey="name" />
+                      <YAxis />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="website" name="Direct" fill="#3b82f6" />
+                      <Bar dataKey="social" name="Social Media" fill="#8b5cf6" />
+                      <Bar dataKey="email" name="Email" fill="#ec4899" />
+                      <Bar dataKey="referral" name="Referral" fill="#f97316" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Top Landing Pages</CardTitle>
+                  <CardDescription>
+                    Pages with the most visitor entries
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {[
+                      { url: "/home", visits: 3245, bounce: "32%" },
+                      { url: "/products", visits: 2189, bounce: "28%" },
+                      { url: "/blog/top-10-tips", visits: 1654, bounce: "45%" },
+                      { url: "/services", visits: 1432, bounce: "39%" },
+                      { url: "/contact", visits: 1021, bounce: "22%" },
+                    ].map((page, i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <div>
+                          <div className="font-medium">{page.url}</div>
+                          <div className="text-sm text-muted-foreground">
+                            Bounce rate: {page.bounce}
+                          </div>
+                        </div>
+                        <div className="font-bold">{page.visits.toLocaleString()}</div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Traffic Geography</CardTitle>
+                  <CardDescription>
+                    Visitor locations by country
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {[
+                      { country: "United States", visits: 5245, percent: "42%" },
+                      { country: "United Kingdom", visits: 2189, percent: "18%" },
+                      { country: "Germany", visits: 1654, percent: "13%" },
+                      { country: "Canada", visits: 1432, percent: "11%" },
+                      { country: "Australia", visits: 1021, percent: "8%" },
+                      { country: "Other", visits: 987, percent: "8%" },
+                    ].map((country, i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <div className="font-medium">{country.country}</div>
+                        <div className="flex items-center space-x-4">
+                          <div className="text-sm text-muted-foreground">
+                            {country.percent}
+                          </div>
+                          <div className="font-bold">{country.visits.toLocaleString()}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="conversions" className="mt-0 space-y-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Conversion Funnel</CardTitle>
+                <CardDescription>
+                  Visitor journey through the conversion process
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="h-[400px]">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart
+                      layout="vertical"
+                      data={[
+                        { name: "Visitors", value: 12483 },
+                        { name: "Product Views", value: 8245 },
+                        { name: "Add to Cart", value: 3842 },
+                        { name: "Checkout", value: 2105 },
+                        { name: "Purchases", value: 1245 },
+                      ]}
+                      margin={{
+                        top: 20,
+                        right: 30,
+                        left: 100,
+                        bottom: 5,
+                      }}
+                    >
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis type="number" />
+                      <YAxis dataKey="name" type="category" />
+                      <Tooltip />
+                      <Legend />
+                      <Bar dataKey="value" name="Count" fill="#3b82f6" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Top Converting Pages</CardTitle>
+                  <CardDescription>
+                    Pages with highest conversion rates
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    {[
+                      { url: "/products/premium-plan", rate: "8.2%", conversions: 245 },
+                      { url: "/special-offer", rate: "7.5%", conversions: 189 },
+                      { url: "/products/basic-plan", rate: "6.4%", conversions: 154 },
+                      { url: "/services/consultation", rate: "5.9%", conversions: 132 },
+                      { url: "/products/enterprise", rate: "5.2%", conversions: 121 },
+                    ].map((page, i) => (
+                      <div key={i} className="flex items-center justify-between">
+                        <div className="font-medium">{page.url}</div>
+                        <div className="flex items-center space-x-4">
+                          <div className="text-sm text-green-500 font-bold">
+                            {page.rate}
+                          </div>
+                          <div className="text-sm text-muted-foreground">
+                            {page.conversions} conv.
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card>
+                <CardHeader>
+                  <CardTitle>Conversion by Channel</CardTitle>
+                  <CardDescription>
+                    Conversion rates by traffic source
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-[300px]">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart
+                        data={[
+                          { name: "Organic", rate: 3.2 },
+                          { name: "Direct", rate: 4.5 },
+                          { name: "Social", rate: 2.8 },
+                          { name: "Referral", rate: 5.2 },
+                          { name: "Email", rate: 6.4 },
+                        ]}
+                        margin={{
+                          top: 20,
+                          right: 30,
+                          left: 20,
+                          bottom: 5,
+                        }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Bar dataKey="rate" name="Conversion Rate (%)" fill="#8b5cf6" />
+                      </BarChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </TabsContent>
+
+          <TabsContent value="dashboards" className="mt-0 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {dashboards.map((dashboard) => (
+                <Card key={dashboard.id} className="overflow-hidden">
+                  <CardHeader className="pb-3">
+                    <CardTitle>{dashboard.name}</CardTitle>
+                    <CardDescription>
+                      {dashboard.type.charAt(0).toUpperCase() + dashboard.type.slice(1)} Dashboard
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-0">
+                    <div className="h-[160px] bg-muted/40 flex items-center justify-center">
+                      {dashboard.type === "marketing" && (
+                        <BarChart3 className="h-16 w-16 text-muted-foreground/60" />
+                      )}
+                      {dashboard.type === "sales" && (
+                        <LineChartIcon className="h-16 w-16 text-muted-foreground/60" />
+                      )}
+                      {dashboard.type === "website" && (
+                        <BarChart3 className="h-16 w-16 text-muted-foreground/60" />
+                      )}
+                      {dashboard.type === "customers" && (
+                        <PieChartIcon className="h-16 w-16 text-muted-foreground/60" />
+                      )}
+                    </div>
+                  </CardContent>
+                  <CardFooter className="flex justify-between pt-3">
+                    <Button variant="outline" size="sm">
+                      <Share2 className="h-4 w-4 mr-2" />
+                      Share
+                    </Button>
+                    <Link href={`/dashboard/analytics/dashboards/${dashboard.id}`}>
+                      <Button size="sm">View Dashboard</Button>
+                    </Link>
+                  </CardFooter>
+                </Card>
+              ))}
+
+              <Card className="border-dashed">
+                <CardHeader className="pb-3">
+                  <CardTitle>Create New Dashboard</CardTitle>
+                  <CardDescription>
+                    Build a custom analytics dashboard
+                  </CardDescription>
+                </CardHeader>
+                <CardContent className="p-0">
+                  <div className="h-[160px] bg-muted/20 flex items-center justify-center">
+                    <PlusCircle className="h-16 w-16 text-muted-foreground/40" />
+                  </div>
+                </CardContent>
+                <CardFooter className="pt-3">
+                  <Link href="/dashboard/analytics/dashboards/new" className="w-full">
+                    <Button className="w-full">
+                      <PlusCircle className="h-4 w-4 mr-2" />
+                      Create Dashboard
+                    </Button>
+                  </Link>
+                </CardFooter>
+              </Card>
+            </div>
+          </TabsContent>
         </Tabs>
         <div className="flex items-center space-x-2">
           <Select value={dateRange} onValueChange={setDateRange}>
@@ -185,514 +693,6 @@ export default function AnalyticsPage() {
           </Button>
         </div>
       </div>
-
-      <TabsContent value="overview" className="mt-0 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Total Visitors</CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
-                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
-              </svg>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{kpiData.visitors.value.toLocaleString()}</div>
-              <p className={`text-xs ${kpiData.visitors.trend === "up" ? "text-green-500" : "text-red-500"}`}>
-                {kpiData.visitors.trend === "up" ? "+" : "-"}{Math.abs(kpiData.visitors.change)}% from last period
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Page Views</CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <rect width="20" height="14" x="2" y="5" rx="2" />
-                <path d="M2 10h20" />
-              </svg>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{kpiData.pageviews.value.toLocaleString()}</div>
-              <p className={`text-xs ${kpiData.pageviews.trend === "up" ? "text-green-500" : "text-red-500"}`}>
-                {kpiData.pageviews.trend === "up" ? "+" : "-"}{Math.abs(kpiData.pageviews.change)}% from last period
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Conversion Rate</CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <path d="M12 2v20" />
-                <path d="m17 5-5-3-5 3" />
-                <path d="m17 19-5 3-5-3" />
-              </svg>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{kpiData.conversionRate.value}%</div>
-              <p className={`text-xs ${kpiData.conversionRate.trend === "up" ? "text-green-500" : "text-red-500"}`}>
-                {kpiData.conversionRate.trend === "up" ? "+" : "-"}{Math.abs(kpiData.conversionRate.change)}% from last period
-              </p>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardHeader className="flex flex-row items-center justify-between pb-2">
-              <CardTitle className="text-sm font-medium">Bounce Rate</CardTitle>
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-              >
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-              </svg>
-            </CardHeader>
-            <CardContent>
-              <div className="text-2xl font-bold">{kpiData.bounceRate.value}%</div>
-              <p className={`text-xs ${kpiData.bounceRate.trend === "down" ? "text-green-500" : "text-red-500"}`}>
-                {kpiData.bounceRate.trend === "down" ? "-" : "+"}{Math.abs(kpiData.bounceRate.change)}% from last period
-              </p>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Traffic Sources</CardTitle>
-              <CardDescription>
-                Visitor acquisition channels over time
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="px-2">
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart
-                    data={trafficData}
-                    margin={{
-                      top: 10,
-                      right: 30,
-                      left: 0,
-                      bottom: 0,
-                    }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Area type="monotone" dataKey="website" stackId="1" stroke="#3b82f6" fill="#3b82f6" />
-                    <Area type="monotone" dataKey="social" stackId="1" stroke="#8b5cf6" fill="#8b5cf6" />
-                    <Area type="monotone" dataKey="email" stackId="1" stroke="#ec4899" fill="#ec4899" />
-                    <Area type="monotone" dataKey="referral" stackId="1" stroke="#f97316" fill="#f97316" />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Conversion Rate</CardTitle>
-              <CardDescription>
-                Website conversion rate over time
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="px-2">
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    data={conversionData}
-                    margin={{
-                      top: 10,
-                      right: 30,
-                      left: 0,
-                      bottom: 0,
-                    }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="rate" stroke="#3b82f6" activeDot={{ r: 8 }} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Traffic Channels</CardTitle>
-              <CardDescription>
-                Distribution of visitor acquisition channels
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px] flex items-center justify-center">
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={channelData}
-                      cx="50%"
-                      cy="50%"
-                      labelLine={false}
-                      label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                      outerRadius={80}
-                      fill="#8884d8"
-                      dataKey="value"
-                    >
-                      {channelData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Tooltip />
-                    <Legend />
-                  </PieChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Device Breakdown</CardTitle>
-              <CardDescription>
-                Visitors by device type
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={deviceData}
-                    margin={{
-                      top: 20,
-                      right: 30,
-                      left: 20,
-                      bottom: 5,
-                    }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="value" name="Percentage" fill="#3b82f6" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </TabsContent>
-
-      <TabsContent value="traffic" className="mt-0 space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Traffic Analysis</CardTitle>
-            <CardDescription>
-              Detailed breakdown of website traffic sources and patterns
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  data={trafficData}
-                  margin={{
-                    top: 20,
-                    right: 30,
-                    left: 20,
-                    bottom: 5,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis dataKey="name" />
-                  <YAxis />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="website" name="Direct" fill="#3b82f6" />
-                  <Bar dataKey="social" name="Social Media" fill="#8b5cf6" />
-                  <Bar dataKey="email" name="Email" fill="#ec4899" />
-                  <Bar dataKey="referral" name="Referral" fill="#f97316" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Top Landing Pages</CardTitle>
-              <CardDescription>
-                Pages with the most visitor entries
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {[
-                  { url: "/home", visits: 3245, bounce: "32%" },
-                  { url: "/products", visits: 2189, bounce: "28%" },
-                  { url: "/blog/top-10-tips", visits: 1654, bounce: "45%" },
-                  { url: "/services", visits: 1432, bounce: "39%" },
-                  { url: "/contact", visits: 1021, bounce: "22%" },
-                ].map((page, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <div>
-                      <div className="font-medium">{page.url}</div>
-                      <div className="text-sm text-muted-foreground">
-                        Bounce rate: {page.bounce}
-                      </div>
-                    </div>
-                    <div className="font-bold">{page.visits.toLocaleString()}</div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Traffic Geography</CardTitle>
-              <CardDescription>
-                Visitor locations by country
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {[
-                  { country: "United States", visits: 5245, percent: "42%" },
-                  { country: "United Kingdom", visits: 2189, percent: "18%" },
-                  { country: "Germany", visits: 1654, percent: "13%" },
-                  { country: "Canada", visits: 1432, percent: "11%" },
-                  { country: "Australia", visits: 1021, percent: "8%" },
-                  { country: "Other", visits: 987, percent: "8%" },
-                ].map((country, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <div className="font-medium">{country.country}</div>
-                    <div className="flex items-center space-x-4">
-                      <div className="text-sm text-muted-foreground">
-                        {country.percent}
-                      </div>
-                      <div className="font-bold">{country.visits.toLocaleString()}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </TabsContent>
-
-      <TabsContent value="conversions" className="mt-0 space-y-6">
-        <Card>
-          <CardHeader>
-            <CardTitle>Conversion Funnel</CardTitle>
-            <CardDescription>
-              Visitor journey through the conversion process
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="h-[400px]">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart
-                  layout="vertical"
-                  data={[
-                    { name: "Visitors", value: 12483 },
-                    { name: "Product Views", value: 8245 },
-                    { name: "Add to Cart", value: 3842 },
-                    { name: "Checkout", value: 2105 },
-                    { name: "Purchases", value: 1245 },
-                  ]}
-                  margin={{
-                    top: 20,
-                    right: 30,
-                    left: 100,
-                    bottom: 5,
-                  }}
-                >
-                  <CartesianGrid strokeDasharray="3 3" />
-                  <XAxis type="number" />
-                  <YAxis dataKey="name" type="category" />
-                  <Tooltip />
-                  <Legend />
-                  <Bar dataKey="value" name="Count" fill="#3b82f6" />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Top Converting Pages</CardTitle>
-              <CardDescription>
-                Pages with highest conversion rates
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {[
-                  { url: "/products/premium-plan", rate: "8.2%", conversions: 245 },
-                  { url: "/special-offer", rate: "7.5%", conversions: 189 },
-                  { url: "/products/basic-plan", rate: "6.4%", conversions: 154 },
-                  { url: "/services/consultation", rate: "5.9%", conversions: 132 },
-                  { url: "/products/enterprise", rate: "5.2%", conversions: 121 },
-                ].map((page, i) => (
-                  <div key={i} className="flex items-center justify-between">
-                    <div className="font-medium">{page.url}</div>
-                    <div className="flex items-center space-x-4">
-                      <div className="text-sm text-green-500 font-bold">
-                        {page.rate}
-                      </div>
-                      <div className="text-sm text-muted-foreground">
-                        {page.conversions} conv.
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Conversion by Channel</CardTitle>
-              <CardDescription>
-                Conversion rates by traffic source
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="h-[300px]">
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={[
-                      { name: "Organic", rate: 3.2 },
-                      { name: "Direct", rate: 4.5 },
-                      { name: "Social", rate: 2.8 },
-                      { name: "Referral", rate: 5.2 },
-                      { name: "Email", rate: 6.4 },
-                    ]}
-                    margin={{
-                      top: 20,
-                      right: 30,
-                      left: 20,
-                      bottom: 5,
-                    }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="name" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Bar dataKey="rate" name="Conversion Rate (%)" fill="#8b5cf6" />
-                  </BarChart>
-                </ResponsiveContainer>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </TabsContent>
-
-      <TabsContent value="dashboards" className="mt-0 space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {dashboards.map((dashboard) => (
-            <Card key={dashboard.id} className="overflow-hidden">
-              <CardHeader className="pb-3">
-                <CardTitle>{dashboard.name}</CardTitle>
-                <CardDescription>
-                  {dashboard.type.charAt(0).toUpperCase() + dashboard.type.slice(1)} Dashboard
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="p-0">
-                <div className="h-[160px] bg-muted/40 flex items-center justify-center">
-                  {dashboard.type === "marketing" && (
-                    <BarChart3 className="h-16 w-16 text-muted-foreground/60" />
-                  )}
-                  {dashboard.type === "sales" && (
-                    <LineChartIcon className="h-16 w-16 text-muted-foreground/60" />
-                  )}
-                  {dashboard.type === "website" && (
-                    <BarChart3 className="h-16 w-16 text-muted-foreground/60" />
-                  )}
-                  {dashboard.type === "customers" && (
-                    <PieChartIcon className="h-16 w-16 text-muted-foreground/60" />
-                  )}
-                </div>
-              </CardContent>
-              <CardFooter className="flex justify-between pt-3">
-                <Button variant="outline" size="sm">
-                  <Share2 className="h-4 w-4 mr-2" />
-                  Share
-                </Button>
-                <Link href={`/dashboard/analytics/dashboards/${dashboard.id}`}>
-                  <Button size="sm">View Dashboard</Button>
-                </Link>
-              </CardFooter>
-            </Card>
-          ))}
-
-          <Card className="border-dashed">
-            <CardHeader className="pb-3">
-              <CardTitle>Create New Dashboard</CardTitle>
-              <CardDescription>
-                Build a custom analytics dashboard
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="h-[160px] bg-muted/20 flex items-center justify-center">
-                <PlusCircle className="h-16 w-16 text-muted-foreground/40" />
-              </div>
-            </CardContent>
-            <CardFooter className="pt-3">
-              <Link href="/dashboard/analytics/dashboards/new" className="w-full">
-                <Button className="w-full">
-                  <PlusCircle className="h-4 w-4 mr-2" />
-                  Create Dashboard
-                </Button>
-              </Link>
-            </CardFooter>
-          </Card>
-        </div>
-      </TabsContent>
     </div>
   );
 } 

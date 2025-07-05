@@ -53,7 +53,8 @@ import {
   Phone,
   ShoppingCart,
   FileText,
-  CalendarDays
+  CalendarDays,
+  MessageSquare
 } from 'lucide-react';
 
 // Mock data for segments

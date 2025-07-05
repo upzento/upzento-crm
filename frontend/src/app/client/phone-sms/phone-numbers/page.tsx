@@ -29,7 +29,8 @@ import {
   Settings, 
   Globe,
   Building,
-  Users
+  Users,
+  BarChart3
 } from 'lucide-react';
 
 // Mock data for phone numbers
@@ -637,7 +638,7 @@ export default function PhoneNumbersPage() {
                 <span>Configure</span>
               </Button>
               <Button variant="outline" className="flex flex-col h-24 w-full">
-                <BarChart2 className="h-6 w-6 mb-2" />
+                <BarChart3 className="h-6 w-6 mb-2" />
                 <span>Analytics</span>
               </Button>
             </div>
