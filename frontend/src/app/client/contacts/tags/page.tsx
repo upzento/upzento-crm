@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   Card, 
   CardContent, 
@@ -9,402 +10,414 @@ import {
   CardTitle,
   CardFooter 
 } from '@/components/ui/card';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuLabel, 
-  DropdownMenuSeparator, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
+import { Label } from '@/components/ui/label';
+import { toast } from '@/components/ui/use-toast';
+import { contactsApi } from '@/lib/api/api-client';
+import { ArrowLeft, Plus, Edit, Trash2, Tag, Info } from 'lucide-react';
 import {
-  ArrowLeft,
-  Search,
-  Plus,
-  MoreHorizontal,
-  Tag,
-  Trash2,
-  Edit,
-  Save,
-  X,
-  CheckCircle2,
-  AlertCircle
-} from 'lucide-react';
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 
-// Mock data for tags
-const initialTags = [
-  { id: '1', name: 'VIP', color: '#FF6B6B', contactCount: 12 },
-  { id: '2', name: 'Enterprise', color: '#4ECDC4', contactCount: 28 },
-  { id: '3', name: 'SMB', color: '#FFD166', contactCount: 45 },
-  { id: '4', name: 'Hot Lead', color: '#FF9F1C', contactCount: 17 },
-  { id: '5', name: 'Cold Lead', color: '#6B9BFF', contactCount: 23 },
-  { id: '6', name: 'Partner', color: '#A177FF', contactCount: 9 },
-  { id: '7', name: 'Technical', color: '#5D576B', contactCount: 14 },
-  { id: '8', name: 'Consultant', color: '#8AC926', contactCount: 6 }
+// Mock data for tags - would come from API in real implementation
+const mockTags = [
+  { id: '1', name: 'VIP', color: '#FF6B6B', usageCount: 15 },
+  { id: '2', name: 'Enterprise', color: '#4ECDC4', usageCount: 28 },
+  { id: '3', name: 'SMB', color: '#FFD166', usageCount: 42 },
+  { id: '4', name: 'Hot Lead', color: '#FF9F1C', usageCount: 19 },
+  { id: '5', name: 'Cold Lead', color: '#6B9BFF', usageCount: 31 },
+  { id: '6', name: 'Partner', color: '#A177FF', usageCount: 8 },
+  { id: '7', name: 'Technical', color: '#5D576B', usageCount: 12 },
+  { id: '8', name: 'Consultant', color: '#8AC926', usageCount: 23 }
 ];
 
 export default function TagsPage() {
-  const [tags, setTags] = useState(initialTags);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [newTagName, setNewTagName] = useState('');
-  const [newTagColor, setNewTagColor] = useState('#4ECDC4');
-  const [editingTagId, setEditingTagId] = useState<string | null>(null);
-  const [editTagName, setEditTagName] = useState('');
-  const [editTagColor, setEditTagColor] = useState('');
-  const [showNewTagForm, setShowNewTagForm] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
+  const router = useRouter();
+  const [tags, setTags] = useState(mockTags);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [editingTag, setEditingTag] = useState<any>(null);
+  const [tagName, setTagName] = useState('');
+  const [tagColor, setTagColor] = useState('#4ECDC4');
   
-  // Filter tags based on search query
-  const filteredTags = tags.filter(tag => 
-    tag.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Load tags on mount
+  useEffect(() => {
+    // In a real implementation, this would fetch tags from the API
+    // const fetchTags = async () => {
+    //   try {
+    //     const response = await contactsApi.getTags();
+    //     setTags(response.data);
+    //   } catch (error) {
+    //     console.error('Error fetching tags:', error);
+    //     toast({
+    //       title: "Error",
+    //       description: "Failed to load tags. Please try again.",
+    //       variant: "destructive",
+    //     });
+    //   }
+    // };
+    // fetchTags();
+  }, []);
   
-  // Add new tag
-  const addTag = () => {
-    // Validate input
-    if (!newTagName.trim()) {
-      setErrorMessage('Tag name cannot be empty');
+  const handleCreateTag = async () => {
+    if (!tagName.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Tag name is required.",
+        variant: "destructive",
+      });
       return;
     }
     
-    // Check for duplicate tag name
-    if (tags.some(tag => tag.name.toLowerCase() === newTagName.toLowerCase())) {
-      setErrorMessage('A tag with this name already exists');
+    setIsLoading(true);
+    try {
+      // In a real implementation, this would call the API
+      // await contactsApi.createTag({ name: tagName, color: tagColor });
+      
+      // Mock creating a new tag
+      const newTag = {
+        id: String(tags.length + 1),
+        name: tagName,
+        color: tagColor,
+        usageCount: 0
+      };
+      
+      setTags([...tags, newTag]);
+      setIsDialogOpen(false);
+      setTagName('');
+      setTagColor('#4ECDC4');
+      
+      toast({
+        title: "Tag Created",
+        description: `Tag "${tagName}" has been created.`,
+      });
+    } catch (error) {
+      console.error('Error creating tag:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create tag. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const handleEditTag = async () => {
+    if (!editingTag || !tagName.trim()) {
+      toast({
+        title: "Validation Error",
+        description: "Tag name is required.",
+        variant: "destructive",
+      });
       return;
     }
     
-    // Add new tag
-    const newTag = {
-      id: `${tags.length + 1}`,
-      name: newTagName,
-      color: newTagColor,
-      contactCount: 0
-    };
+    setIsLoading(true);
+    try {
+      // In a real implementation, this would call the API
+      // await contactsApi.updateTag(editingTag.id, { name: tagName, color: tagColor });
+      
+      // Mock updating the tag
+      const updatedTags = tags.map(tag => 
+        tag.id === editingTag.id 
+          ? { ...tag, name: tagName, color: tagColor }
+          : tag
+      );
+      
+      setTags(updatedTags);
+      setIsDialogOpen(false);
+      setEditingTag(null);
+      setTagName('');
+      setTagColor('#4ECDC4');
+      
+      toast({
+        title: "Tag Updated",
+        description: `Tag "${tagName}" has been updated.`,
+      });
+    } catch (error) {
+      console.error('Error updating tag:', error);
+      toast({
+        title: "Error",
+        description: "Failed to update tag. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const handleDeleteTag = async (tag: any) => {
+    if (!tag) return;
     
-    setTags([...tags, newTag]);
-    setNewTagName('');
-    setNewTagColor('#4ECDC4');
-    setShowNewTagForm(false);
-    setSuccessMessage('Tag created successfully');
-    setTimeout(() => setSuccessMessage(''), 3000);
-  };
-  
-  // Start editing tag
-  const startEditTag = (tag: any) => {
-    setEditingTagId(tag.id);
-    setEditTagName(tag.name);
-    setEditTagColor(tag.color);
-    setErrorMessage('');
-  };
-  
-  // Cancel editing tag
-  const cancelEditTag = () => {
-    setEditingTagId(null);
-    setEditTagName('');
-    setEditTagColor('');
-    setErrorMessage('');
-  };
-  
-  // Save edited tag
-  const saveEditTag = (tagId: string) => {
-    // Validate input
-    if (!editTagName.trim()) {
-      setErrorMessage('Tag name cannot be empty');
+    if (tag.usageCount > 0) {
+      toast({
+        title: "Cannot Delete Tag",
+        description: `This tag is currently used by ${tag.usageCount} contacts. Remove the tag from these contacts first.`,
+        variant: "destructive",
+      });
       return;
     }
     
-    // Check for duplicate tag name
-    if (tags.some(tag => tag.id !== tagId && tag.name.toLowerCase() === editTagName.toLowerCase())) {
-      setErrorMessage('A tag with this name already exists');
-      return;
+    setIsLoading(true);
+    try {
+      // In a real implementation, this would call the API
+      // await contactsApi.deleteTag(tag.id);
+      
+      // Mock deleting the tag
+      const updatedTags = tags.filter(t => t.id !== tag.id);
+      setTags(updatedTags);
+      
+      toast({
+        title: "Tag Deleted",
+        description: `Tag "${tag.name}" has been deleted.`,
+      });
+    } catch (error) {
+      console.error('Error deleting tag:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete tag. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
-    
-    // Update tag
-    setTags(tags.map(tag => 
-      tag.id === tagId ? { ...tag, name: editTagName, color: editTagColor } : tag
-    ));
-    
-    setEditingTagId(null);
-    setEditTagName('');
-    setEditTagColor('');
-    setSuccessMessage('Tag updated successfully');
-    setTimeout(() => setSuccessMessage(''), 3000);
   };
   
-  // Delete tag
-  const deleteTag = (tagId: string) => {
-    const tagToDelete = tags.find(tag => tag.id === tagId);
-    if (tagToDelete && tagToDelete.contactCount > 0) {
-      setErrorMessage(`Cannot delete tag "${tagToDelete.name}" because it is used by ${tagToDelete.contactCount} contacts`);
-      return;
-    }
-    
-    setTags(tags.filter(tag => tag.id !== tagId));
-    setSuccessMessage('Tag deleted successfully');
-    setTimeout(() => setSuccessMessage(''), 3000);
+  const openEditDialog = (tag: any) => {
+    setEditingTag(tag);
+    setTagName(tag.name);
+    setTagColor(tag.color);
+    setIsDialogOpen(true);
   };
   
+  const openCreateDialog = () => {
+    setEditingTag(null);
+    setTagName('');
+    setTagColor('#4ECDC4');
+    setIsDialogOpen(true);
+  };
+
   return (
     <div className="container mx-auto py-6 space-y-6">
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" asChild>
-          <a href="/client/contacts">
-            <ArrowLeft className="h-4 w-4" />
-          </a>
+      <div className="flex items-center">
+        <Button 
+          variant="ghost" 
+          onClick={() => router.push('/client/contacts')}
+          className="mr-4"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Contacts
         </Button>
         <h1 className="text-3xl font-bold tracking-tight">Contact Tags</h1>
       </div>
       
-      <Card>
-        <CardHeader>
-          <div className="flex justify-between items-center">
-            <div>
-              <CardTitle>Manage Tags</CardTitle>
-              <CardDescription>
-                Create and manage tags for organizing contacts
-              </CardDescription>
-            </div>
-            <Button onClick={() => setShowNewTagForm(!showNewTagForm)}>
-              <Plus className="mr-2 h-4 w-4" />
-              New Tag
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          {errorMessage && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-md flex items-start gap-2">
-              <AlertCircle className="h-5 w-5 text-red-500 mt-0.5" />
-              <span>{errorMessage}</span>
-            </div>
-          )}
-          
-          {successMessage && (
-            <div className="bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-md flex items-start gap-2">
-              <CheckCircle2 className="h-5 w-5 text-green-500 mt-0.5" />
-              <span>{successMessage}</span>
-            </div>
-          )}
-          
-          {showNewTagForm && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Create New Tag</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <label htmlFor="newTagName" className="text-sm font-medium">Tag Name</label>
-                    <Input
-                      id="newTagName"
-                      value={newTagName}
-                      onChange={(e) => setNewTagName(e.target.value)}
-                      placeholder="Enter tag name"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <label htmlFor="newTagColor" className="text-sm font-medium">Tag Color</label>
-                    <div className="flex gap-2">
-                      <Input
-                        id="newTagColor"
-                        type="color"
-                        value={newTagColor}
-                        onChange={(e) => setNewTagColor(e.target.value)}
-                        className="w-16 h-10 p-1"
-                      />
-                      <div className="flex-1 flex items-center border rounded-md px-3">
-                        <div 
-                          className="h-4 w-4 rounded-full mr-2" 
-                          style={{ backgroundColor: newTagColor }}
-                        ></div>
-                        <span>{newTagColor}</span>
-                      </div>
-                    </div>
-                  </div>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="md:col-span-2">
+          <Card>
+            <CardHeader>
+              <div className="flex justify-between items-center">
+                <div>
+                  <CardTitle>All Tags</CardTitle>
+                  <CardDescription>
+                    Manage your contact tags
+                  </CardDescription>
                 </div>
-              </CardContent>
-              <CardFooter className="flex justify-end gap-2">
-                <Button variant="outline" onClick={() => setShowNewTagForm(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={addTag}>
+                <Button onClick={openCreateDialog}>
+                  <Plus className="mr-2 h-4 w-4" />
                   Create Tag
                 </Button>
-              </CardFooter>
-            </Card>
-          )}
-          
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search tags..."
-                className="pl-8"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-              />
-            </div>
-          </div>
-          
-          <div className="rounded-md border">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Tag</TableHead>
-                  <TableHead>Color</TableHead>
-                  <TableHead>Contacts</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredTags.length === 0 ? (
-                  <TableRow>
-                    <TableCell colSpan={4} className="text-center py-8 text-muted-foreground">
-                      No tags found matching your search.
-                    </TableCell>
-                  </TableRow>
-                ) : (
-                  filteredTags.map((tag) => (
-                    <TableRow key={tag.id}>
-                      <TableCell>
-                        {editingTagId === tag.id ? (
-                          <Input
-                            value={editTagName}
-                            onChange={(e) => setEditTagName(e.target.value)}
-                            className="max-w-[200px]"
-                          />
-                        ) : (
-                          <div className="flex items-center gap-2">
-                            <Tag className="h-4 w-4" style={{ color: tag.color }} />
-                            <span>{tag.name}</span>
-                          </div>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {editingTagId === tag.id ? (
-                          <div className="flex gap-2">
-                            <Input
-                              type="color"
-                              value={editTagColor}
-                              onChange={(e) => setEditTagColor(e.target.value)}
-                              className="w-16 h-8 p-1"
-                            />
-                            <span className="text-sm">{editTagColor}</span>
-                          </div>
-                        ) : (
+              </div>
+            </CardHeader>
+            <CardContent>
+              <div className="rounded-md border">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Tag</TableHead>
+                      <TableHead>Color</TableHead>
+                      <TableHead>Usage</TableHead>
+                      <TableHead className="text-right">Actions</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {tags.map((tag) => (
+                      <TableRow key={tag.id}>
+                        <TableCell>
                           <div className="flex items-center gap-2">
                             <div 
-                              className="h-4 w-4 rounded-full" 
+                              className="w-4 h-4 rounded-full" 
                               style={{ backgroundColor: tag.color }}
-                            ></div>
-                            <span className="text-sm">{tag.color}</span>
+                            />
+                            {tag.name}
                           </div>
-                        )}
-                      </TableCell>
-                      <TableCell>{tag.contactCount}</TableCell>
-                      <TableCell className="text-right">
-                        {editingTagId === tag.id ? (
+                        </TableCell>
+                        <TableCell>
+                          <code className="text-sm">{tag.color}</code>
+                        </TableCell>
+                        <TableCell>{tag.usageCount} contacts</TableCell>
+                        <TableCell className="text-right">
                           <div className="flex justify-end gap-2">
-                            <Button variant="ghost" size="icon" onClick={cancelEditTag}>
-                              <X className="h-4 w-4" />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => openEditDialog(tag)}
+                            >
+                              <Edit className="h-4 w-4" />
                             </Button>
-                            <Button variant="ghost" size="icon" onClick={() => saveEditTag(tag.id)}>
-                              <Save className="h-4 w-4" />
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleDeleteTag(tag)}
+                              disabled={tag.usageCount > 0}
+                            >
+                              <Trash2 className="h-4 w-4" />
                             </Button>
                           </div>
-                        ) : (
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" className="h-8 w-8 p-0">
-                                <span className="sr-only">Open menu</span>
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem onClick={() => startEditTag(tag)}>
-                                <Edit className="mr-2 h-4 w-4" /> Edit
-                              </DropdownMenuItem>
-                              <DropdownMenuItem 
-                                onClick={() => deleteTag(tag.id)}
-                                className="text-red-600"
-                                disabled={tag.contactCount > 0}
-                              >
-                                <Trash2 className="mr-2 h-4 w-4" /> Delete
-                              </DropdownMenuItem>
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        )}
-                      </TableCell>
-                    </TableRow>
-                  ))
-                )}
-              </TableBody>
-            </Table>
-          </div>
-        </CardContent>
-      </Card>
-      
-      <Card>
-        <CardHeader>
-          <CardTitle>Tag Usage</CardTitle>
-          <CardDescription>
-            Visualization of tag distribution across contacts
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <div className="space-y-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="h-[300px] border-2 border-dashed rounded-md flex items-center justify-center">
-                <p className="text-muted-foreground">Tag distribution chart will be displayed here</p>
-              </div>
-              <div>
-                <h3 className="text-lg font-medium mb-4">Most Used Tags</h3>
-                <div className="space-y-2">
-                  {[...tags]
-                    .sort((a, b) => b.contactCount - a.contactCount)
-                    .slice(0, 5)
-                    .map((tag) => (
-                      <div key={tag.id} className="flex items-center justify-between">
-                        <div className="flex items-center gap-2">
-                          <div 
-                            className="h-3 w-3 rounded-full" 
-                            style={{ backgroundColor: tag.color }}
-                          ></div>
-                          <span>{tag.name}</span>
-                        </div>
-                        <span className="text-sm text-muted-foreground">{tag.contactCount} contacts</span>
-                      </div>
+                        </TableCell>
+                      </TableRow>
                     ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+        
+        <div className="md:col-span-1">
+          <Card>
+            <CardHeader>
+              <CardTitle>Tag Guidelines</CardTitle>
+              <CardDescription>
+                Best practices for using tags
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex gap-2">
+                <Info className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                <div className="space-y-1">
+                  <p className="font-medium">Keep it Simple</p>
+                  <p className="text-sm text-muted-foreground">
+                    Use clear, concise names that are easy to understand and remember.
+                  </p>
                 </div>
               </div>
+              
+              <div className="flex gap-2">
+                <Tag className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                <div className="space-y-1">
+                  <p className="font-medium">Be Consistent</p>
+                  <p className="text-sm text-muted-foreground">
+                    Use a consistent naming convention for related tags.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex gap-2">
+                <Info className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                <div className="space-y-1">
+                  <p className="font-medium">Use Categories</p>
+                  <p className="text-sm text-muted-foreground">
+                    Group related tags into categories (e.g., Industry, Status, Source).
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex gap-2">
+                <Tag className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                <div className="space-y-1">
+                  <p className="font-medium">Color Coding</p>
+                  <p className="text-sm text-muted-foreground">
+                    Use colors to visually distinguish between different types of tags.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
+      
+      {/* Create/Edit Tag Dialog */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>
+              {editingTag ? 'Edit Tag' : 'Create New Tag'}
+            </DialogTitle>
+            <DialogDescription>
+              {editingTag 
+                ? 'Edit the tag details below.' 
+                : 'Enter the details for the new tag.'}
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label htmlFor="name">Tag Name</Label>
+              <Input
+                id="name"
+                value={tagName}
+                onChange={(e) => setTagName(e.target.value)}
+                placeholder="Enter tag name"
+              />
             </div>
             
-            <div className="bg-muted/50 p-4 rounded-md">
-              <h3 className="text-lg font-medium mb-2">Tag Best Practices</h3>
-              <ul className="space-y-1 text-sm">
-                <li>• Use consistent naming conventions for your tags</li>
-                <li>• Create tags for industry, lead status, and customer segments</li>
-                <li>• Avoid creating too many tags that serve similar purposes</li>
-                <li>• Regularly review and clean up unused tags</li>
-                <li>• Use distinctive colors for different tag categories</li>
-              </ul>
+            <div className="space-y-2">
+              <Label htmlFor="color">Tag Color</Label>
+              <div className="flex gap-4">
+                <Input
+                  id="color"
+                  type="color"
+                  value={tagColor}
+                  onChange={(e) => setTagColor(e.target.value)}
+                  className="w-20 h-10 p-1"
+                />
+                <Input
+                  value={tagColor}
+                  onChange={(e) => setTagColor(e.target.value)}
+                  placeholder="#000000"
+                  className="font-mono"
+                />
+              </div>
             </div>
           </div>
-        </CardContent>
-      </Card>
+          
+          <DialogFooter>
+            <Button
+              variant="outline"
+              onClick={() => setIsDialogOpen(false)}
+              disabled={isLoading}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={editingTag ? handleEditTag : handleCreateTag}
+              disabled={isLoading}
+            >
+              {isLoading ? (
+                <>Saving...</>
+              ) : (
+                <>{editingTag ? 'Save Changes' : 'Create Tag'}</>
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 } 
