@@ -14,7 +14,10 @@ import {
   Calendar,
   HelpCircle,
   Settings,
-  LogOut
+  LogOut,
+  Users,
+  BarChart3,
+  CreditCard
 } from 'lucide-react';
 
 interface ClientLayoutProps {
@@ -32,6 +35,16 @@ const sidebarItems: SidebarItem[] = [
     title: 'Dashboard',
     href: '/client',
     icon: <LayoutDashboard className="h-5 w-5" />
+  },
+  {
+    title: 'Contacts',
+    href: '/client/contacts',
+    icon: <Users className="h-5 w-5" />
+  },
+  {
+    title: 'Analytics',
+    href: '/client/analytics',
+    icon: <BarChart3 className="h-5 w-5" />
   },
   {
     title: 'Forms',
@@ -62,6 +75,11 @@ const sidebarItems: SidebarItem[] = [
     title: 'Shop',
     href: '/client/shop',
     icon: <ShoppingCart className="h-5 w-5" />
+  },
+  {
+    title: 'Payment',
+    href: '/client/payment',
+    icon: <CreditCard className="h-5 w-5" />
   },
   {
     title: 'Support',
