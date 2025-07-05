@@ -422,3 +422,186 @@ enum ChatSource {
   FACEBOOK
   EMAIL
 }
+
+model ContactRelationship {
+  id            String   @id @default(uuid())
+  contact1Id    String
+  contact2Id    String
+  type          String
+  customLabel   String?
+  notes         String?
+  strength      Int?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  contact1      Contact  @relation("ContactRelationships1", fields: [contact1Id], references: [id])
+  contact2      Contact  @relation("ContactRelationships2", fields: [contact2Id], references: [id])
+
+  @@unique([contact1Id, contact2Id, type])
+}
+
+model SavedSearch {
+  id          String   @id @default(uuid())
+  name        String
+  conditions  Json
+  userId      String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  user        User     @relation(fields: [userId], references: [id])
+}
+
+model LeadCampaign {
+  id               String   @id @default(uuid())
+  name             String
+  description      String?
+  triggerConditions Json
+  steps            Json
+  isActive         Boolean  @default(true)
+  maxContacts      Int?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+  createdBy        String
+  user             User     @relation(fields: [createdBy], references: [id])
+  assignments      CampaignAssignment[]
+  campaignSteps    CampaignStep[]
+  conversions      CampaignConversion[]
+
+  @@map("lead_campaigns")
+}
+
+model CampaignAssignment {
+  id          String   @id @default(uuid())
+  campaignId  String
+  contactId   String
+  status      String   @default("PENDING")
+  startedAt   DateTime?
+  completedAt DateTime?
+  currentStep Int      @default(0)
+  overrides   Json?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  campaign    LeadCampaign @relation(fields: [campaignId], references: [id])
+  contact     Contact      @relation(fields: [contactId], references: [id])
+
+  @@unique([campaignId, contactId])
+}
+
+model Contact {
+  id              String    @id @default(uuid())
+  name            String
+  email           String
+  phone           String
+  address         String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  relationships1        ContactRelationship[] @relation("ContactRelationships1")
+  relationships2        ContactRelationship[] @relation("ContactRelationships2")
+  campaignAssignments  CampaignAssignment[]
+  emailMetrics         EmailMetric[]
+  smsMetrics           SMSMetric[]
+  taskMetrics          TaskMetric[]
+  conversions          CampaignConversion[]
+
+  @@map("contacts")
+}
+
+model ContactSegment {
+  id             String   @id @default(uuid())
+  name           String
+  description    String?
+  conditions     Json
+  combinator     String   @default("AND")
+  isDynamic      Boolean  @default(true)
+  includeArchived Boolean @default(false)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  createdBy      String
+  user           User     @relation(fields: [createdBy], references: [id])
+
+  @@map("contact_segments")
+}
+
+model CampaignStep {
+  id           String   @id @default(uuid())
+  campaignId   String
+  type         String   // EMAIL, SMS, TASK, WEBHOOK
+  content      Json
+  delay        Int      // delay in minutes
+  conditions   Json?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  campaign     LeadCampaign @relation(fields: [campaignId], references: [id])
+  emailMetrics EmailMetric[]
+  smsMetrics   SMSMetric[]
+  taskMetrics  TaskMetric[]
+
+  @@map("campaign_steps")
+}
+
+model EmailMetric {
+  id            String   @id @default(uuid())
+  stepId        String
+  contactId     String
+  sent          Boolean  @default(false)
+  opened        Boolean  @default(false)
+  clicked       Boolean  @default(false)
+  sentAt        DateTime?
+  openedAt      DateTime?
+  clickedAt     DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  step          CampaignStep @relation(fields: [stepId], references: [id])
+  contact       Contact      @relation(fields: [contactId], references: [id])
+
+  @@map("email_metrics")
+}
+
+model SMSMetric {
+  id            String   @id @default(uuid())
+  stepId        String
+  contactId     String
+  sent          Boolean  @default(false)
+  delivered     Boolean  @default(false)
+  responded     Boolean  @default(false)
+  sentAt        DateTime?
+  deliveredAt   DateTime?
+  respondedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  step          CampaignStep @relation(fields: [stepId], references: [id])
+  contact       Contact      @relation(fields: [contactId], references: [id])
+
+  @@map("sms_metrics")
+}
+
+model TaskMetric {
+  id            String   @id @default(uuid())
+  stepId        String
+  contactId     String
+  assigned      Boolean  @default(false)
+  completed     Boolean  @default(false)
+  assignedAt    DateTime?
+  completedAt   DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  step          CampaignStep @relation(fields: [stepId], references: [id])
+  contact       Contact      @relation(fields: [contactId], references: [id])
+
+  @@map("task_metrics")
+}
+
+model CampaignConversion {
+  id            String   @id @default(uuid())
+  campaignId    String
+  contactId     String
+  type          String
+  value         Float?
+  occurredAt    DateTime
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  campaign      LeadCampaign @relation(fields: [campaignId], references: [id])
+  contact       Contact      @relation(fields: [contactId], references: [id])
+
+  @@map("campaign_conversions")
+}

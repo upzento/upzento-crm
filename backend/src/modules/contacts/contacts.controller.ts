@@ -14,7 +14,8 @@ import {
   HttpCode,
   HttpStatus,
   BadRequestException,
-  NotFoundException
+  NotFoundException,
+  Put
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
 import { ContactsService } from './contacts.service';
@@ -28,6 +29,11 @@ import { ImportContactsDto } from './dto/import-contacts.dto';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
 import { RequiresTenantType } from '../auth/decorators/tenant-type.decorator';
+import { CreateContactRelationshipDto } from './dto/create-contact-relationship.dto';
+import { AdvancedSearchDto } from './dto/advanced-search.dto';
+import { CreateLeadCampaignDto } from './dto/create-lead-campaign.dto';
+import { AssignCampaignDto } from './dto/assign-campaign.dto';
+import { CreateSegmentDto } from './dto/create-segment.dto';
 
 @ApiTags('contacts')
 @Controller('contacts')
@@ -413,5 +419,96 @@ export class ContactsController {
     const clientId = req.user.tenantContext.clientId;
     const userId = req.user.id;
     return this.contactsService.mergeContacts(body.primaryId, body.secondaryIds, clientId, userId);
+  }
+
+  @Post('relationships')
+  @ApiOperation({ summary: 'Create a new contact relationship' })
+  @ApiResponse({ status: 201, description: 'Relationship created successfully' })
+  async createRelationship(@Body() dto: CreateContactRelationshipDto) {
+    return this.contactsService.createRelationship(dto);
+  }
+
+  @Get(':id/relationships')
+  @ApiOperation({ summary: 'Get all relationships for a contact' })
+  @ApiResponse({ status: 200, description: 'Relationships retrieved successfully' })
+  async getContactRelationships(@Param('id') contactId: string) {
+    return this.contactsService.getContactRelationships(contactId);
+  }
+
+  @Delete('relationships/:id')
+  @ApiOperation({ summary: 'Delete a contact relationship' })
+  @ApiResponse({ status: 200, description: 'Relationship deleted successfully' })
+  async deleteRelationship(@Param('id') relationshipId: string) {
+    return this.contactsService.deleteRelationship(relationshipId);
+  }
+
+  @Post('campaigns')
+  @ApiOperation({ summary: 'Create a new lead nurturing campaign' })
+  @ApiResponse({ status: 201, description: 'Campaign created successfully' })
+  async createLeadCampaign(@Body() dto: CreateLeadCampaignDto) {
+    // TODO: Get userId from request context
+    const userId = 'current-user-id';
+    return this.contactsService.createLeadCampaign(dto, userId);
+  }
+
+  @Post('campaigns/assign')
+  @ApiOperation({ summary: 'Assign contacts to a campaign' })
+  @ApiResponse({ status: 201, description: 'Contacts assigned successfully' })
+  async assignCampaign(@Body() dto: AssignCampaignDto) {
+    return this.contactsService.assignCampaign(dto);
+  }
+
+  @Post('search')
+  @ApiOperation({ summary: 'Advanced search for contacts' })
+  @ApiResponse({ status: 200, description: 'Search results retrieved successfully' })
+  async advancedSearch(@Body() dto: AdvancedSearchDto) {
+    return this.contactsService.advancedSearch(dto);
+  }
+
+  @Post('segments')
+  @ApiOperation({ summary: 'Create a new contact segment' })
+  @ApiResponse({ status: 201, description: 'Segment created successfully' })
+  async createSegment(@Body() dto: CreateSegmentDto) {
+    // TODO: Get userId from request context
+    const userId = 'current-user-id';
+    return this.contactsService.createSegment(dto, userId);
+  }
+
+  @Get('segments')
+  @ApiOperation({ summary: 'List all segments' })
+  @ApiResponse({ status: 200, description: 'Segments retrieved successfully' })
+  async listSegments() {
+    return this.contactsService.listSegments();
+  }
+
+  @Get('segments/:id')
+  @ApiOperation({ summary: 'Get a specific segment' })
+  @ApiResponse({ status: 200, description: 'Segment retrieved successfully' })
+  async getSegment(@Param('id') segmentId: string) {
+    return this.contactsService.getSegment(segmentId);
+  }
+
+  @Put('segments/:id')
+  @ApiOperation({ summary: 'Update a segment' })
+  @ApiResponse({ status: 200, description: 'Segment updated successfully' })
+  async updateSegment(
+    @Param('id') segmentId: string,
+    @Body() dto: CreateSegmentDto,
+  ) {
+    return this.contactsService.updateSegment(segmentId, dto);
+  }
+
+  @Delete('segments/:id')
+  @ApiOperation({ summary: 'Delete a segment' })
+  @ApiResponse({ status: 200, description: 'Segment deleted successfully' })
+  async deleteSegment(@Param('id') segmentId: string) {
+    return this.contactsService.deleteSegment(segmentId);
+  }
+
+  @Get('campaigns/:id/metrics')
+  @ApiOperation({ summary: 'Get campaign metrics' })
+  @ApiResponse({ status: 200, description: 'Campaign metrics retrieved successfully' })
+  async getCampaignMetrics(@Param('id') campaignId: string) {
+    return this.contactsService.getCampaignMetrics(campaignId);
   }
 } 

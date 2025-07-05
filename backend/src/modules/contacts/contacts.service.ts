@@ -11,6 +11,12 @@ import { ImportContactsDto } from './dto/import-contacts.dto';
 import * as csv from 'csv-parser';
 import { Readable } from 'stream';
 import * as Papa from 'papaparse';
+import { CreateContactRelationshipDto, RelationshipType } from './dto/create-contact-relationship.dto';
+import { AdvancedSearchDto } from './dto/advanced-search.dto';
+import { CreateLeadCampaignDto } from './dto/create-lead-campaign.dto';
+import { AssignCampaignDto } from './dto/assign-campaign.dto';
+import { CreateSegmentDto } from './dto/create-segment.dto';
+import { CampaignMetricsDto } from './dto/campaign-metrics.dto';
 
 @Injectable()
 export class ContactsService {
@@ -847,5 +853,347 @@ export class ContactsService {
       where: { contactId: secondaryId },
       data: { contactId: primaryId },
     });
+  }
+
+  async createRelationship(dto: CreateContactRelationshipDto) {
+    return this.prisma.contactRelationship.create({
+      data: {
+        contact1Id: dto.contactId1,
+        contact2Id: dto.contactId2,
+        type: dto.relationshipType,
+        customLabel: dto.customLabel,
+        notes: dto.notes,
+        strength: dto.strength,
+      },
+      include: {
+        contact1: true,
+        contact2: true,
+      },
+    });
+  }
+
+  async getContactRelationships(contactId: string) {
+    return this.prisma.contactRelationship.findMany({
+      where: {
+        OR: [
+          { contact1Id: contactId },
+          { contact2Id: contactId },
+        ],
+      },
+      include: {
+        contact1: true,
+        contact2: true,
+      },
+    });
+  }
+
+  async deleteRelationship(relationshipId: string) {
+    return this.prisma.contactRelationship.delete({
+      where: { id: relationshipId },
+    });
+  }
+
+  async createLeadCampaign(dto: CreateLeadCampaignDto, userId: string) {
+    return this.prisma.leadCampaign.create({
+      data: {
+        name: dto.name,
+        description: dto.description,
+        triggerConditions: dto.triggerConditions,
+        steps: dto.steps,
+        isActive: dto.isActive,
+        maxContacts: dto.maxContacts,
+        createdBy: userId,
+      },
+    });
+  }
+
+  async assignCampaign(dto: AssignCampaignDto) {
+    const assignments = dto.contactIds.map(contactId => ({
+      campaignId: dto.campaignId,
+      contactId,
+      overrides: dto.overrides,
+    }));
+
+    return this.prisma.campaignAssignment.createMany({
+      data: assignments,
+      skipDuplicates: true,
+    });
+  }
+
+  async advancedSearch(dto: AdvancedSearchDto) {
+    const where = this.buildSearchQuery(dto.conditions, dto.combinator);
+    
+    const results = await this.prisma.contact.findMany({
+      where,
+      orderBy: dto.sort,
+      skip: dto.page ? (dto.page - 1) * (dto.limit || 10) : undefined,
+      take: dto.limit,
+      select: dto.include ? this.buildSelectObject(dto.include) : undefined,
+    });
+
+    if (dto.saveSearch && dto.searchName) {
+      await this.prisma.savedSearch.create({
+        data: {
+          name: dto.searchName,
+          conditions: dto.conditions,
+          userId: 'current-user-id', // Replace with actual user ID from context
+        },
+      });
+    }
+
+    return results;
+  }
+
+  private buildSearchQuery(conditions: any[], combinator: 'AND' | 'OR' = 'AND') {
+    const queries = conditions.map(condition => {
+      switch (condition.operator) {
+        case 'equals':
+          return { [condition.field]: condition.value };
+        case 'contains':
+          return { [condition.field]: { contains: condition.value, mode: 'insensitive' } };
+        case 'greater_than':
+          return { [condition.field]: { gt: condition.value } };
+        case 'less_than':
+          return { [condition.field]: { lt: condition.value } };
+        case 'between':
+          return { 
+            AND: [
+              { [condition.field]: { gte: condition.value } },
+              { [condition.field]: { lte: condition.upperValue } },
+            ],
+          };
+        case 'in':
+          return { [condition.field]: { in: condition.value } };
+        case 'not_in':
+          return { [condition.field]: { notIn: condition.value } };
+        case 'exists':
+          return { [condition.field]: { not: null } };
+        default:
+          return {};
+      }
+    });
+
+    return { [combinator]: queries };
+  }
+
+  private buildSelectObject(fields: string[]) {
+    return fields.reduce((acc, field) => ({ ...acc, [field]: true }), {});
+  }
+
+  async createSegment(dto: CreateSegmentDto, userId: string) {
+    return this.prisma.contactSegment.create({
+      data: {
+        name: dto.name,
+        description: dto.description,
+        conditions: dto.conditions,
+        combinator: dto.combinator,
+        isDynamic: dto.isDynamic,
+        includeArchived: dto.includeArchived,
+        createdBy: userId,
+      },
+    });
+  }
+
+  async getSegment(segmentId: string) {
+    const segment = await this.prisma.contactSegment.findUnique({
+      where: { id: segmentId },
+    });
+
+    if (!segment) {
+      throw new NotFoundException(`Segment with ID ${segmentId} not found`);
+    }
+
+    // If dynamic, run the search to get current members
+    if (segment.isDynamic) {
+      const contacts = await this.advancedSearch({
+        conditions: segment.conditions as any[],
+        combinator: segment.combinator as 'AND' | 'OR',
+      });
+
+      return {
+        ...segment,
+        contacts,
+      };
+    }
+
+    return segment;
+  }
+
+  async updateSegment(segmentId: string, dto: CreateSegmentDto) {
+    return this.prisma.contactSegment.update({
+      where: { id: segmentId },
+      data: {
+        name: dto.name,
+        description: dto.description,
+        conditions: dto.conditions,
+        combinator: dto.combinator,
+        isDynamic: dto.isDynamic,
+        includeArchived: dto.includeArchived,
+      },
+    });
+  }
+
+  async deleteSegment(segmentId: string) {
+    return this.prisma.contactSegment.delete({
+      where: { id: segmentId },
+    });
+  }
+
+  async listSegments() {
+    return this.prisma.contactSegment.findMany({
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  async getCampaignMetrics(campaignId: string): Promise<CampaignMetricsDto> {
+    const campaign = await this.prisma.leadCampaign.findUnique({
+      where: { id: campaignId },
+      include: {
+        assignments: true,
+      },
+    });
+
+    if (!campaign) {
+      throw new NotFoundException(`Campaign with ID ${campaignId} not found`);
+    }
+
+    const assignments = campaign.assignments;
+    const totalContacts = assignments.length;
+    const completedContacts = assignments.filter(a => a.status === 'COMPLETED').length;
+    const inProgressContacts = assignments.filter(a => a.status === 'IN_PROGRESS').length;
+    const pendingContacts = assignments.filter(a => a.status === 'PENDING').length;
+
+    // Calculate average completion time
+    const completedAssignments = assignments.filter(a => a.status === 'COMPLETED' && a.startedAt && a.completedAt);
+    const averageCompletionTime = completedAssignments.length > 0
+      ? completedAssignments.reduce((acc, curr) => {
+          const completionTime = curr.completedAt.getTime() - curr.startedAt.getTime();
+          return acc + completionTime;
+        }, 0) / (completedAssignments.length * 24 * 60 * 60 * 1000) // Convert to days
+      : undefined;
+
+    // Calculate step metrics
+    const steps = campaign.steps as any[];
+    const stepMetrics = steps.map((_, index) => {
+      const assignmentsAtStep = assignments.filter(a => a.currentStep === index);
+      return {
+        stepIndex: index,
+        completed: assignmentsAtStep.filter(a => a.currentStep > index).length,
+        pending: assignmentsAtStep.filter(a => a.currentStep === index && a.status !== 'COMPLETED').length,
+        failed: assignmentsAtStep.filter(a => a.status === 'FAILED').length,
+        averageTimeToComplete: undefined, // Would need additional tracking data
+      };
+    });
+
+    // Calculate conversion metrics
+    const conversions = await this.prisma.campaignConversion.findMany({
+      where: { campaignId },
+    });
+
+    const conversionMetrics = {
+      totalConversions: conversions.length,
+      conversionRate: totalContacts > 0 ? conversions.length / totalContacts : 0,
+      revenueGenerated: conversions.reduce((acc, curr) => acc + (curr.value || 0), 0),
+    };
+
+    // Calculate engagement metrics
+    const engagementMetrics = {
+      emailOpenRate: await this.calculateEmailOpenRate(campaignId),
+      emailClickRate: await this.calculateEmailClickRate(campaignId),
+      smsResponseRate: await this.calculateSMSResponseRate(campaignId),
+      taskCompletionRate: await this.calculateTaskCompletionRate(campaignId),
+    };
+
+    return {
+      totalContacts,
+      completedContacts,
+      inProgressContacts,
+      pendingContacts,
+      averageCompletionTime,
+      successRate: totalContacts > 0 ? completedContacts / totalContacts : 0,
+      stepMetrics,
+      conversionMetrics,
+      engagementMetrics,
+    };
+  }
+
+  private async calculateEmailOpenRate(campaignId: string): Promise<number> {
+    const emailSteps = await this.prisma.campaignStep.findMany({
+      where: {
+        campaignId,
+        type: 'EMAIL',
+      },
+      include: {
+        emailMetrics: true,
+      },
+    });
+
+    if (emailSteps.length === 0) return 0;
+
+    const totalEmails = emailSteps.reduce((acc, step) => acc + step.emailMetrics.length, 0);
+    const openedEmails = emailSteps.reduce((acc, step) => 
+      acc + step.emailMetrics.filter(m => m.opened).length, 0);
+
+    return totalEmails > 0 ? openedEmails / totalEmails : 0;
+  }
+
+  private async calculateEmailClickRate(campaignId: string): Promise<number> {
+    const emailSteps = await this.prisma.campaignStep.findMany({
+      where: {
+        campaignId,
+        type: 'EMAIL',
+      },
+      include: {
+        emailMetrics: true,
+      },
+    });
+
+    if (emailSteps.length === 0) return 0;
+
+    const totalEmails = emailSteps.reduce((acc, step) => acc + step.emailMetrics.length, 0);
+    const clickedEmails = emailSteps.reduce((acc, step) => 
+      acc + step.emailMetrics.filter(m => m.clicked).length, 0);
+
+    return totalEmails > 0 ? clickedEmails / totalEmails : 0;
+  }
+
+  private async calculateSMSResponseRate(campaignId: string): Promise<number> {
+    const smsSteps = await this.prisma.campaignStep.findMany({
+      where: {
+        campaignId,
+        type: 'SMS',
+      },
+      include: {
+        smsMetrics: true,
+      },
+    });
+
+    if (smsSteps.length === 0) return 0;
+
+    const totalSMS = smsSteps.reduce((acc, step) => acc + step.smsMetrics.length, 0);
+    const respondedSMS = smsSteps.reduce((acc, step) => 
+      acc + step.smsMetrics.filter(m => m.responded).length, 0);
+
+    return totalSMS > 0 ? respondedSMS / totalSMS : 0;
+  }
+
+  private async calculateTaskCompletionRate(campaignId: string): Promise<number> {
+    const taskSteps = await this.prisma.campaignStep.findMany({
+      where: {
+        campaignId,
+        type: 'TASK',
+      },
+      include: {
+        taskMetrics: true,
+      },
+    });
+
+    if (taskSteps.length === 0) return 0;
+
+    const totalTasks = taskSteps.reduce((acc, step) => acc + step.taskMetrics.length, 0);
+    const completedTasks = taskSteps.reduce((acc, step) => 
+      acc + step.taskMetrics.filter(m => m.completed).length, 0);
+
+    return totalTasks > 0 ? completedTasks / totalTasks : 0;
   }
 } 
