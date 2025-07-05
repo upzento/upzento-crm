@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { 
   Card, 
   CardContent, 
@@ -28,6 +29,18 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+
+import { toast } from "@/components/ui/use-toast";
+import { contactsApi } from '@/lib/api/api-client';
 import {
   Search,
   Plus,
@@ -215,13 +228,114 @@ const leadSources = [
 ];
 
 export default function ContactsPage() {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState('');
   const [typeFilter, setTypeFilter] = useState('all');
   const [tagFilter, setTagFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
   const [selectedContact, setSelectedContact] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+  const [contactToDelete, setContactToDelete] = useState<any>(null);
+  const [isLoading, setIsLoading] = useState(false);
   const itemsPerPage = 5;
+  
+  // Action handler functions
+  const handleEditContact = (contact: any) => {
+    // Navigate to edit contact page or open modal
+    router.push(`/client/contacts/edit/${contact.id}`);
+  };
+  
+  const handleSendEmail = (contact: any) => {
+    // For now, open default email client
+    window.open(`mailto:${contact.email}`, '_blank');
+    toast({
+      title: "Email Client Opened",
+      description: `Sending email to ${contact.firstName} ${contact.lastName}`,
+    });
+  };
+  
+  const handleSendSMS = (contact: any) => {
+    // Open SMS dialog or navigate to SMS page
+    router.push(`/client/phone-sms/new?contactId=${contact.id}`);
+  };
+  
+  const handleScheduleMeeting = (contact: any) => {
+    // Navigate to appointments page with contact pre-selected
+    router.push(`/client/appointments/new?contactId=${contact.id}`);
+  };
+  
+  const handleDeleteContact = (contact: any) => {
+    setContactToDelete(contact);
+    setIsDeleteDialogOpen(true);
+  };
+  
+  const confirmDeleteContact = async () => {
+    if (!contactToDelete) return;
+    
+    setIsLoading(true);
+    try {
+      await contactsApi.deleteContact(contactToDelete.id);
+      toast({
+        title: "Contact Deleted",
+        description: `${contactToDelete.firstName} ${contactToDelete.lastName} has been deleted.`,
+      });
+      // Refresh contacts list (in a real app, this would fetch from API)
+      const updatedContacts = contacts.filter(c => c.id !== contactToDelete.id);
+      // Would need to update state here in a real implementation
+      
+      if (selectedContact === contactToDelete.id) {
+        setSelectedContact(null);
+      }
+    } catch (error) {
+      console.error('Error deleting contact:', error);
+      toast({
+        title: "Error",
+        description: "Failed to delete contact. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+      setIsDeleteDialogOpen(false);
+      setContactToDelete(null);
+    }
+  };
+  
+  const handleImportContacts = () => {
+    // Navigate to import page
+    router.push('/client/contacts/import');
+  };
+  
+  const handleExportContacts = async () => {
+    setIsLoading(true);
+    try {
+      const tagIds = tagFilter !== 'all' ? [tagFilter] : undefined;
+      const response = await contactsApi.exportContacts(tagIds);
+      
+      // Create a download link for the CSV
+      const url = window.URL.createObjectURL(new Blob([response.data]));
+      const link = document.createElement('a');
+      link.href = url;
+      link.setAttribute('download', 'contacts.csv');
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      
+      toast({
+        title: "Contacts Exported",
+        description: "Your contacts have been exported to CSV.",
+      });
+    } catch (error) {
+      console.error('Error exporting contacts:', error);
+      toast({
+        title: "Export Failed",
+        description: "Failed to export contacts. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
   
   // Filter contacts based on search query and filters
   const filteredContacts = contacts.filter(contact => {
@@ -283,11 +397,11 @@ export default function ContactsPage() {
       <div className="flex justify-between items-center">
         <h1 className="text-3xl font-bold tracking-tight">Contacts</h1>
         <div className="flex gap-2">
-          <Button variant="outline">
+          <Button variant="outline" onClick={handleImportContacts}>
             <Upload className="mr-2 h-4 w-4" />
             Import
           </Button>
-          <Button>
+          <Button onClick={() => router.push('/client/contacts/new')}>
             <Plus className="mr-2 h-4 w-4" />
             Add Contact
           </Button>
@@ -322,9 +436,13 @@ export default function ContactsPage() {
                   </Button>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Button variant="outline">
+                  <Button 
+                    variant="outline" 
+                    onClick={handleExportContacts}
+                    disabled={isLoading}
+                  >
                     <Download className="mr-2 h-4 w-4" />
-                    Export
+                    {isLoading ? 'Exporting...' : 'Export'}
                   </Button>
                 </div>
               </div>
@@ -415,20 +533,23 @@ export default function ContactsPage() {
                               <DropdownMenuContent align="end">
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleEditContact(contact)}>
                                   <Edit className="mr-2 h-4 w-4" /> Edit
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleSendEmail(contact)}>
                                   <Mail className="mr-2 h-4 w-4" /> Send Email
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleSendSMS(contact)}>
                                   <MessageSquare className="mr-2 h-4 w-4" /> Send SMS
                                 </DropdownMenuItem>
-                                <DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleScheduleMeeting(contact)}>
                                   <Calendar className="mr-2 h-4 w-4" /> Schedule Meeting
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem className="text-red-600">
+                                <DropdownMenuItem 
+                                  className="text-red-600"
+                                  onClick={() => handleDeleteContact(contact)}
+                                >
                                   <Trash2 className="mr-2 h-4 w-4" /> Delete
                                 </DropdownMenuItem>
                               </DropdownMenuContent>
@@ -561,19 +682,46 @@ export default function ContactsPage() {
                   </div>
                   
                   <div className="flex justify-between pt-4 border-t">
-                    <Button variant="outline" size="sm">
+                    <Button 
+                      variant="outline" 
+                      size="sm"
+                      onClick={() => handleEditContact(selectedContactData)}
+                    >
                       <Edit className="mr-2 h-3 w-3" />
                       Edit
                     </Button>
                     <div className="flex gap-2">
-                      <Button variant="outline" size="icon" className="h-8 w-8">
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={() => handleSendEmail(selectedContactData)}
+                      >
                         <Mail className="h-4 w-4" />
                       </Button>
-                      <Button variant="outline" size="icon" className="h-8 w-8">
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={() => window.open(`tel:${selectedContactData.phone}`, '_blank')}
+                      >
                         <Phone className="h-4 w-4" />
                       </Button>
-                      <Button variant="outline" size="icon" className="h-8 w-8">
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={() => handleSendSMS(selectedContactData)}
+                      >
                         <MessageSquare className="h-4 w-4" />
+                      </Button>
+                      <Button 
+                        variant="outline" 
+                        size="icon" 
+                        className="h-8 w-8"
+                        onClick={() => handleScheduleMeeting(selectedContactData)}
+                      >
+                        <Calendar className="h-4 w-4" />
                       </Button>
                     </div>
                   </div>
@@ -589,6 +737,35 @@ export default function ContactsPage() {
           </Card>
         </div>
       </div>
+      
+      {/* Delete Confirmation Dialog */}
+      <Dialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Delete Contact</DialogTitle>
+            <DialogDescription>
+              Are you sure you want to delete {contactToDelete?.firstName} {contactToDelete?.lastName}? 
+              This action cannot be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button 
+              variant="outline" 
+              onClick={() => setIsDeleteDialogOpen(false)}
+              disabled={isLoading}
+            >
+              Cancel
+            </Button>
+            <Button 
+              variant="destructive" 
+              onClick={confirmDeleteContact}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Deleting...' : 'Delete'}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 } 

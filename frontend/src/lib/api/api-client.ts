@@ -135,4 +135,25 @@ export const clientsApi = {
   deleteClient: (id: string) => apiClient.delete(`/clients/${id}`),
 };
 
+export const contactsApi = {
+  getContacts: (params?: any) => apiClient.get('/contacts', { params }),
+  
+  getContact: (id: string) => apiClient.get(`/contacts/${id}`),
+  
+  createContact: (data: any) => apiClient.post('/contacts', data),
+  
+  updateContact: (id: string, data: any) => apiClient.patch(`/contacts/${id}`, data),
+  
+  deleteContact: (id: string) => apiClient.delete(`/contacts/${id}`),
+  
+  searchContacts: (query: string) => apiClient.get(`/contacts/search?query=${encodeURIComponent(query)}`),
+  
+  importContacts: (data: any) => apiClient.post('/contacts/import', data),
+  
+  exportContacts: (tagIds?: string[]) => {
+    const query = tagIds && tagIds.length ? `?tagIds=${tagIds.join(',')}` : '';
+    return apiClient.get(`/contacts/export${query}`, { responseType: 'blob' });
+  },
+};
+
 export default apiClient; 
