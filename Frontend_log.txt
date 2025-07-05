@@ -15,15 +15,11 @@ context: 26px-
 
 [internal] load build definition from Dockerfile
 
-[internal] load build definition from Dockerfile  ✔ 7ms
+[internal] load build definition from Dockerfile  ✔ 15ms
 
 [internal] load metadata for docker.io/library/node:18-alpine
 
-[auth] library/node:pull token for registry-1.docker.io
-
-[auth] library/node:pull token for registry-1.docker.io  ✔ 0ms
-
-[internal] load metadata for docker.io/library/node:18-alpine  ✔ 555ms
+[internal] load metadata for docker.io/library/node:18-alpine  ✔ 261ms
 
 [internal] load .dockerignore
 
@@ -32,6 +28,10 @@ context: 26px-
 [internal] load .dockerignore
 
 [internal] load .dockerignore  ✔ 7ms
+
+[runner 5/6] COPY --from=builder /app/package*.json ./
+
+[runner 4/6] COPY --from=builder /app/node_modules ./node_modules
 
 [runner 3/6] COPY --from=builder /app/.next ./.next
 
@@ -55,19 +55,15 @@ context: 26px-
 
 [runner 6/6] COPY --from=builder /app/public ./public
 
-[runner 5/6] COPY --from=builder /app/package*.json ./
-
-[runner 4/6] COPY --from=builder /app/node_modules ./node_modules
-
 [builder 1/8] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
-
-[internal] load build context
 
 [internal] load build context  ✔ 0ms
 
+[builder 1/8] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e  ✔ 6ms
+
 [internal] load build context
 
-[internal] load build context  ✔ 43ms
+[internal] load build context  ✔ 63ms
 
 [builder 2/8] WORKDIR /app  ✔ 0ms – CACHED
 
@@ -77,7 +73,7 @@ context: 26px-
 
 [builder 5/8] COPY . .
 
-[builder 5/8] COPY . .  ✔ 271ms
+[builder 5/8] COPY . .  ✔ 59ms
 
 [builder 6/8] RUN node fix-frontend-encoding.js || echo "No encoding issues found"
 
@@ -85,7 +81,7 @@ Scanning for UTF-16LE files...
 
 Converted 0 files from UTF-16LE to UTF-8
 
-[builder 6/8] RUN node fix-frontend-encoding.js || echo "No encoding issues found"  ✔ 320ms
+[builder 6/8] RUN node fix-frontend-encoding.js || echo "No encoding issues found"  ✔ 216ms
 
 [builder 7/8] RUN node update-ui-components.js || echo "UI components update completed with warnings"
 
@@ -102,11 +98,9 @@ Created input.tsx
 Created dropdown-menu.tsx
 All UI components updated successfully!
 
-[builder 7/8] RUN node update-ui-components.js || echo "UI components update completed with warnings"  ✔ 325ms
+[builder 7/8] RUN node update-ui-components.js || echo "UI components update completed with warnings"  ✔ 149ms
 
 [builder 8/8] RUN npm run build || echo "Build completed with warnings"
-
-
 > upzento-crm-frontend@0.1.0 build
 > next build
 
@@ -120,6 +114,9 @@ All UI components updated successfully!
 - warn You have enabled experimental features (skipTypeCheck, esmExternals, swcPlugins) in next.config.js.
 
 - warn Experimental features are not covered by semver, and may cause unexpected or broken application behavior. Use at your own risk.
+
+
+
 Attention: Next.js now collects completely anonymous telemetry regarding usage.
 This information is used to shape Next.js' roadmap and prioritize features.
 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
@@ -132,12 +129,6 @@ https://nextjs.org/telemetry
 
 - warn Compiled with warnings
 
-./src/components/ui/pagination.tsx
-Attempted import error: 'buttonVariants' is not exported from '@/components/ui/button' (imported as 'buttonVariants').
-
-Import trace for requested module:
-./src/components/ui/pagination.tsx
-./src/app/dashboard/forms/[id]/submissions/page.tsx
 
 ./src/components/ui/pagination.tsx
 Attempted import error: 'buttonVariants' is not exported from '@/components/ui/button' (imported as 'buttonVariants').
@@ -146,8 +137,12 @@ Import trace for requested module:
 ./src/components/ui/pagination.tsx
 ./src/app/dashboard/forms/[id]/submissions/page.tsx
 
+./src/components/ui/pagination.tsx
+Attempted import error: 'buttonVariants' is not exported from '@/components/ui/button' (imported as 'buttonVariants').
 
-
+Import trace for requested module:
+./src/components/ui/pagination.tsx
+./src/app/dashboard/forms/[id]/submissions/page.tsx
 - info Skipping validation of types
 - info Skipping linting
 
@@ -155,165 +150,14 @@ Import trace for requested module:
 
 - info Generating static pages (0/63)
 
-Error: Unsupported Server Component type: {...}
-    at T (/app/.next/server/chunks/9796.js:10212:11)
-    at Xa (/app/.next/server/chunks/9796.js:10273:21)
-    at Array.toJSON (/app/.next/server/chunks/9796.js:10087:20)
-    at stringify (<anonymous>)
-    at hb (/app/.next/server/chunks/9796.js:10483:9)
-    at eb (/app/.next/server/chunks/9796.js:10382:29)
-    at Timeout._onTimeout (/app/.next/server/chunks/9796.js:10218:16)
-    at listOnTimeout (node:internal/timers:569:17)
-    at process.processTimers (node:internal/timers:512:7)
-
-ReferenceError: Download is not defined
-    at CampaignsPage (/app/.next/server/app/client/phone-sms/campaigns/page.js:1474:118)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:9)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:127:11)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
-    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:126:189)
-
-ReferenceError: MessageSquare is not defined
-    at /app/.next/server/app/client/campaigns/segments/page.js:1358:150
-    at Array.map (<anonymous>)
-    at SegmentsPage (/app/.next/server/app/client/campaigns/segments/page.js:1241:67)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:9)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:127:11)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
-    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
-
-
-Error occurred prerendering page "/client/phone-sms/campaigns". Read more: https://nextjs.org/docs/messages/prerender-error
-ReferenceError: Download is not defined
-    at CampaignsPage (/app/.next/server/app/client/phone-sms/campaigns/page.js:1474:118)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:9)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:127:11)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
-    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:126:189)
-    Error occurred prerendering page "/client/campaigns/segments". Read more: https://nextjs.org/docs/messages/prerender-error
-ReferenceError: MessageSquare is not defined
-    at /app/.next/server/app/client/campaigns/segments/page.js:1358:150
-    at Array.map (<anonymous>)
-    at SegmentsPage (/app/.next/server/app/client/campaigns/segments/page.js:1241:67)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:9)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:127:11)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
-    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+- warn Entire page /client/campaigns/create deopted into client-side rendering. https://nextjs.org/docs/messages/deopted-into-client-rendering /client/campaigns/create
 
 - info Generating static pages (15/63)
 
-Error: `TabsContent` must be used within `Tabs`
-    at useContext2 (/app/.next/server/chunks/5866.js:52:13)
-    at /app/.next/server/chunks/3608.js:1005:21
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:125:329)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:125:449)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
-    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
-    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
-
-
-Error occurred prerendering page "/client/shop/settings". Read more: https://nextjs.org/docs/messages/prerender-error
-Error: Unsupported Server Component type: {...}
-    at T (/app/.next/server/chunks/9796.js:10212:11)
-    at Xa (/app/.next/server/chunks/9796.js:10273:21)
-    at Array.toJSON (/app/.next/server/chunks/9796.js:10087:20)
-    at stringify (<anonymous>)
-    at hb (/app/.next/server/chunks/9796.js:10483:9)
-    at eb (/app/.next/server/chunks/9796.js:10382:29)
-    at Timeout._onTimeout (/app/.next/server/chunks/9796.js:10218:16)
-    at listOnTimeout (node:internal/timers:569:17)
-    at process.processTimers (node:internal/timers:512:7)
-
 - info Generating static pages (31/63)
-
-
-Error occurred prerendering page "/dashboard/reviews". Read more: https://nextjs.org/docs/messages/prerender-error
-Error: `TabsContent` must be used within `Tabs`
-    at useContext2 (/app/.next/server/chunks/5866.js:52:13)
-    at /app/.next/server/chunks/3608.js:1005:21
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:125:329)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:125:449)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
-    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
-    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
 
 - info Generating static pages (47/63)
 
-- warn Entire page /client/campaigns/create deopted into client-side rendering. https://nextjs.org/docs/messages/deopted-into-client-rendering /client/campaigns/create
-
-ReferenceError: BarChart2 is not defined
-    at PhoneNumbersPage (/app/.next/server/app/client/phone-sms/phone-numbers/page.js:1700:114)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:9)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:127:11)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
-    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:126:189)
-
-
-Error occurred prerendering page "/client/phone-sms/phone-numbers". Read more: https://nextjs.org/docs/messages/prerender-error
-ReferenceError: BarChart2 is not defined
-    at PhoneNumbersPage (/app/.next/server/app/client/phone-sms/phone-numbers/page.js:1700:114)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:9)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:127:11)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
-    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:126:189)
-    Error: `TabsContent` must be used within `Tabs`
-    at useContext2 (/app/.next/server/chunks/5866.js:52:13)
-    at /app/.next/server/chunks/3608.js:1005:21
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:125:329)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:125:449)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
-    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
-    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
-
-Error: `TabsContent` must be used within `Tabs`
-    at useContext2 (/app/.next/server/chunks/5866.js:52:13)
-    at /app/.next/server/chunks/3608.js:1005:21
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:125:329)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:125:449)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
-    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
-    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
-    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
-    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
-
-
-Error occurred prerendering page "/dashboard/analytics". Read more: https://nextjs.org/docs/messages/prerender-error
 Error: `TabsContent` must be used within `Tabs`
     at useContext2 (/app/.next/server/chunks/5866.js:52:13)
     at /app/.next/server/chunks/3608.js:1005:21
@@ -345,22 +189,17 @@ Error: `TabsContent` must be used within `Tabs`
 
 
 > Export encountered errors on following paths:
-	/client/campaigns/segments/page: /client/campaigns/segments
 	/client/forms/builder/page: /client/forms/builder
-	/client/phone-sms/campaigns/page: /client/phone-sms/campaigns
-	/client/phone-sms/phone-numbers/page: /client/phone-sms/phone-numbers
-	/client/shop/settings/page: /client/shop/settings
-	/dashboard/analytics/page: /dashboard/analytics
-	/dashboard/reviews/page: /dashboard/reviews
+
 Build completed with warnings
 
-[builder 8/8] RUN npm run build || echo "Build completed with warnings"  ✔ 36s
+[builder 8/8] RUN npm run build || echo "Build completed with warnings"  ✔ 37s
 
 [builder 2/8] WORKDIR /app  ✔ 0ms – CACHED
 
 [runner 3/6] COPY --from=builder /app/.next ./.next
 
-[runner 3/6] COPY --from=builder /app/.next ./.next  ✔ 946ms
+[runner 3/6] COPY --from=builder /app/.next ./.next  ✔ 369ms
 
 [runner 4/6] COPY --from=builder /app/node_modules ./node_modules
 
@@ -368,11 +207,11 @@ Build completed with warnings
 
 [runner 5/6] COPY --from=builder /app/package*.json ./
 
-[runner 5/6] COPY --from=builder /app/package*.json ./  ✔ 789ms
+[runner 5/6] COPY --from=builder /app/package*.json ./  ✔ 728ms
 
 [runner 6/6] COPY --from=builder /app/public ./public
 
-[runner 6/6] COPY --from=builder /app/public ./public  ✔ 25ms
+[runner 6/6] COPY --from=builder /app/public ./public  ✔ 24ms
 
 exporting to docker image format
 
@@ -380,13 +219,13 @@ exporting to image
 
 [auth] sharing credentials for production-europe-west4-drams3a.railway-registry.com
 
-[auth] sharing credentials for production-europe-west4-drams3a.railway-registry.com  ✔ 1ms
+[auth] sharing credentials for production-europe-west4-drams3a.railway-registry.com  ✔ 0ms
 
 importing to docker
 
-importing to docker  ✔ 14s
+importing to docker  ✔ 17s
 
-Build time: 81.95 seconds
+Build time: 87.09 seconds
 
  
 
@@ -403,36 +242,16 @@ Retry window: 5m0s
 
  
 
-Attempt #1 failed with service unavailable. Continuing to retry for 4m56s
+Attempt #1 failed with service unavailable. Continuing to retry for 4m49s
 
-Attempt #2 failed with service unavailable. Continuing to retry for 4m54s
+Attempt #2 failed with service unavailable. Continuing to retry for 4m38s
 
-Attempt #3 failed with service unavailable. Continuing to retry for 4m52s
+Attempt #3 failed with service unavailable. Continuing to retry for 4m36s
 
-Attempt #4 failed with service unavailable. Continuing to retry for 4m47s
+Attempt #4 failed with service unavailable. Continuing to retry for 4m32s
 
-Attempt #5 failed with service unavailable. Continuing to retry for 4m36s
+Attempt #5 failed with service unavailable. Continuing to retry for 4m24s
 
-Attempt #6 failed with service unavailable. Continuing to retry for 4m19s
+Attempt #6 failed with service unavailable. Continuing to retry for 4m8s
 
-Attempt #7 failed with service unavailable. Continuing to retry for 3m49s
-
-Attempt #8 failed with service unavailable. Continuing to retry for 3m19s
-
-Attempt #9 failed with service unavailable. Continuing to retry for 2m49s
-
-Attempt #10 failed with service unavailable. Continuing to retry for 2m19s
-
-Attempt #11 failed with service unavailable. Continuing to retry for 1m49s
-
-Attempt #12 failed with service unavailable. Continuing to retry for 1m18s
-
-Attempt #13 failed with service unavailable. Continuing to retry for 48s
-
-Attempt #14 failed with service unavailable. Continuing to retry for 18s
-
- 
-
-1/1 replicas never became healthy!
-
-Healthcheck failed!
+Attempt #7 failed with service unavailable. Continuing to retry for 3m37s

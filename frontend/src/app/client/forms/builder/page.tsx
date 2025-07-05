@@ -589,83 +589,84 @@ export default function FormBuilderPage() {
                 <TabsTrigger value="fields">Field Properties</TabsTrigger>
                 <TabsTrigger value="settings">Form Settings</TabsTrigger>
               </TabsList>
+            
+              <TabsContent value="fields" className="mt-4">
+                {renderFieldConfig()}
+              </TabsContent>
+              
+              <TabsContent value="settings" className="mt-4">
+                <div className="space-y-6 p-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="submit-text">Submit Button Text</Label>
+                    <Input
+                      id="submit-text"
+                      value={form.settings.submitButtonText}
+                      onChange={(e) => updateSettings({ submitButtonText: e.target.value })}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="success-message">Success Message</Label>
+                    <Textarea
+                      id="success-message"
+                      value={form.settings.successMessage}
+                      onChange={(e) => updateSettings({ successMessage: e.target.value })}
+                      className="resize-none"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="redirect-url">Redirect URL (Optional)</Label>
+                    <Input
+                      id="redirect-url"
+                      value={form.settings.redirectUrl}
+                      onChange={(e) => updateSettings({ redirectUrl: e.target.value })}
+                      placeholder="https://example.com/thank-you"
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="notify-email">Notification Email</Label>
+                    <Input
+                      id="notify-email"
+                      type="email"
+                      value={form.settings.notifyEmail}
+                      onChange={(e) => updateSettings({ notifyEmail: e.target.value })}
+                      placeholder="notifications@example.com"
+                    />
+                  </div>
+                  
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="enable-captcha">Enable CAPTCHA</Label>
+                    <Switch
+                      id="enable-captcha"
+                      checked={form.settings.enableCaptcha}
+                      onCheckedChange={(checked) => updateSettings({ enableCaptcha: checked })}
+                    />
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <Label htmlFor="form-theme">Form Theme</Label>
+                    <Select 
+                      value={form.settings.theme}
+                      onValueChange={(value) => updateSettings({ theme: value })}
+                    >
+                      <SelectTrigger id="form-theme">
+                        <SelectValue placeholder="Select a theme" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="default">Default</SelectItem>
+                        <SelectItem value="minimal">Minimal</SelectItem>
+                        <SelectItem value="cosmic">Cosmic</SelectItem>
+                        <SelectItem value="elegant">Elegant</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </TabsContent>
             </Tabs>
           </CardHeader>
           <CardContent>
-            <TabsContent value="fields" className="mt-0">
-              {renderFieldConfig()}
-            </TabsContent>
-            
-            <TabsContent value="settings" className="mt-0">
-              <div className="space-y-6 p-4">
-                <div className="space-y-2">
-                  <Label htmlFor="submit-text">Submit Button Text</Label>
-                  <Input
-                    id="submit-text"
-                    value={form.settings.submitButtonText}
-                    onChange={(e) => updateSettings({ submitButtonText: e.target.value })}
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="success-message">Success Message</Label>
-                  <Textarea
-                    id="success-message"
-                    value={form.settings.successMessage}
-                    onChange={(e) => updateSettings({ successMessage: e.target.value })}
-                    className="resize-none"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="redirect-url">Redirect URL (Optional)</Label>
-                  <Input
-                    id="redirect-url"
-                    value={form.settings.redirectUrl}
-                    onChange={(e) => updateSettings({ redirectUrl: e.target.value })}
-                    placeholder="https://example.com/thank-you"
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="notify-email">Notification Email</Label>
-                  <Input
-                    id="notify-email"
-                    type="email"
-                    value={form.settings.notifyEmail}
-                    onChange={(e) => updateSettings({ notifyEmail: e.target.value })}
-                    placeholder="notifications@example.com"
-                  />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <Label htmlFor="enable-captcha">Enable CAPTCHA</Label>
-                  <Switch
-                    id="enable-captcha"
-                    checked={form.settings.enableCaptcha}
-                    onCheckedChange={(checked) => updateSettings({ enableCaptcha: checked })}
-                  />
-                </div>
-                
-                <div className="space-y-2">
-                  <Label htmlFor="form-theme">Form Theme</Label>
-                  <Select 
-                    value={form.settings.theme}
-                    onValueChange={(value) => updateSettings({ theme: value })}
-                  >
-                    <SelectTrigger id="form-theme">
-                      <SelectValue placeholder="Select a theme" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="default">Default</SelectItem>
-                      <SelectItem value="minimal">Minimal</SelectItem>
-                      <SelectItem value="cosmic">Cosmic</SelectItem>
-                      <SelectItem value="elegant">Elegant</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-              </div>
-            </TabsContent>
           </CardContent>
         </Card>
       </div>
