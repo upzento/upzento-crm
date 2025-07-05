@@ -645,6 +645,7 @@ model FormField {
   type          String   // text, email, phone, textarea, select, checkbox, radio, date, file, rating
   label         String
   placeholder   String?
+  helpText      String?
   required      Boolean  @default(false)
   order         Int
   stepId        String?
@@ -707,6 +708,8 @@ model FormStep {
   title         String
   description   String?
   order         Int
+  layout        String   @default("grid")    // grid, columns, rows
+  alignment     String   @default("left")    // left, center, right
   
   // Relations
   form          Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
@@ -723,6 +726,8 @@ model FormSettings {
   redirectUrl       String?
   enableCaptcha     Boolean  @default(true)
   notifyEmail       String?
+  createContact     Boolean  @default(false)
+  createDeal        Boolean  @default(false)
   theme             Json?    // Custom theme settings
   customCss         String?  // Custom CSS
   customJs          String?  // Custom JavaScript
@@ -740,6 +745,7 @@ model FormSubmission {
   status        String   @default("new") // new, viewed, flagged, archived
   ipAddress     String?
   userAgent     String?
+  metadata      Json?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
   
@@ -783,33 +789,33 @@ model FormWebhook {
 }
 
 model FormDomain {
-  id            String   @id @default(cuid())
-  formId        String
-  domain        String
-  verified      Boolean  @default(false)
+  id                String   @id @default(cuid())
+  formId            String
+  domain            String
+  verified          Boolean  @default(false)
   verificationToken String?
-  verifiedAt    DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  verifiedAt        DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
   
   // Relations
-  form          Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  form              Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
 
   @@map("form_domains")
   @@unique([formId, domain])
 }
 
 model FormAnalytics {
-  id            String   @id @default(cuid())
-  formId        String
-  date          DateTime @default(now())
-  views         Int      @default(0)
-  submissions   Int      @default(0)
-  completionRate Float   @default(0)
-  avgTimeToComplete Int? // in seconds
+  id                String   @id @default(cuid())
+  formId            String
+  date              DateTime @default(now())
+  views             Int      @default(0)
+  submissions       Int      @default(0)
+  completionRate    Float    @default(0)
+  avgTimeToComplete Int?     // in seconds
   
   // Relations
-  form          Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  form              Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
 
   @@map("form_analytics")
   @@unique([formId, date])

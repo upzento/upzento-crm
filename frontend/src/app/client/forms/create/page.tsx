@@ -292,19 +292,19 @@ export default function CreateFormPage() {
               <CardTitle>Form Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <Input
+                <Input
                 placeholder="Form Name"
-                value={formData.name}
+                  value={formData.name}
                 onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
               />
               <Input
                 placeholder="Description"
-                value={formData.description}
+                  value={formData.description}
                 onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-              />
+                />
             </CardContent>
           </Card>
-        </div>
+              </div>
 
         <div className="col-span-3">
           <Tabs value={activeTab} onValueChange={setActiveTab}>
@@ -410,16 +410,16 @@ export default function CreateFormPage() {
                             }
                           />
                         </div>
-                        <div className="flex items-center justify-between">
+              <div className="flex items-center justify-between">
                           <div>
                             <Label>Field Help Text</Label>
                             <p className="text-sm text-muted-foreground">
                               Show help text below form fields
-                            </p>
-                          </div>
-                          <Switch
+                  </p>
+                </div>
+                <Switch
                             checked={formData.settings.showHelpText}
-                            onCheckedChange={(checked) =>
+                  onCheckedChange={(checked) =>
                               setFormData(prev => ({
                                 ...prev,
                                 settings: {
@@ -427,9 +427,9 @@ export default function CreateFormPage() {
                                   showHelpText: checked
                                 }
                               }))
-                            }
-                          />
-                        </div>
+                  }
+                />
+              </div>
                       </div>
                     </div>
 
@@ -470,9 +470,9 @@ export default function CreateFormPage() {
                         </div>
                       </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
+              </div>
+            </CardContent>
+          </Card>
             </TabsContent>
 
             <TabsContent value="settings">
@@ -580,7 +580,7 @@ export default function CreateFormPage() {
                           </p>
                         </div>
                       </div>
-                    </div>
+        </div>
 
                     <div>
                       <h3 className="text-lg font-medium mb-4">Appearance</h3>
@@ -720,11 +720,11 @@ export default function CreateFormPage() {
                       </div>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
+          </CardContent>
+        </Card>
             </TabsContent>
           </Tabs>
-        </div>
+      </div>
       </div>
     </div>
   );

@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
+import { ConfigService } from '@nestjs/config';
 import { CreateFormDto } from './dto/create-form.dto';
 import { UpdateFormDto } from './dto/update-form.dto';
 import { CreateFormFieldDto } from './dto/create-form-field.dto';
@@ -9,10 +10,17 @@ import { Form, FormField, FormStep, FormSubmission, FormWebhook } from '@prisma/
 import axios from 'axios';
 import * as crypto from 'crypto';
 import { SubmitFormDto } from './dto/submit-form.dto';
+import * as dns from 'dns';
+import { promisify } from 'util';
+
+const resolveTxt = promisify(dns.resolveTxt);
 
 @Injectable()
 export class FormsService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private configService: ConfigService,
+  ) {}
 
   // Form CRUD operations
   async createForm(dto: CreateFormDto, userId: string) {
@@ -426,5 +434,205 @@ export class FormsService {
     const hmac = crypto.createHmac('sha256', secret);
     hmac.update(JSON.stringify(payload));
     return hmac.digest('hex');
+  }
+
+  async duplicate(id: string) {
+    const form = await this.findFormById(id, '');
+    const { id: _, createdAt, updatedAt, ...formData } = form;
+
+    return this.prisma.form.create({
+      data: {
+        ...formData,
+        name: `${formData.name} (Copy)`,
+        fields: {
+          create: form.fields.map(({ id: _, ...field }) => field),
+        },
+        steps: {
+          create: form.steps.map(({ id: _, fields, ...step }) => ({
+            ...step,
+            fields: {
+              create: fields.map(({ id: __, ...field }) => field),
+            },
+          })),
+        },
+        settings: {
+          create: form.settings
+            ? { ...form.settings, id: undefined }
+            : undefined,
+        },
+      },
+      include: {
+        fields: true,
+        steps: {
+          include: {
+            fields: true,
+          },
+        },
+        settings: true,
+      },
+    });
+  }
+
+  async verifyCaptcha(token: string) {
+    try {
+      const secretKey = this.configService.get('RECAPTCHA_SECRET_KEY');
+      const response = await axios.post(
+        'https://www.google.com/recaptcha/api/siteverify',
+        null,
+        {
+          params: {
+            secret: secretKey,
+            response: token,
+          },
+        },
+      );
+
+      if (!response.data.success) {
+        throw new BadRequestException('CAPTCHA verification failed');
+      }
+
+      return response.data;
+    } catch (error) {
+      throw new BadRequestException('CAPTCHA verification failed');
+    }
+  }
+
+  async verifyDomain(formId: string, domain: string) {
+    // Generate verification token
+    const verificationToken = `upzento-verify=${formId}`;
+
+    // Save domain verification record
+    await this.prisma.formDomain.create({
+      data: {
+        formId,
+        domain,
+        verificationToken,
+        verified: false,
+      },
+    });
+
+    return { verificationToken };
+  }
+
+  async checkDomainVerification(formId: string, domain: string) {
+    try {
+      // Get domain record
+      const domainRecord = await this.prisma.formDomain.findFirst({
+        where: { formId, domain },
+      });
+
+      if (!domainRecord) {
+        return false;
+      }
+
+      // Check TXT records
+      const txtRecords = await resolveTxt(domain);
+      const verificationRecord = txtRecords.flat().find(record =>
+        record.includes(`upzento-verify=${formId}`),
+      );
+
+      if (verificationRecord) {
+        // Update domain verification status
+        await this.prisma.formDomain.update({
+          where: { id: domainRecord.id },
+          data: { verified: true },
+        });
+        return true;
+      }
+
+      return false;
+    } catch (error) {
+      console.error('Domain verification check failed:', error);
+      return false;
+    }
+  }
+
+  async createContactFromSubmission(submission: any) {
+    const { data } = submission;
+
+    return this.prisma.contact.create({
+      data: {
+        name: data.name,
+        email: data.email,
+        phone: data.phone,
+        source: 'form',
+        formId: submission.formId,
+        submissionId: submission.id,
+      },
+    });
+  }
+
+  async createDealFromSubmission(submission: any) {
+    return this.prisma.deal.create({
+      data: {
+        title: `Form Submission - ${submission.data.name}`,
+        value: submission.data.value,
+        source: 'form',
+        formId: submission.formId,
+        submissionId: submission.id,
+        contactId: submission.contactId,
+      },
+    });
+  }
+
+  async trackFormView(formId: string) {
+    return this.prisma.formAnalytics.upsert({
+      where: {
+        formId_date: {
+          formId,
+          date: new Date(),
+        },
+      },
+      update: {
+        views: { increment: 1 },
+      },
+      create: {
+        formId,
+        date: new Date(),
+        views: 1,
+        submissions: 0,
+        completionRate: 0,
+      },
+    });
+  }
+
+  async trackFormSubmission(formId: string, data: any) {
+    const analytics = await this.prisma.formAnalytics.findUnique({
+      where: {
+        formId_date: {
+          formId,
+          date: new Date(),
+        },
+      },
+    });
+
+    if (!analytics) {
+      return this.prisma.formAnalytics.create({
+        data: {
+          formId,
+          date: new Date(),
+          views: 0,
+          submissions: 1,
+          completionRate: 100,
+        },
+      });
+    }
+
+    const completionRate = Math.round(
+      ((analytics.submissions + 1) / (analytics.views || 1)) * 100,
+    );
+
+    return this.prisma.formAnalytics.update({
+      where: {
+        formId_date: {
+          formId,
+          date: new Date(),
+        },
+      },
+      data: {
+        submissions: { increment: 1 },
+        completionRate,
+      },
+    });
   }
 } 

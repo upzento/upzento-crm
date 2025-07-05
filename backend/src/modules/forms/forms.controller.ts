@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request, ParseUUIDPipe, BadRequestException, NotFoundException } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards, Request, ParseUUIDPipe, BadRequestException, NotFoundException, UnauthorizedException } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiBody, ApiBearerAuth, ApiQuery, ApiParam } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
@@ -10,6 +10,8 @@ import { CreateFormFieldDto } from './dto/create-form-field.dto';
 import { CreateFormStepDto } from './dto/create-form-step.dto';
 import { CreateFormWebhookDto } from './dto/create-form-webhook.dto';
 import { SubmitFormDto } from './dto/submit-form.dto';
+import { VerifyCaptchaDto } from './dto/verify-captcha.dto';
+import { VerifyDomainDto } from './dto/verify-domain.dto';
 
 @ApiTags('forms')
 @Controller('forms')
@@ -28,8 +30,9 @@ export class FormsController {
   }
 
   @Get()
-  findAllForms(@Request() req) {
-    return this.formsService.findAllForms(req.user.clientId);
+  @ApiOperation({ summary: 'Get all forms' })
+  async findAllForms(@Query('type') type?: string) {
+    return this.formsService.findAll(type);
   }
 
   @Get(':id')
@@ -43,7 +46,8 @@ export class FormsController {
   }
 
   @Patch(':id')
-  updateForm(
+  @ApiOperation({ summary: 'Update a form' })
+  async updateForm(
     @Param('id') id: string,
     @Body() updateFormDto: UpdateFormDto,
     @Request() req,
@@ -52,7 +56,8 @@ export class FormsController {
   }
 
   @Delete(':id')
-  deleteForm(@Param('id') id: string, @Request() req) {
+  @ApiOperation({ summary: 'Delete a form' })
+  async deleteForm(@Param('id') id: string, @Request() req) {
     return this.formsService.deleteForm(id, req.user.clientId);
   }
 
@@ -149,21 +154,85 @@ export class FormsController {
     return this.formsService.deleteFormSubmission(id, formId, req.user.clientId);
   }
 
-  @Post(':id/submit')
+  @Post('submit')
   @ApiOperation({ summary: 'Submit a form' })
   @ApiResponse({ status: 201, description: 'Form submitted successfully' })
   async submitForm(
-    @Param('id') formId: string,
-    @Body() dto: SubmitFormDto,
+    @Body() submitFormDto: SubmitFormDto,
   ) {
-    return this.formsService.submitForm(formId, dto);
+    try {
+      // Verify CAPTCHA if token provided
+      if (submitFormDto.captchaToken) {
+        await this.formsService.verifyCaptcha(submitFormDto.captchaToken);
+      }
+
+      // Verify domain if in embed mode
+      if (submitFormDto.metadata?.source === 'embed') {
+        const domain = new URL(submitFormDto.metadata.url).hostname;
+        const isVerified = await this.formsService.checkDomainVerification(
+          submitFormDto.formId,
+          domain,
+        );
+        if (!isVerified) {
+          throw new UnauthorizedException('Domain not verified');
+        }
+      }
+
+      // Submit form
+      const submission = await this.formsService.submitForm(submitFormDto);
+
+      // Create contact if enabled
+      if (submission.createContact) {
+        await this.formsService.createContactFromSubmission(submission);
+      }
+
+      // Create deal if enabled
+      if (submission.createDeal) {
+        await this.formsService.createDealFromSubmission(submission);
+      }
+
+      return submission;
+    } catch (error) {
+      throw new BadRequestException(error.message);
+    }
   }
 
-  @Get(':id/submissions')
-  @UseGuards(JwtAuthGuard)
-  @ApiOperation({ summary: 'Get form submissions' })
-  @ApiResponse({ status: 200, description: 'Form submissions retrieved successfully' })
-  async getSubmissions(@Param('id') formId: string) {
-    return this.formsService.getSubmissions(formId);
+  @Post('verify-captcha')
+  @ApiOperation({ summary: 'Verify reCAPTCHA token' })
+  async verifyCaptcha(@Body() verifyCaptchaDto: VerifyCaptchaDto) {
+    return this.formsService.verifyCaptcha(verifyCaptchaDto.token);
+  }
+
+  @Post(':id/domains/verify')
+  @ApiOperation({ summary: 'Verify domain for form embedding' })
+  async verifyDomain(
+    @Param('id') id: string,
+    @Body() verifyDomainDto: VerifyDomainDto,
+  ) {
+    return this.formsService.verifyDomain(id, verifyDomainDto.domain);
+  }
+
+  @Get(':id/domains/:domain/status')
+  @ApiOperation({ summary: 'Check domain verification status' })
+  async checkDomainVerification(
+    @Param('id') id: string,
+    @Param('domain') domain: string,
+  ) {
+    return this.formsService.checkDomainVerification(id, domain);
+  }
+
+  @Post(':id/analytics/view')
+  @ApiOperation({ summary: 'Track form view' })
+  async trackView(@Param('id') id: string) {
+    return this.formsService.trackFormView(id);
+  }
+
+  @Post(':id/analytics/submission')
+  @ApiOperation({ summary: 'Track form submission' })
+  async trackSubmission(
+    @Param('id') id: string,
+    @Body() data: Record<string, any>,
+  ) {
+    return this.formsService.trackFormSubmission(id, data);
   }
 } 
