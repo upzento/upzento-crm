@@ -1,7 +1,8 @@
 'use client';
 
-import React from 'react';
+import React, { useState } from 'react';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Plus, FileText, Eye, Edit, Trash2, BarChart } from 'lucide-react';
@@ -14,8 +15,19 @@ import {
   TableRow,
 } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog';
+import { useToast } from '@/components/ui/use-toast';
 
-// This will be replaced with actual API data
+// Mock data - replace with actual API calls
 const mockForms = [
   {
     id: '1',
@@ -47,12 +59,60 @@ const mockForms = [
 ];
 
 export default function FormsPage() {
+  const router = useRouter();
+  const { toast } = useToast();
+  const [forms, setForms] = useState(mockForms);
+  const [formToDelete, setFormToDelete] = useState<string | null>(null);
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
       year: 'numeric',
       month: 'short',
       day: 'numeric',
     });
+  };
+
+  const handleCreateForm = () => {
+    router.push('/dashboard/forms/create');
+  };
+
+  const handleViewForm = (id: string) => {
+    router.push(`/dashboard/forms/${id}`);
+  };
+
+  const handleEditForm = (id: string) => {
+    router.push(`/dashboard/forms/${id}/edit`);
+  };
+
+  const handleViewAnalytics = (id: string) => {
+    router.push(`/dashboard/forms/${id}/analytics`);
+  };
+
+  const handleDeleteClick = (id: string) => {
+    setFormToDelete(id);
+    setIsDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirm = async () => {
+    if (formToDelete) {
+      try {
+        // In a real app, make API call to delete the form
+        setForms(forms.filter(form => form.id !== formToDelete));
+        toast({
+          title: "Form deleted",
+          description: "The form has been successfully deleted.",
+        });
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to delete the form. Please try again.",
+          variant: "destructive",
+        });
+      }
+      setIsDeleteDialogOpen(false);
+      setFormToDelete(null);
+    }
   };
 
   return (
@@ -62,12 +122,10 @@ export default function FormsPage() {
           <h1 className="text-2xl font-bold">Forms</h1>
           <p className="text-gray-500">Create and manage your forms</p>
         </div>
-        <Link href="/dashboard/forms/create">
-          <Button>
-            <Plus className="h-4 w-4 mr-2" />
-            Create Form
-          </Button>
-        </Link>
+        <Button onClick={handleCreateForm}>
+          <Plus className="h-4 w-4 mr-2" />
+          Create Form
+        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -76,7 +134,7 @@ export default function FormsPage() {
             <CardTitle className="text-sm font-medium">Total Forms</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{mockForms.length}</div>
+            <div className="text-2xl font-bold">{forms.length}</div>
           </CardContent>
         </Card>
         <Card>
@@ -85,7 +143,7 @@ export default function FormsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {mockForms.filter(form => form.isActive).length}
+              {forms.filter(form => form.isActive).length}
             </div>
           </CardContent>
         </Card>
@@ -95,7 +153,7 @@ export default function FormsPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {mockForms.reduce((acc, form) => acc + form.submissions, 0)}
+              {forms.reduce((acc, form) => acc + form.submissions, 0)}
             </div>
           </CardContent>
         </Card>
@@ -118,7 +176,7 @@ export default function FormsPage() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {mockForms.map((form) => (
+              {forms.map((form) => (
                 <TableRow key={form.id}>
                   <TableCell>
                     <div className="flex items-center gap-2">
@@ -130,7 +188,7 @@ export default function FormsPage() {
                     </div>
                   </TableCell>
                   <TableCell>
-                    <Badge variant={form.isActive ? "success" : "secondary"}>
+                    <Badge variant={form.isActive ? "default" : "secondary"}>
                       {form.isActive ? 'Active' : 'Inactive'}
                     </Badge>
                   </TableCell>
@@ -139,22 +197,33 @@ export default function FormsPage() {
                   <TableCell>{formatDate(form.lastSubmission)}</TableCell>
                   <TableCell>
                     <div className="flex justify-end gap-2">
-                      <Link href={`/dashboard/forms/${form.id}`}>
-                        <Button variant="ghost" size="sm">
-                          <Eye className="h-4 w-4" />
-                        </Button>
-                      </Link>
-                      <Link href={`/dashboard/forms/${form.id}/edit`}>
-                        <Button variant="ghost" size="sm">
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                      </Link>
-                      <Link href={`/dashboard/forms/${form.id}/analytics`}>
-                        <Button variant="ghost" size="sm">
-                          <BarChart className="h-4 w-4" />
-                        </Button>
-                      </Link>
-                      <Button variant="ghost" size="sm" className="text-red-500">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleViewForm(form.id)}
+                      >
+                        <Eye className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleEditForm(form.id)}
+                      >
+                        <Edit className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleViewAnalytics(form.id)}
+                      >
+                        <BarChart className="h-4 w-4" />
+                      </Button>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleDeleteClick(form.id)}
+                        className="text-red-500 hover:text-red-700"
+                      >
                         <Trash2 className="h-4 w-4" />
                       </Button>
                     </div>
@@ -165,6 +234,22 @@ export default function FormsPage() {
           </Table>
         </CardContent>
       </Card>
+
+      <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Form</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this form? This action cannot be undone
+              and all form submissions will be permanently deleted.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteConfirm}>Delete</AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 } 
