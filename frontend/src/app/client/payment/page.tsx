@@ -26,26 +26,58 @@ import {
   Plus, 
   Search, 
   ArrowUpRight, 
-  ArrowDownRight
+  ArrowDownRight,
+  Loader2
 } from 'lucide-react';
+import { usePayment } from '@/lib/hooks';
 
 export default function ClientPaymentPage() {
   const [activeTab, setActiveTab] = useState('overview');
 
-  // Mock transaction data
-  const transactions = [
-    { id: '1', date: '2023-07-01', description: 'Monthly Subscription', amount: -99.00, status: 'Completed' },
-    { id: '2', date: '2023-06-28', description: 'Additional Users', amount: -29.00, status: 'Completed' },
-    { id: '3', date: '2023-06-15', description: 'Invoice #INV-0053', amount: 450.00, status: 'Paid' },
-    { id: '4', date: '2023-06-10', description: 'Invoice #INV-0052', amount: 750.00, status: 'Paid' },
-    { id: '5', date: '2023-06-01', description: 'Monthly Subscription', amount: -99.00, status: 'Completed' }
-  ];
+  // Use our payment data fetching hook
+  const {
+    summary,
+    transactions,
+    paymentMethods,
+    loading,
+    error,
+    fetchTransactions,
+    fetchPaymentMethods,
+    createPaymentMethod,
+    setDefaultPaymentMethod,
+    deletePaymentMethod,
+  } = usePayment();
 
-  // Mock payment methods
-  const paymentMethods = [
-    { id: '1', type: 'Credit Card', last4: '4242', expiry: '04/25', isDefault: true },
-    { id: '2', type: 'Bank Account', last4: '6789', routingNumber: '110000000', isDefault: false }
-  ];
+  // Show loading state for initial load
+  if (loading && !summary && !transactions && !paymentMethods) {
+    return (
+      <div className="container mx-auto py-6 space-y-6 flex items-center justify-center h-[50vh]">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <h2 className="text-xl font-medium">Loading payment data...</h2>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error && !summary && !transactions && !paymentMethods) {
+    return (
+      <div className="container mx-auto py-6 space-y-6">
+        <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
+          <h2 className="text-xl font-medium text-red-800 dark:text-red-300">Error loading payment data</h2>
+          <p className="mt-2 text-red-700 dark:text-red-400">{error.message}</p>
+          <Button 
+            variant="outline" 
+            className="mt-4" 
+            onClick={() => window.location.reload()}
+          >
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -80,10 +112,16 @@ export default function ClientPaymentPage() {
                     <DollarSign className="h-5 w-5" />
                   </span>
                 </div>
-                <div className="text-3xl font-bold mb-2">$1,250.00</div>
+                <div className="text-3xl font-bold mb-2">
+                  ${summary?.totalBalance?.toFixed(2) || '0.00'}
+                </div>
                 <div className="flex items-center text-sm text-green-500">
                   <ArrowUpRight className="h-4 w-4 mr-1" />
-                  <span>Up $450.00 from last month</span>
+                  <span>
+                    {summary?.monthlyChange > 0 
+                      ? `Up $${summary?.monthlyChange?.toFixed(2) || '0.00'} from last month`
+                      : `No change from last month`}
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -96,9 +134,9 @@ export default function ClientPaymentPage() {
                     <FileText className="h-5 w-5" />
                   </span>
                 </div>
-                <div className="text-3xl font-bold mb-2">2</div>
+                <div className="text-3xl font-bold mb-2">{summary?.outstandingInvoices || 0}</div>
                 <div className="flex items-center text-sm text-muted-foreground">
-                  <span>Total: $1,250.00</span>
+                  <span>Total: ${summary?.outstandingAmount?.toFixed(2) || '0.00'}</span>
                 </div>
               </CardContent>
             </Card>
@@ -111,10 +149,20 @@ export default function ClientPaymentPage() {
                     <CreditCard className="h-5 w-5" />
                   </span>
                 </div>
-                <div className="text-3xl font-bold mb-2">$128.00</div>
-                <div className="flex items-center text-sm text-red-500">
-                  <ArrowDownRight className="h-4 w-4 mr-1" />
-                  <span>Down $29.00 from last month</span>
+                <div className="text-3xl font-bold mb-2">
+                  ${summary?.monthlySpending?.toFixed(2) || '0.00'}
+                </div>
+                <div className={`flex items-center text-sm ${summary?.monthlyChange >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                  {summary?.monthlyChange >= 0 ? (
+                    <ArrowUpRight className="h-4 w-4 mr-1" />
+                  ) : (
+                    <ArrowDownRight className="h-4 w-4 mr-1" />
+                  )}
+                  <span>
+                    {summary?.monthlyChange !== 0 
+                      ? `${summary?.monthlyChange > 0 ? 'Up' : 'Down'} $${Math.abs(summary?.monthlyChange || 0).toFixed(2)} from last month`
+                      : 'No change from last month'}
+                  </span>
                 </div>
               </CardContent>
             </Card>
@@ -128,34 +176,48 @@ export default function ClientPaymentPage() {
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <div className="relative w-full overflow-auto">
-                <table className="w-full caption-bottom text-sm">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left p-4 font-medium">Date</th>
-                      <th className="text-left p-4 font-medium">Description</th>
-                      <th className="text-right p-4 font-medium">Amount</th>
-                      <th className="text-right p-4 font-medium">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {transactions.slice(0, 3).map((transaction) => (
-                      <tr key={transaction.id} className="border-b">
-                        <td className="p-4">{transaction.date}</td>
-                        <td className="p-4">{transaction.description}</td>
-                        <td className={`p-4 text-right ${transaction.amount < 0 ? 'text-red-500' : 'text-green-500'}`}>
-                          {transaction.amount < 0 ? '-' : ''}${Math.abs(transaction.amount).toFixed(2)}
-                        </td>
-                        <td className="p-4 text-right">
-                          <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                            {transaction.status}
-                          </span>
-                        </td>
+              {loading && !transactions ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                </div>
+              ) : (
+                <div className="relative w-full overflow-auto">
+                  <table className="w-full caption-bottom text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left p-4 font-medium">Date</th>
+                        <th className="text-left p-4 font-medium">Description</th>
+                        <th className="text-right p-4 font-medium">Amount</th>
+                        <th className="text-right p-4 font-medium">Status</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {transactions && transactions.length > 0 ? (
+                        transactions.slice(0, 3).map((transaction) => (
+                          <tr key={transaction.id} className="border-b">
+                            <td className="p-4">{new Date(transaction.date).toLocaleDateString()}</td>
+                            <td className="p-4">{transaction.description}</td>
+                            <td className={`p-4 text-right ${transaction.amount < 0 ? 'text-red-500' : 'text-green-500'}`}>
+                              {transaction.amount < 0 ? '-' : ''}${Math.abs(transaction.amount).toFixed(2)}
+                            </td>
+                            <td className="p-4 text-right">
+                              <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                                {transaction.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={4} className="p-4 text-center text-muted-foreground">
+                            No transactions found
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </CardContent>
             <CardFooter>
               <Button variant="ghost" className="w-full" onClick={() => setActiveTab('transactions')}>

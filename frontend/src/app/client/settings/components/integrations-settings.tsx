@@ -9,111 +9,84 @@ import {
   Github, 
   ArrowRight, 
   Check, 
-  AlertCircle
+  AlertCircle,
+  Loader2
 } from "lucide-react";
+import { useEffect } from "react";
+import { useSettings } from "@/lib/hooks";
+import type { Integration } from "@/lib/api/modules/settings-api";
 
-// Define types for integrations
-type IntegrationStatus = "connected" | "disconnected" | "error";
-
-type Integration = {
-  id: string;
-  name: string;
-  description: string;
-  icon: React.ReactNode;
-  status: IntegrationStatus;
-  lastSync: string;
-  category: string;
-};
-
-type CategoryMap = {
+interface CategoryMap {
   [key: string]: Integration[];
-};
-
-// Mock integrations data
-const integrations: Integration[] = [
-  {
-    id: "google-analytics",
-    name: "Google Analytics",
-    description: "Track website traffic and user behavior",
-    icon: <BarChart className="h-8 w-8 text-[#E37400]" />,
-    status: "connected",
-    lastSync: "2 hours ago",
-    category: "analytics"
-  },
-  {
-    id: "mailchimp",
-    name: "Mailchimp",
-    description: "Email marketing and automation",
-    icon: <Mail className="h-8 w-8 text-[#FFE01B]" />,
-    status: "connected",
-    lastSync: "1 day ago",
-    category: "marketing"
-  },
-  {
-    id: "facebook-pixel",
-    name: "Facebook Pixel",
-    description: "Track conversions from Facebook ads",
-    icon: <Facebook className="h-8 w-8 text-[#1877F2]" />,
-    status: "connected",
-    lastSync: "3 hours ago",
-    category: "analytics"
-  },
-  {
-    id: "stripe",
-    name: "Stripe",
-    description: "Payment processing and subscriptions",
-    icon: <CreditCard className="h-8 w-8 text-[#635BFF]" />,
-    status: "connected",
-    lastSync: "30 minutes ago",
-    category: "payments"
-  },
-  {
-    id: "slack",
-    name: "Slack",
-    description: "Team messaging and notifications",
-    icon: <MessageSquare className="h-8 w-8 text-[#4A154B]" />,
-    status: "disconnected",
-    lastSync: "Never",
-    category: "communication"
-  },
-  {
-    id: "zapier",
-    name: "Zapier",
-    description: "Connect apps and automate workflows",
-    icon: <Cloud className="h-8 w-8 text-[#FF4A00]" />,
-    status: "connected",
-    lastSync: "5 hours ago",
-    category: "automation"
-  },
-  {
-    id: "github",
-    name: "GitHub",
-    description: "Code repository and version control",
-    icon: <Github className="h-8 w-8" />,
-    status: "disconnected",
-    lastSync: "Never",
-    category: "development"
-  },
-  {
-    id: "hubspot",
-    name: "HubSpot",
-    description: "CRM, marketing, and sales platform",
-    icon: <Cloud className="h-8 w-8 text-[#FF7A59]" />,
-    status: "error",
-    lastSync: "Error connecting",
-    category: "marketing"
-  }
-];
+}
 
 export default function IntegrationsSettings() {
+  // Use the settings hook to fetch integrations
+  const { integrations, loading, error, fetchIntegrations } = useSettings({
+    autoFetch: false // We'll handle fetching manually
+  });
+  
+  // Fetch integrations on component mount
+  useEffect(() => {
+    fetchIntegrations();
+  }, [fetchIntegrations]);
+  
+  // Show loading state
+  if (loading && !integrations) {
+    return (
+      <div className="flex justify-center py-8">
+        <Loader2 className="h-8 w-8 animate-spin" />
+      </div>
+    );
+  }
+  
+  // Show error state
+  if (error && !integrations) {
+    return (
+      <div className="bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-md p-4">
+        <h3 className="text-red-800 dark:text-red-300 font-medium">Error loading integrations</h3>
+        <p className="text-red-700 dark:text-red-400 text-sm mt-1">{error.message}</p>
+        <Button 
+          variant="outline" 
+          size="sm" 
+          className="mt-2" 
+          onClick={() => fetchIntegrations()}
+        >
+          Retry
+        </Button>
+      </div>
+    );
+  }
+  
   // Group integrations by category
-  const categories = integrations.reduce<CategoryMap>((acc, integration) => {
+  const categories: CategoryMap = (integrations || []).reduce((acc: CategoryMap, integration: Integration) => {
     if (!acc[integration.category]) {
       acc[integration.category] = [];
     }
     acc[integration.category].push(integration);
     return acc;
   }, {});
+  
+  // Helper function to get icon by integration name
+  const getIcon = (name: string) => {
+    const lowerName = name.toLowerCase();
+    
+    if (lowerName.includes('google') || lowerName.includes('analytics')) {
+      return <BarChart className="h-8 w-8 text-[#E37400]" />;
+    } else if (lowerName.includes('mail') || lowerName.includes('email')) {
+      return <Mail className="h-8 w-8 text-[#FFE01B]" />;
+    } else if (lowerName.includes('facebook') || lowerName.includes('meta')) {
+      return <Facebook className="h-8 w-8 text-[#1877F2]" />;
+    } else if (lowerName.includes('stripe') || lowerName.includes('payment')) {
+      return <CreditCard className="h-8 w-8 text-[#635BFF]" />;
+    } else if (lowerName.includes('chat') || lowerName.includes('slack')) {
+      return <MessageSquare className="h-8 w-8 text-[#4A154B]" />;
+    } else if (lowerName.includes('github')) {
+      return <Github className="h-8 w-8" />;
+    } else {
+      return <Cloud className="h-8 w-8 text-[#FF4A00]" />;
+    }
+  };
   
   return (
     <div className="space-y-8">
@@ -128,7 +101,7 @@ export default function IntegrationsSettings() {
               >
                 <div className="flex items-center gap-4">
                   <div className="bg-background p-2 rounded-lg border">
-                    {integration.icon}
+                    {getIcon(integration.name)}
                   </div>
                   <div>
                     <h4 className="font-medium">{integration.name}</h4>
