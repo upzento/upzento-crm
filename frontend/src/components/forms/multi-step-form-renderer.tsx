@@ -1,142 +1,131 @@
 'use client'
 
 import React, { useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Checkbox } from '@/components/ui/checkbox';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Select } from '@/components/ui/select';
 import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
-import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { ArrowLeft, ArrowRight, Send } from 'lucide-react';
+
+interface FormField {
+  id: string;
+  type: string;
+  label: string;
+  placeholder?: string;
+  required: boolean;
+  options?: { label: string; value: string }[];
+  validation?: any;
+}
 
 interface FormStep {
   id: string;
   title: string;
   description?: string;
+  layout: 'grid' | 'columns' | 'rows';
+  alignment: 'left' | 'center' | 'right';
   fields: FormField[];
 }
 
-interface FormField {
-  id: string;
-  label: string;
-  type: string;
-  required: boolean;
-  placeholder?: string;
-  options?: { label: string; value: string }[];
-  defaultValue?: string;
-  validation?: Record<string, any>;
-}
-
 interface MultiStepFormRendererProps {
-  formId: string;
-  name: string;
-  description?: string;
   steps: FormStep[];
-  onSubmit: (data: any) => Promise<void>;
+  onSubmit: (data: any) => void;
 }
 
 export const MultiStepFormRenderer: React.FC<MultiStepFormRendererProps> = ({
-  formId,
-  name,
-  description,
   steps,
   onSubmit,
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Record<string, any>>({});
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
-  // Generate schema for current step
-  const generateStepSchema = (fields: FormField[]) => {
-    const schema: Record<string, any> = {};
-    
-    fields.forEach((field) => {
-      let fieldSchema = z.string();
-      
-      if (field.required) {
-        fieldSchema = fieldSchema.min(1, `${field.label} is required`);
-      } else {
-        fieldSchema = fieldSchema.optional();
+  const validateStep = () => {
+    const currentFields = steps[currentStep].fields;
+    const newErrors: Record<string, string> = {};
+
+    currentFields.forEach(field => {
+      if (field.required && !formData[field.id]) {
+        newErrors[field.id] = 'This field is required';
       }
 
-      if (field.type === 'email') {
-        fieldSchema = z.string().email('Invalid email address');
-      } else if (field.type === 'number') {
-        fieldSchema = z.number().or(z.string().regex(/^\d+$/).transform(Number));
+      if (field.type === 'email' && formData[field.id]) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(formData[field.id])) {
+          newErrors[field.id] = 'Please enter a valid email address';
+        }
       }
-
-      schema[field.id] = fieldSchema;
     });
 
-    return z.object(schema);
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
 
-  const currentStepSchema = generateStepSchema(steps[currentStep].fields);
-  const form = useForm({
-    resolver: zodResolver(currentStepSchema),
-    defaultValues: steps[currentStep].fields.reduce((acc, field) => ({
-      ...acc,
-      [field.id]: field.defaultValue || '',
-    }), {}),
-  });
+  const handleNext = () => {
+    if (validateStep()) {
+      setCurrentStep(prev => Math.min(prev + 1, steps.length - 1));
+    }
+  };
 
-  const handleStepSubmit = async (data: any) => {
-    const updatedFormData = { ...formData, ...data };
-    setFormData(updatedFormData);
+  const handlePrevious = () => {
+    setCurrentStep(prev => Math.max(prev - 1, 0));
+  };
 
-    if (currentStep === steps.length - 1) {
-      // Final step - submit the form
-      await onSubmit(updatedFormData);
-    } else {
-      // Move to next step
-      setCurrentStep(currentStep + 1);
+  const handleSubmit = () => {
+    if (validateStep()) {
+      onSubmit(formData);
     }
   };
 
   const renderField = (field: FormField) => {
-    const commonProps = {
-      id: field.id,
-      placeholder: field.placeholder,
-      ...form.register(field.id),
-    };
-
     switch (field.type) {
+      case 'text':
+      case 'email':
+      case 'phone':
+        return (
+          <Input
+            type={field.type}
+            placeholder={field.placeholder}
+            value={formData[field.id] || ''}
+            onChange={(e) => setFormData({ ...formData, [field.id]: e.target.value })}
+          />
+        );
       case 'textarea':
         return (
           <Textarea
-            {...commonProps}
-            className="min-h-[100px]"
+            placeholder={field.placeholder}
+            value={formData[field.id] || ''}
+            onChange={(e) => setFormData({ ...formData, [field.id]: e.target.value })}
           />
         );
-
       case 'select':
         return (
           <Select
-            {...commonProps}
-            value={form.getValues(field.id)}
-            onValueChange={(value) => form.setValue(field.id, value)}
+            value={formData[field.id] || ''}
+            onValueChange={(value) => setFormData({ ...formData, [field.id]: value })}
           >
-            <option value="">Select an option</option>
-            {field.options?.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label}
-              </option>
-            ))}
+            <SelectTrigger>
+              <SelectValue placeholder={field.placeholder || 'Select an option'} />
+            </SelectTrigger>
+            <SelectContent>
+              {field.options?.map(option => (
+                <SelectItem key={option.value} value={option.value}>
+                  {option.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
           </Select>
         );
-
       case 'radio':
         return (
           <RadioGroup
-            value={form.getValues(field.id)}
-            onValueChange={(value) => form.setValue(field.id, value)}
+            value={formData[field.id] || ''}
+            onValueChange={(value) => setFormData({ ...formData, [field.id]: value })}
           >
-            {field.options?.map((option) => (
+            {field.options?.map(option => (
               <div key={option.value} className="flex items-center space-x-2">
                 <RadioGroupItem value={option.value} id={`${field.id}-${option.value}`} />
                 <Label htmlFor={`${field.id}-${option.value}`}>{option.label}</Label>
@@ -144,119 +133,93 @@ export const MultiStepFormRenderer: React.FC<MultiStepFormRendererProps> = ({
             ))}
           </RadioGroup>
         );
-
       case 'checkbox':
         return (
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id={field.id}
-              checked={form.getValues(field.id) === 'true'}
-              onCheckedChange={(checked) =>
-                form.setValue(field.id, checked ? 'true' : 'false')
-              }
-            />
-            <Label htmlFor={field.id}>{field.label}</Label>
+          <div className="space-y-2">
+            {field.options?.map(option => (
+              <div key={option.value} className="flex items-center space-x-2">
+                <Checkbox
+                  id={`${field.id}-${option.value}`}
+                  checked={formData[field.id]?.includes(option.value)}
+                  onCheckedChange={(checked) => {
+                    const currentValues = formData[field.id] || [];
+                    const newValues = checked
+                      ? [...currentValues, option.value]
+                      : currentValues.filter((v: string) => v !== option.value);
+                    setFormData({ ...formData, [field.id]: newValues });
+                  }}
+                />
+                <Label htmlFor={`${field.id}-${option.value}`}>{option.label}</Label>
+              </div>
+            ))}
           </div>
         );
-
       default:
-        return (
-          <Input
-            {...commonProps}
-            type={field.type}
-          />
-        );
+        return null;
     }
   };
 
   return (
     <Card>
       <CardHeader>
-        <CardTitle>{name}</CardTitle>
-        {description && (
-          <CardDescription>{description}</CardDescription>
-        )}
-        <div className="flex items-center gap-2 mt-4">
-          {steps.map((step, index) => (
-            <div
-              key={step.id}
-              className={`flex items-center ${index !== 0 ? 'ml-2' : ''}`}
-            >
-              {index !== 0 && (
-                <div className="h-px w-8 bg-border mx-2" />
-              )}
-              <div
-                className={`w-8 h-8 rounded-full flex items-center justify-center border-2 ${
-                  index < currentStep
-                    ? 'bg-primary border-primary text-primary-foreground'
-                    : index === currentStep
-                    ? 'border-primary'
-                    : 'border-border'
-                }`}
-              >
-                {index < currentStep ? (
-                  <Check className="h-4 w-4" />
-                ) : (
-                  <span>{index + 1}</span>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-6">
+        <div className="flex items-center justify-between">
           <div>
-            <h3 className="text-lg font-medium">{steps[currentStep].title}</h3>
+            <CardTitle>{steps[currentStep].title}</CardTitle>
             {steps[currentStep].description && (
               <p className="text-sm text-muted-foreground mt-1">
                 {steps[currentStep].description}
               </p>
             )}
           </div>
-
-          <form onSubmit={form.handleSubmit(handleStepSubmit)} className="space-y-4">
-            {steps[currentStep].fields.map((field) => (
-              <div key={field.id} className="space-y-2">
-                {field.type !== 'checkbox' && (
-                  <Label htmlFor={field.id}>
-                    {field.label}
-                    {field.required && <span className="text-red-500">*</span>}
-                  </Label>
-                )}
-                {renderField(field)}
-                {form.formState.errors[field.id] && (
-                  <Alert variant="destructive">
-                    <AlertDescription>
-                      {form.formState.errors[field.id]?.message as string}
-                    </AlertDescription>
-                  </Alert>
-                )}
-              </div>
-            ))}
-
-            <div className="flex justify-between pt-4">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setCurrentStep(currentStep - 1)}
-                disabled={currentStep === 0}
-              >
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Previous
-              </Button>
-              <Button type="submit">
-                {currentStep === steps.length - 1 ? (
-                  'Submit'
-                ) : (
-                  <>
-                    Next
-                    <ArrowRight className="h-4 w-4 ml-2" />
-                  </>
-                )}
-              </Button>
+          <div className="text-sm text-muted-foreground">
+            Step {currentStep + 1} of {steps.length}
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <div className={`grid gap-6 ${
+          steps[currentStep].layout === 'grid' ? 'grid-cols-2' :
+          steps[currentStep].layout === 'columns' ? 'grid-cols-3' : 'grid-cols-1'
+        }`}>
+          {steps[currentStep].fields.map((field) => (
+            <div key={field.id} className="space-y-2">
+              <Label>
+                {field.label}
+                {field.required && <span className="text-destructive">*</span>}
+              </Label>
+              {renderField(field)}
+              {errors[field.id] && (
+                <p className="text-sm text-destructive">{errors[field.id]}</p>
+              )}
             </div>
-          </form>
+          ))}
+        </div>
+
+        <div className={`flex mt-6 ${
+          steps[currentStep].alignment === 'center' ? 'justify-center' :
+          steps[currentStep].alignment === 'right' ? 'justify-end' : 'justify-start'
+        }`}>
+          {currentStep > 0 && (
+            <Button
+              variant="outline"
+              onClick={handlePrevious}
+              className="mr-2"
+            >
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Previous
+            </Button>
+          )}
+          {currentStep < steps.length - 1 ? (
+            <Button onClick={handleNext}>
+              Next
+              <ArrowRight className="h-4 w-4 ml-2" />
+            </Button>
+          ) : (
+            <Button onClick={handleSubmit}>
+              Submit
+              <Send className="h-4 w-4 ml-2" />
+            </Button>
+          )}
         </div>
       </CardContent>
     </Card>
