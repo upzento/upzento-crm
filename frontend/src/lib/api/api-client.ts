@@ -215,6 +215,21 @@ export const contactsApi = {
   filterByTags: (tagIds: string[]) => 
     apiClient.get(`/contacts/filter?tagIds=${tagIds.join(',')}`),
     
+  // Lead Scoring
+  getLeadScore: (contactId: string) => 
+    apiClient.get(`/contacts/${contactId}/lead-score`),
+  
+  refreshLeadScore: (contactId: string) => 
+    apiClient.post(`/contacts/${contactId}/lead-score/refresh`),
+  
+  getLeadScoreFactors: (contactId: string) => 
+    apiClient.get(`/contacts/${contactId}/lead-score/factors`),
+  
+  getLeadScoreHistory: (contactId: string, params?: {
+    startDate?: string;
+    endDate?: string;
+  }) => apiClient.get(`/contacts/${contactId}/lead-score/history`, { params }),
+  
   // Activities
   getContactActivities: (contactId: string, params?: {
     page?: number;

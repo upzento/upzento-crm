@@ -11,6 +11,8 @@ import {
   CardFooter 
 } from '@/components/ui/card';
 import { ActivityTimeline } from '@/components/contacts/activity-timeline';
+import { LeadScoreCard } from '@/components/contacts/lead-score-card';
+import { LeadAssignment } from '@/components/contacts/lead-assignment';
 import { 
   Table, 
   TableBody, 
@@ -943,6 +945,72 @@ export default function ContactsPage() {
                       </Button>
                     </div>
                   </div>
+                  
+                  {/* Lead Management */}
+                  {selectedContactData.type === 'lead' && (
+                    <div className="space-y-6 pt-6">
+                      <LeadScoreCard
+                        contactId={selectedContactData.id}
+                        initialScore={{
+                          total: 65,
+                          breakdown: {
+                            engagement: 70,
+                            demographic: 60,
+                            behavioral: 75,
+                            firmographic: 55
+                          },
+                          factors: [
+                            {
+                              type: 'email',
+                              description: 'Opened marketing email',
+                              impact: 5,
+                              timestamp: '2024-03-20T14:30:00Z'
+                            },
+                            {
+                              type: 'meeting',
+                              description: 'Attended product demo',
+                              impact: 10,
+                              timestamp: '2024-03-19T10:00:00Z'
+                            },
+                            {
+                              type: 'form',
+                              description: 'Downloaded whitepaper',
+                              impact: 8,
+                              timestamp: '2024-03-18T16:45:00Z'
+                            },
+                            {
+                              type: 'website',
+                              description: 'Visited pricing page',
+                              impact: 3,
+                              timestamp: '2024-03-18T15:30:00Z'
+                            }
+                          ],
+                          trend: 'up',
+                          lastUpdated: '2024-03-20T14:30:00Z'
+                        }}
+                        onScoreUpdate={(newScore) => {
+                          // In a real implementation, this would update the contact's lead score
+                          console.log('Lead score updated:', newScore);
+                        }}
+                      />
+                      
+                      <LeadAssignment
+                        contactId={selectedContactData.id}
+                        currentAssignment={
+                          selectedContactData.assignedTo ? {
+                            userId: '1', // In a real app, this would be the actual user ID
+                            name: selectedContactData.assignedTo,
+                            assignedAt: selectedContactData.lastActivity,
+                            status: 'active'
+                          } : undefined
+                        }
+                        onAssignmentUpdate={(assignment) => {
+                          // In a real implementation, this would update the contact's assignment
+                          console.log('Lead assignment updated:', assignment);
+                        }}
+                      />
+                    </div>
+                  )}
                   
                   {/* Activity Timeline */}
                   <div className="pt-6">
