@@ -254,34 +254,48 @@ export default function ClientPaymentPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="relative w-full overflow-auto">
-                <table className="w-full caption-bottom text-sm">
-                  <thead>
-                    <tr className="border-b">
-                      <th className="text-left p-4 font-medium">Date</th>
-                      <th className="text-left p-4 font-medium">Description</th>
-                      <th className="text-right p-4 font-medium">Amount</th>
-                      <th className="text-right p-4 font-medium">Status</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {transactions.map((transaction) => (
-                      <tr key={transaction.id} className="border-b">
-                        <td className="p-4">{transaction.date}</td>
-                        <td className="p-4">{transaction.description}</td>
-                        <td className={`p-4 text-right ${transaction.amount < 0 ? 'text-red-500' : 'text-green-500'}`}>
-                          {transaction.amount < 0 ? '-' : ''}${Math.abs(transaction.amount).toFixed(2)}
-                        </td>
-                        <td className="p-4 text-right">
-                          <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
-                            {transaction.status}
-                          </span>
-                        </td>
+              {loading ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                </div>
+              ) : (
+                <div className="relative w-full overflow-auto">
+                  <table className="w-full caption-bottom text-sm">
+                    <thead>
+                      <tr className="border-b">
+                        <th className="text-left p-4 font-medium">Date</th>
+                        <th className="text-left p-4 font-medium">Description</th>
+                        <th className="text-right p-4 font-medium">Amount</th>
+                        <th className="text-right p-4 font-medium">Status</th>
                       </tr>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
+                    </thead>
+                    <tbody>
+                      {transactions && transactions.length > 0 ? (
+                        transactions.map((transaction) => (
+                          <tr key={transaction.id} className="border-b">
+                            <td className="p-4">{new Date(transaction.date).toLocaleDateString()}</td>
+                            <td className="p-4">{transaction.description}</td>
+                            <td className={`p-4 text-right ${transaction.amount < 0 ? 'text-red-500' : 'text-green-500'}`}>
+                              {transaction.amount < 0 ? '-' : ''}${Math.abs(transaction.amount).toFixed(2)}
+                            </td>
+                            <td className="p-4 text-right">
+                              <span className="inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300">
+                                {transaction.status}
+                              </span>
+                            </td>
+                          </tr>
+                        ))
+                      ) : (
+                        <tr>
+                          <td colSpan={4} className="p-4 text-center text-muted-foreground">
+                            No transactions found
+                          </td>
+                        </tr>
+                      )}
+                    </tbody>
+                  </table>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>
@@ -303,49 +317,63 @@ export default function ClientPaymentPage() {
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-4">
-                {paymentMethods.map((method) => (
-                  <div key={method.id} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex items-center gap-4">
-                      {method.type === 'Credit Card' ? (
-                        <div className="bg-primary/10 p-3 rounded-full">
-                          <CreditCard className="h-6 w-6 text-primary" />
-                        </div>
-                      ) : (
-                        <div className="bg-primary/10 p-3 rounded-full">
-                          <Inbox className="h-6 w-6 text-primary" />
-                        </div>
-                      )}
-                      <div>
-                        <div className="font-medium">{method.type}</div>
-                        <div className="text-sm text-muted-foreground">
-                          {method.type === 'Credit Card' 
-                            ? `•••• ${method.last4} | Expires ${method.expiry}` 
-                            : `•••• ${method.last4}`}
-                        </div>
-                        {method.isDefault && (
-                          <div className="text-xs mt-1 inline-flex items-center rounded-full px-2.5 py-0.5 font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
-                            Default
+              {loading ? (
+                <div className="flex justify-center py-8">
+                  <Loader2 className="h-8 w-8 animate-spin" />
+                </div>
+              ) : paymentMethods && paymentMethods.length > 0 ? (
+                <div className="space-y-4">
+                  {paymentMethods.map((method) => (
+                    <div key={method.id} className="flex items-center justify-between p-4 border rounded-lg">
+                      <div className="flex items-center gap-4">
+                        {method.type === 'Credit Card' ? (
+                          <div className="bg-primary/10 p-3 rounded-full">
+                            <CreditCard className="h-6 w-6 text-primary" />
+                          </div>
+                        ) : (
+                          <div className="bg-primary/10 p-3 rounded-full">
+                            <Inbox className="h-6 w-6 text-primary" />
                           </div>
                         )}
+                        <div>
+                          <div className="font-medium">{method.type}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {method.type === 'Credit Card' 
+                              ? `•••• ${method.last4} | Expires ${method.expiry}` 
+                              : `•••• ${method.last4}`}
+                          </div>
+                          {method.isDefault && (
+                            <div className="text-xs mt-1 inline-flex items-center rounded-full px-2.5 py-0.5 font-medium bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300">
+                              Default
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2">
+                        {!method.isDefault && (
+                          <Button variant="outline" size="sm">
+                            Set as Default
+                          </Button>
+                        )}
+                        <Button variant="ghost" size="sm">
+                          Edit
+                        </Button>
+                        <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600">
+                          Remove
+                        </Button>
                       </div>
                     </div>
-                    <div className="flex gap-2">
-                      {!method.isDefault && (
-                        <Button variant="outline" size="sm">
-                          Set as Default
-                        </Button>
-                      )}
-                      <Button variant="ghost" size="sm">
-                        Edit
-                      </Button>
-                      <Button variant="ghost" size="sm" className="text-red-500 hover:text-red-600">
-                        Remove
-                      </Button>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                  ))}
+                </div>
+              ) : (
+                <div className="p-4 text-center text-muted-foreground">
+                  <p>No payment methods found</p>
+                  <Button className="mt-4">
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add Your First Payment Method
+                  </Button>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

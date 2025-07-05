@@ -27,8 +27,8 @@ const nextConfig = {
     
     return config;
   },
-  // Disable static export errors
-  outputFileTracing: false,
+  // Enable outputFileTracing for compatibility with standalone output
+  outputFileTracing: true,
   // Disable image optimization
   images: {
     unoptimized: true,
