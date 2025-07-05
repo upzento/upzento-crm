@@ -13,28 +13,38 @@ export enum DataType {
 }
 
 export class CreateDatasetDto {
+  @ApiProperty({ description: 'Dataset name' })
   @IsString()
   name: string;
 
+  @ApiProperty({ description: 'Dataset description', required: false })
   @IsOptional()
   @IsString()
   description?: string;
 
-  @IsObject()
-  query: Record<string, any>;
-
+  @ApiProperty({ 
+    description: 'Data type',
+    enum: DataType
+  })
   @IsEnum(DataType)
   dataType: DataType;
 
-  @IsOptional()
-  @IsInt()
-  @Min(0)
-  cacheTime?: number;
+  @ApiProperty({ 
+    description: 'Query configuration for data retrieval',
+    type: 'object'
+  })
+  @IsObject()
+  query: Record<string, any>;
 
+  @ApiProperty({ description: 'Integration ID' })
   @IsUUID()
   integrationId: string;
 
-  @IsUUID()
-  clientId: string;
+  @ApiProperty({ description: 'Client ID', required: false })
+  @IsOptional()
+  @IsString()
+  clientId?: string; // Will be set from context if not provided
 }
+
+export class UpdateDatasetDto extends PartialType(CreateDatasetDto) {}
 

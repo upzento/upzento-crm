@@ -61,6 +61,12 @@ model Client {
   orders            Order[]
   coupons           Coupon[]
   shopWidgets       ShopWidget[]
+  
+  // Analytics relationships
+  analyticsIntegrations AnalyticsIntegration[]
+  analyticsDashboards   AnalyticsDashboard[]
+  analyticsReports      AnalyticsReport[]
+  analyticsGoals        AnalyticsGoal[]
 }
 
 // User management model
@@ -96,6 +102,11 @@ model User {
   leadCampaigns   LeadCampaign[]
   contactSegments ContactSegment[]
   forms           Form[]
+  
+  // Analytics relationships
+  createdDashboards AnalyticsDashboard[] @relation("DashboardCreator")
+  createdReports    AnalyticsReport[]    @relation("ReportCreator")
+  dashboardShares   DashboardShare[]
 
   @@map("users")
 }
@@ -819,4 +830,163 @@ model FormAnalytics {
 
   @@map("form_analytics")
   @@unique([formId, date])
+}
+
+// Analytics Models for Multi-tenant Support
+model AnalyticsIntegration {
+  id              String    @id @default(cuid())
+  name            String
+  type            String    // google_analytics, meta_ads, linkedin_ads, etc.
+  status          String    @default("disconnected") // connected, disconnected, error
+  credentials     Json      // Encrypted credentials
+  config          Json?     // Integration-specific configuration
+  lastSync        DateTime?
+  syncFrequency   String    @default("daily") // hourly, daily, weekly, manual
+  errorMessage    String?
+  clientId        String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  datasets        AnalyticsDataset[]
+
+  @@map("analytics_integrations")
+}
+
+model AnalyticsDashboard {
+  id              String    @id @default(cuid())
+  name            String
+  description     String?
+  layout          Json      // Dashboard layout configuration
+  isTemplate      Boolean   @default(false)
+  isDefault       Boolean   @default(false)
+  isPublic        Boolean   @default(false)
+  clientId        String
+  createdById     String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdBy       User      @relation("DashboardCreator", fields: [createdById], references: [id])
+  widgets         AnalyticsWidget[]
+  shares          DashboardShare[]
+  reports         AnalyticsReport[]
+
+  @@map("analytics_dashboards")
+}
+
+model AnalyticsWidget {
+  id              String    @id @default(cuid())
+  name            String
+  type            String    // line_chart, bar_chart, pie_chart, kpi_card, table, etc.
+  config          Json      // Widget configuration (data source, metrics, styling)
+  position        Json      // {x, y, w, h} for grid positioning
+  dashboardId     String
+  dataSourceId    String?   // Reference to integration or dataset
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  dashboard       AnalyticsDashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+
+  @@map("analytics_widgets")
+}
+
+model DashboardShare {
+  id              String    @id @default(cuid())
+  dashboardId     String
+  userId          String?   // Null for public shares
+  email           String?   // For sharing with non-users
+  permission      String    @default("view") // view, edit
+  token           String?   @unique // For public/email shares
+  expiresAt       DateTime?
+  createdAt       DateTime  @default(now())
+
+  // Relationships
+  dashboard       AnalyticsDashboard @relation(fields: [dashboardId], references: [id], onDelete: Cascade)
+  user            User?     @relation(fields: [userId], references: [id])
+
+  @@map("dashboard_shares")
+}
+
+model AnalyticsDataset {
+  id              String    @id @default(cuid())
+  name            String
+  description     String?
+  dataType        String    // time_series, categorical, etc.
+  query           Json      // Query configuration for data retrieval
+  cachedData      Json?     // Cached data for performance
+  lastRefresh     DateTime?
+  integrationId   String
+  clientId        String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  integration     AnalyticsIntegration @relation(fields: [integrationId], references: [id], onDelete: Cascade)
+
+  @@map("analytics_datasets")
+}
+
+model AnalyticsReport {
+  id              String    @id @default(cuid())
+  name            String
+  description     String?
+  type            String    // dashboard, custom, template
+  config          Json      // Report configuration
+  schedule        Json?     // Schedule configuration if automated
+  format          String    @default("pdf") // pdf, csv, xlsx
+  deliveryMethod  String    @default("download") // email, download
+  recipients      Json?     // List of email recipients
+  dashboardId     String?   // If based on a dashboard
+  clientId        String
+  createdById     String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  createdBy       User      @relation("ReportCreator", fields: [createdById], references: [id])
+  dashboard       AnalyticsDashboard? @relation(fields: [dashboardId], references: [id])
+  executions      ReportExecution[]
+
+  @@map("analytics_reports")
+}
+
+model ReportExecution {
+  id              String    @id @default(cuid())
+  reportId        String
+  status          String    @default("pending") // pending, processing, completed, failed
+  fileUrl         String?   // URL to the generated report file
+  error           String?   // Error message if failed
+  startedAt       DateTime  @default(now())
+  completedAt     DateTime?
+
+  // Relationships
+  report          AnalyticsReport @relation(fields: [reportId], references: [id], onDelete: Cascade)
+
+  @@map("report_executions")
+}
+
+model AnalyticsGoal {
+  id              String    @id @default(cuid())
+  name            String
+  description     String?
+  metric          String    // The metric to track
+  target          Float     // Target value
+  currentValue    Float     @default(0) // Current value
+  period          String    @default("monthly") // daily, weekly, monthly, quarterly, yearly
+  startDate       DateTime
+  endDate         DateTime
+  status          String    @default("active") // active, achieved, paused, cancelled
+  clientId        String
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  // Relationships
+  client          Client    @relation(fields: [clientId], references: [id], onDelete: Cascade)
+
+  @@map("analytics_goals")
 }
