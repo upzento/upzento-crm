@@ -4,16 +4,14 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { TenantContextGuard } from '../auth/guards/tenant-context.guard';
 import { RequiresTenantType } from '../auth/decorators/tenant-type.decorator';
 import { FormsService } from './forms.service';
-
-import { FormsService } from './forms.service';
 import { CreateFormDto } from './dto/create-form.dto';
 import { UpdateFormDto } from './dto/update-form.dto';
 import { CreateFormFieldDto } from './dto/create-form-field.dto';
 import { CreateFormStepDto } from './dto/create-form-step.dto';
 import { CreateFormWebhookDto } from './dto/create-form-webhook.dto';
+import { SubmitFormDto } from './dto/submit-form.dto';
 
-
-
+@ApiTags('forms')
 @Controller('forms')
 @UseGuards(JwtAuthGuard, TenantContextGuard)
 export class FormsController {
@@ -21,8 +19,12 @@ export class FormsController {
 
   // Form endpoints
   @Post()
-  createForm(@Body() createFormDto: CreateFormDto) {
-    return this.formsService.createForm(createFormDto);
+  @ApiOperation({ summary: 'Create a new form' })
+  @ApiResponse({ status: 201, description: 'Form created successfully' })
+  async createForm(@Body() dto: CreateFormDto) {
+    // TODO: Get userId from request context
+    const userId = 'current-user-id';
+    return this.formsService.createForm(dto, userId);
   }
 
   @Get()
@@ -31,8 +33,13 @@ export class FormsController {
   }
 
   @Get(':id')
-  findFormById(@Param('id') id: string, @Request() req) {
-    return this.formsService.findFormById(id, req.user.clientId);
+  @ApiOperation({ summary: 'Get a form by ID' })
+  @ApiResponse({ status: 200, description: 'Form retrieved successfully' })
+  async getForm(
+    @Param('id') formId: string,
+    @Query('include_private') includePrivate?: boolean,
+  ) {
+    return this.formsService.getForm(formId, includePrivate);
   }
 
   @Patch(':id')
@@ -140,5 +147,23 @@ export class FormsController {
     @Request() req,
   ) {
     return this.formsService.deleteFormSubmission(id, formId, req.user.clientId);
+  }
+
+  @Post(':id/submit')
+  @ApiOperation({ summary: 'Submit a form' })
+  @ApiResponse({ status: 201, description: 'Form submitted successfully' })
+  async submitForm(
+    @Param('id') formId: string,
+    @Body() dto: SubmitFormDto,
+  ) {
+    return this.formsService.submitForm(formId, dto);
+  }
+
+  @Get(':id/submissions')
+  @UseGuards(JwtAuthGuard)
+  @ApiOperation({ summary: 'Get form submissions' })
+  @ApiResponse({ status: 200, description: 'Form submissions retrieved successfully' })
+  async getSubmissions(@Param('id') formId: string) {
+    return this.formsService.getSubmissions(formId);
   }
 } 

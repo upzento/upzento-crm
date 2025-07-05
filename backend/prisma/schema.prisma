@@ -13,389 +13,398 @@ datasource db {
 // Core models for multi-tenancy
 
 model Tenant {
-  id          String    @id @default(uuid())
-  name        String
-  domain      String?   @unique
-  plan        String    @default("free")
-  status      String    @default("active")
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        String   @id @default(uuid())
+  name      String
+  domain    String?  @unique
+  plan      String   @default("free")
+  status    String   @default("active")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relationships
-  agencies    Agency[]
-  users       User[]
+  agencies Agency[]
+  users    User[]
 }
 
 model Agency {
-  id          String    @id @default(uuid())
-  name        String
-  logo        String?
+  id           String   @id @default(uuid())
+  name         String
+  logo         String?
   primaryColor String?
-  tenantId    String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  tenantId     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   // Relationships
-  tenant      Tenant    @relation(fields: [tenantId], references: [id], onDelete: Cascade)
-  clients     Client[]
-  users       User[]
+  tenant  Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  clients Client[]
+  users   User[]
 }
 
 model Client {
-  id          String    @id @default(uuid())
-  name        String
-  logo        String?
+  id           String   @id @default(uuid())
+  name         String
+  logo         String?
   primaryColor String?
-  agencyId    String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  agencyId     String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   // Relationships
-  agency      Agency    @relation(fields: [agencyId], references: [id], onDelete: Cascade)
-  users       User[]
-  campaigns   Campaign[]
-  chatWidgets ChatWidget[]
+  agency            Agency             @relation(fields: [agencyId], references: [id], onDelete: Cascade)
+  users             User[]
+  campaigns         Campaign[]
+  chatWidgets       ChatWidget[]
   chatConversations ChatConversation[]
-  products    Product[]
+  products          Product[]
   productCategories ProductCategory[]
-  orders      Order[]
-  coupons     Coupon[]
-  shopWidgets ShopWidget[]
+  orders            Order[]
+  coupons           Coupon[]
+  shopWidgets       ShopWidget[]
 }
 
 // User management model
 
 model User {
-  id          String    @id @default(uuid())
-  email       String    @unique
-  password    String
-  firstName   String
-  lastName    String
-  role        Role      @default(CLIENT_USER)
-  tenantId    String?
-  agencyId    String?
-  clientId    String?
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  id        String   @id @default(uuid())
+  email     String   @unique
+  name      String?
+  password  String
+  firstName String
+  lastName  String
+  role      Role     @default(CLIENT_USER)
+  tenantId  String?
+  agencyId  String?
+  clientId  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relationships
-  tenant      Tenant?   @relation(fields: [tenantId], references: [id], onDelete: SetNull)
-  agency      Agency?   @relation(fields: [agencyId], references: [id], onDelete: SetNull)
-  client      Client?   @relation(fields: [clientId], references: [id], onDelete: SetNull)
-  
+  tenant Tenant? @relation(fields: [tenantId], references: [id], onDelete: SetNull)
+  agency Agency? @relation(fields: [agencyId], references: [id], onDelete: SetNull)
+  client Client? @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
   // Chat relationships
   assignedConversations ChatConversation[] @relation("AssignedAgent")
-  sentMessages ChatMessage[] @relation("MessageSender")
-  
+  sentMessages          ChatMessage[]      @relation("MessageSender")
+
   // Shop relationships
-  orders      Order[]
+  orders Order[]
+
+  // Add relation fields
+  savedSearches   SavedSearch[]
+  leadCampaigns   LeadCampaign[]
+  contactSegments ContactSegment[]
+  forms           Form[]
+
+  @@map("users")
 }
 
 // Campaign models
 model Campaign {
-  id              String          @id @default(uuid())
-  name            String
-  description     String?
-  type            String
-  status          String          @default("draft")
-  clientId        String
-  createdById     String?
-  scheduledAt     DateTime?
-  sentAt          DateTime?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id          String    @id @default(uuid())
+  name        String
+  description String?
+  type        String
+  status      String    @default("draft")
+  clientId    String
+  createdById String?
+  scheduledAt DateTime?
+  sentAt      DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   // Relationships
-  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  analytics       CampaignAnalytics?
-  segments        CampaignToSegment[]
+  client    Client              @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  analytics CampaignAnalytics?
+  segments  CampaignToSegment[]
 }
 
 model CampaignAnalytics {
-  id              String          @id @default(uuid())
-  campaignId      String          @unique
-  sent            Int             @default(0)
-  delivered       Int             @default(0)
-  opened          Int             @default(0)
-  clicked         Int             @default(0)
-  replied         Int             @default(0)
-  bounced         Int             @default(0)
-  unsubscribed    Int             @default(0)
-  conversions     Int             @default(0)
-  revenue         Float           @default(0)
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id           String   @id @default(uuid())
+  campaignId   String   @unique
+  sent         Int      @default(0)
+  delivered    Int      @default(0)
+  opened       Int      @default(0)
+  clicked      Int      @default(0)
+  replied      Int      @default(0)
+  bounced      Int      @default(0)
+  unsubscribed Int      @default(0)
+  conversions  Int      @default(0)
+  revenue      Float    @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
   // Relationships
-  campaign        Campaign        @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  campaign Campaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
 }
 
 model CampaignSegment {
-  id              String          @id @default(uuid())
-  name            String
-  description     String?
-  filterRules     Json?
-  clientId        String
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  filterRules Json?
+  clientId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   // Relationships
-  campaigns       CampaignToSegment[]
+  campaigns CampaignToSegment[]
 }
 
 model CampaignToSegment {
-  campaignId      String
-  segmentId       String
-  createdAt       DateTime        @default(now())
+  campaignId String
+  segmentId  String
+  createdAt  DateTime @default(now())
 
   // Relationships
-  campaign        Campaign        @relation(fields: [campaignId], references: [id], onDelete: Cascade)
-  segment         CampaignSegment @relation(fields: [segmentId], references: [id], onDelete: Cascade)
+  campaign Campaign        @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  segment  CampaignSegment @relation(fields: [segmentId], references: [id], onDelete: Cascade)
 
   @@id([campaignId, segmentId])
 }
 
 // Chat models
 model ChatWidget {
-  id              String          @id @default(uuid())
-  name            String
-  clientId        String
-  primaryColor    String          @default("#3B82F6")
-  welcomeMessage  String          @default("Hello! How can we help you today?")
-  offlineMessage  String          @default("We're currently offline. Leave a message and we'll get back to you.")
-  position        String          @default("right")
-  isActive        Boolean         @default(true)
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id             String   @id @default(uuid())
+  name           String
+  clientId       String
+  primaryColor   String   @default("#3B82F6")
+  welcomeMessage String   @default("Hello! How can we help you today?")
+  offlineMessage String   @default("We're currently offline. Leave a message and we'll get back to you.")
+  position       String   @default("right")
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   // Relationships
-  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  conversations   ChatConversation[]
+  client        Client             @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  conversations ChatConversation[]
 }
 
 model ChatConversation {
-  id              String          @id @default(uuid())
-  visitorName     String?
-  visitorEmail    String?
-  widgetId        String?
-  clientId        String
-  status          ChatConversationStatus @default(OPEN)
-  source          ChatSource      @default(WEBSITE)
-  assignedToId    String?
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id           String                 @id @default(uuid())
+  visitorName  String?
+  visitorEmail String?
+  widgetId     String?
+  clientId     String
+  status       ChatConversationStatus @default(OPEN)
+  source       ChatSource             @default(WEBSITE)
+  assignedToId String?
+  createdAt    DateTime               @default(now())
+  updatedAt    DateTime               @updatedAt
 
   // Relationships
-  widget          ChatWidget?     @relation(fields: [widgetId], references: [id], onDelete: SetNull)
-  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  assignedTo      User?           @relation("AssignedAgent", fields: [assignedToId], references: [id], onDelete: SetNull)
-  messages        ChatMessage[]
+  widget     ChatWidget?   @relation(fields: [widgetId], references: [id], onDelete: SetNull)
+  client     Client        @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  assignedTo User?         @relation("AssignedAgent", fields: [assignedToId], references: [id], onDelete: SetNull)
+  messages   ChatMessage[]
 }
 
 model ChatMessage {
-  id              String          @id @default(uuid())
-  conversationId  String
-  content         String
-  isFromVisitor   Boolean         @default(false)
-  read            Boolean         @default(false)
-  sentById        String?
-  attachments     Json?
-  createdAt       DateTime        @default(now())
+  id             String   @id @default(uuid())
+  conversationId String
+  content        String
+  isFromVisitor  Boolean  @default(false)
+  read           Boolean  @default(false)
+  sentById       String?
+  attachments    Json?
+  createdAt      DateTime @default(now())
 
   // Relationships
-  conversation    ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
-  sentBy          User?           @relation("MessageSender", fields: [sentById], references: [id], onDelete: SetNull)
+  conversation ChatConversation @relation(fields: [conversationId], references: [id], onDelete: Cascade)
+  sentBy       User?            @relation("MessageSender", fields: [sentById], references: [id], onDelete: SetNull)
 }
 
 // Shop models
 model Product {
-  id              String          @id @default(uuid())
-  name            String
-  description     String?
-  price           Decimal
-  sku             String?
-  status          String          @default("ACTIVE")
-  isFeatured      Boolean         @default(false)
-  images          String[]
-  inventory       Int?
-  clientId        String
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Decimal
+  sku         String?
+  status      String   @default("ACTIVE")
+  isFeatured  Boolean  @default(false)
+  images      String[]
+  inventory   Int?
+  clientId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   // Relationships
-  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  categories      ProductToCategory[]
-  variants        ProductVariant[]
-  orderItems      OrderItem[]
-  coupons         CouponToProduct[]
+  client     Client              @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  categories ProductToCategory[]
+  variants   ProductVariant[]
+  orderItems OrderItem[]
+  coupons    CouponToProduct[]
 }
 
 model ProductCategory {
-  id              String          @id @default(uuid())
-  name            String
-  description     String?
-  image           String?
-  parentId        String?
-  clientId        String
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  image       String?
+  parentId    String?
+  clientId    String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   // Relationships
-  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  parent          ProductCategory? @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
-  children        ProductCategory[] @relation("CategoryHierarchy")
-  products        ProductToCategory[]
-  coupons         CouponToCategory[]
+  client   Client              @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  parent   ProductCategory?    @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: SetNull)
+  children ProductCategory[]   @relation("CategoryHierarchy")
+  products ProductToCategory[]
+  coupons  CouponToCategory[]
 }
 
 model ProductToCategory {
-  productId       String
-  categoryId      String
-  createdAt       DateTime        @default(now())
+  productId  String
+  categoryId String
+  createdAt  DateTime @default(now())
 
   // Relationships
-  product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
-  category        ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  product  Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  category ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   @@id([productId, categoryId])
 }
 
 model ProductVariant {
-  id              String          @id @default(uuid())
-  name            String
-  price           Decimal
-  sku             String?
-  inventory       Int?
-  options         Json?
-  productId       String
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id        String   @id @default(uuid())
+  name      String
+  price     Decimal
+  sku       String?
+  inventory Int?
+  options   Json?
+  productId String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relationships
-  product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
-  orderItems      OrderItem[]
+  product    Product     @relation(fields: [productId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
 }
 
 model Order {
-  id              String          @id @default(uuid())
-  orderNumber     String          @unique
-  status          String          @default("PENDING")
+  id              String   @id @default(uuid())
+  orderNumber     String   @unique
+  status          String   @default("PENDING")
   customerName    String?
   customerEmail   String?
   contactId       String?
   userId          String?
   couponCode      String?
   subtotal        Decimal
-  discountTotal   Decimal         @default(0)
-  shippingTotal   Decimal         @default(0)
-  taxTotal        Decimal         @default(0)
+  discountTotal   Decimal  @default(0)
+  shippingTotal   Decimal  @default(0)
+  taxTotal        Decimal  @default(0)
   total           Decimal
   shippingAddress Json?
   billingAddress  Json?
   paymentMethod   String?
   paymentStatus   String?
   clientId        String
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   // Relationships
-  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  user            User?           @relation(fields: [userId], references: [id], onDelete: SetNull)
-  items           OrderItem[]
-  events          OrderEvent[]
-  coupon          Coupon?         @relation(fields: [couponCode], references: [code], onDelete: SetNull)
+  client Client       @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  user   User?        @relation(fields: [userId], references: [id], onDelete: SetNull)
+  items  OrderItem[]
+  events OrderEvent[]
+  coupon Coupon?      @relation(fields: [couponCode], references: [code], onDelete: SetNull)
 }
 
 model OrderItem {
-  id              String          @id @default(uuid())
-  orderId         String
-  productId       String?
-  variantId       String?
-  quantity        Int
-  price           Decimal
-  total           Decimal
-  productName     String
-  variantName     String?
-  productOptions  Json?
-  createdAt       DateTime        @default(now())
+  id             String   @id @default(uuid())
+  orderId        String
+  productId      String?
+  variantId      String?
+  quantity       Int
+  price          Decimal
+  total          Decimal
+  productName    String
+  variantName    String?
+  productOptions Json?
+  createdAt      DateTime @default(now())
 
   // Relationships
-  order           Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
-  product         Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
-  variant         ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
+  order   Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  product Product?        @relation(fields: [productId], references: [id], onDelete: SetNull)
+  variant ProductVariant? @relation(fields: [variantId], references: [id], onDelete: SetNull)
 }
 
 model OrderEvent {
-  id              String          @id @default(uuid())
-  orderId         String
-  type            String
-  data            Json?
-  createdAt       DateTime        @default(now())
+  id        String   @id @default(uuid())
+  orderId   String
+  type      String
+  data      Json?
+  createdAt DateTime @default(now())
 
   // Relationships
-  order           Order           @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  order Order @relation(fields: [orderId], references: [id], onDelete: Cascade)
 }
 
 model Coupon {
-  id              String          @id @default(uuid())
-  code            String          @unique
-  type            String          // PERCENTAGE, FIXED_AMOUNT, FREE_SHIPPING
-  value           Decimal?        // Percentage or fixed amount value
-  minOrderAmount  Decimal?
-  maxUses         Int?
-  usageCount      Int             @default(0)
-  startDate       DateTime?
-  endDate         DateTime?
-  isActive        Boolean         @default(true)
-  clientId        String
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id             String    @id @default(uuid())
+  code           String    @unique
+  type           String // PERCENTAGE, FIXED_AMOUNT, FREE_SHIPPING
+  value          Decimal? // Percentage or fixed amount value
+  minOrderAmount Decimal?
+  maxUses        Int?
+  usageCount     Int       @default(0)
+  startDate      DateTime?
+  endDate        DateTime?
+  isActive       Boolean   @default(true)
+  clientId       String
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
 
   // Relationships
-  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
-  products        CouponToProduct[]
-  categories      CouponToCategory[]
-  orders          Order[]
+  client     Client             @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  products   CouponToProduct[]
+  categories CouponToCategory[]
+  orders     Order[]
 }
 
 model CouponToProduct {
-  couponId        String
-  productId       String
-  createdAt       DateTime        @default(now())
+  couponId  String
+  productId String
+  createdAt DateTime @default(now())
 
   // Relationships
-  coupon          Coupon          @relation(fields: [couponId], references: [id], onDelete: Cascade)
-  product         Product         @relation(fields: [productId], references: [id], onDelete: Cascade)
+  coupon  Coupon  @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
 
   @@id([couponId, productId])
 }
 
 model CouponToCategory {
-  couponId        String
-  categoryId      String
-  createdAt       DateTime        @default(now())
+  couponId   String
+  categoryId String
+  createdAt  DateTime @default(now())
 
   // Relationships
-  coupon          Coupon          @relation(fields: [couponId], references: [id], onDelete: Cascade)
-  category        ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  coupon   Coupon          @relation(fields: [couponId], references: [id], onDelete: Cascade)
+  category ProductCategory @relation(fields: [categoryId], references: [id], onDelete: Cascade)
 
   @@id([couponId, categoryId])
 }
 
 model ShopWidget {
-  id              String          @id @default(uuid())
-  name            String
-  type            String          @default("PRODUCTS")
-  isActive        Boolean         @default(true)
-  theme           Json?
-  settings        Json?
-  allowedDomains  String[]        @default([])
-  clientId        String
-  createdAt       DateTime        @default(now())
-  updatedAt       DateTime        @updatedAt
+  id             String   @id @default(uuid())
+  name           String
+  type           String   @default("PRODUCTS")
+  isActive       Boolean  @default(true)
+  theme          Json?
+  settings       Json?
+  allowedDomains String[] @default([])
+  clientId       String
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
 
   // Relationships
-  client          Client          @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  client Client @relation(fields: [clientId], references: [id], onDelete: Cascade)
 }
 
 // Enums
@@ -424,61 +433,61 @@ enum ChatSource {
 }
 
 model ContactRelationship {
-  id            String   @id @default(uuid())
-  contact1Id    String
-  contact2Id    String
-  type          String
-  customLabel   String?
-  notes         String?
-  strength      Int?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  contact1      Contact  @relation("ContactRelationships1", fields: [contact1Id], references: [id])
-  contact2      Contact  @relation("ContactRelationships2", fields: [contact2Id], references: [id])
+  id          String   @id @default(uuid())
+  contact1Id  String
+  contact2Id  String
+  type        String
+  customLabel String?
+  notes       String?
+  strength    Int?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  contact1    Contact  @relation("ContactRelationships1", fields: [contact1Id], references: [id])
+  contact2    Contact  @relation("ContactRelationships2", fields: [contact2Id], references: [id])
 
   @@unique([contact1Id, contact2Id, type])
 }
 
 model SavedSearch {
-  id          String   @id @default(uuid())
-  name        String
-  conditions  Json
-  userId      String
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-  user        User     @relation(fields: [userId], references: [id])
+  id         String   @id @default(uuid())
+  name       String
+  conditions Json
+  userId     String
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id])
 }
 
 model LeadCampaign {
-  id               String   @id @default(uuid())
-  name             String
-  description      String?
+  id                String               @id @default(uuid())
+  name              String
+  description       String?
   triggerConditions Json
-  steps            Json
-  isActive         Boolean  @default(true)
-  maxContacts      Int?
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
-  createdBy        String
-  user             User     @relation(fields: [createdBy], references: [id])
-  assignments      CampaignAssignment[]
-  campaignSteps    CampaignStep[]
-  conversions      CampaignConversion[]
+  steps             Json
+  isActive          Boolean              @default(true)
+  maxContacts       Int?
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  createdBy         String
+  user              User                 @relation(fields: [createdBy], references: [id])
+  assignments       CampaignAssignment[]
+  campaignSteps     CampaignStep[]
+  conversions       CampaignConversion[]
 
   @@map("lead_campaigns")
 }
 
 model CampaignAssignment {
-  id          String   @id @default(uuid())
+  id          String       @id @default(uuid())
   campaignId  String
   contactId   String
-  status      String   @default("PENDING")
+  status      String       @default("PENDING")
   startedAt   DateTime?
   completedAt DateTime?
-  currentStep Int      @default(0)
+  currentStep Int          @default(0)
   overrides   Json?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   campaign    LeadCampaign @relation(fields: [campaignId], references: [id])
   contact     Contact      @relation(fields: [contactId], references: [id])
 
@@ -486,52 +495,53 @@ model CampaignAssignment {
 }
 
 model Contact {
-  id              String    @id @default(uuid())
-  name            String
-  email           String
-  phone           String
-  address         String
-  createdAt       DateTime  @default(now())
-  updatedAt       DateTime  @updatedAt
+  id        String   @id @default(uuid())
+  name      String
+  email     String
+  phone     String
+  address   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relationships
-  relationships1        ContactRelationship[] @relation("ContactRelationships1")
-  relationships2        ContactRelationship[] @relation("ContactRelationships2")
-  campaignAssignments  CampaignAssignment[]
-  emailMetrics         EmailMetric[]
-  smsMetrics           SMSMetric[]
-  taskMetrics          TaskMetric[]
-  conversions          CampaignConversion[]
+  relationships1      ContactRelationship[] @relation("ContactRelationships1")
+  relationships2      ContactRelationship[] @relation("ContactRelationships2")
+  campaignAssignments CampaignAssignment[]
+  emailMetrics        EmailMetric[]
+  smsMetrics          SMSMetric[]
+  taskMetrics         TaskMetric[]
+  conversions         CampaignConversion[]
+  FormSubmission      FormSubmission[]
 
   @@map("contacts")
 }
 
 model ContactSegment {
-  id             String   @id @default(uuid())
-  name           String
-  description    String?
-  conditions     Json
-  combinator     String   @default("AND")
-  isDynamic      Boolean  @default(true)
-  includeArchived Boolean @default(false)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  createdBy      String
-  user           User     @relation(fields: [createdBy], references: [id])
+  id              String   @id @default(uuid())
+  name            String
+  description     String?
+  conditions      Json
+  combinator      String   @default("AND")
+  isDynamic       Boolean  @default(true)
+  includeArchived Boolean  @default(false)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  createdBy       String
+  user            User     @relation(fields: [createdBy], references: [id])
 
   @@map("contact_segments")
 }
 
 model CampaignStep {
-  id           String   @id @default(uuid())
+  id           String        @id @default(uuid())
   campaignId   String
-  type         String   // EMAIL, SMS, TASK, WEBHOOK
+  type         String // EMAIL, SMS, TASK, WEBHOOK
   content      Json
-  delay        Int      // delay in minutes
+  delay        Int // delay in minutes
   conditions   Json?
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  campaign     LeadCampaign @relation(fields: [campaignId], references: [id])
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+  campaign     LeadCampaign  @relation(fields: [campaignId], references: [id])
   emailMetrics EmailMetric[]
   smsMetrics   SMSMetric[]
   taskMetrics  TaskMetric[]
@@ -540,68 +550,134 @@ model CampaignStep {
 }
 
 model EmailMetric {
-  id            String   @id @default(uuid())
-  stepId        String
-  contactId     String
-  sent          Boolean  @default(false)
-  opened        Boolean  @default(false)
-  clicked       Boolean  @default(false)
-  sentAt        DateTime?
-  openedAt      DateTime?
-  clickedAt     DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  step          CampaignStep @relation(fields: [stepId], references: [id])
-  contact       Contact      @relation(fields: [contactId], references: [id])
+  id        String       @id @default(uuid())
+  stepId    String
+  contactId String
+  sent      Boolean      @default(false)
+  opened    Boolean      @default(false)
+  clicked   Boolean      @default(false)
+  sentAt    DateTime?
+  openedAt  DateTime?
+  clickedAt DateTime?
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @updatedAt
+  step      CampaignStep @relation(fields: [stepId], references: [id])
+  contact   Contact      @relation(fields: [contactId], references: [id])
 
   @@map("email_metrics")
 }
 
 model SMSMetric {
-  id            String   @id @default(uuid())
-  stepId        String
-  contactId     String
-  sent          Boolean  @default(false)
-  delivered     Boolean  @default(false)
-  responded     Boolean  @default(false)
-  sentAt        DateTime?
-  deliveredAt   DateTime?
-  respondedAt   DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  step          CampaignStep @relation(fields: [stepId], references: [id])
-  contact       Contact      @relation(fields: [contactId], references: [id])
+  id          String       @id @default(uuid())
+  stepId      String
+  contactId   String
+  sent        Boolean      @default(false)
+  delivered   Boolean      @default(false)
+  responded   Boolean      @default(false)
+  sentAt      DateTime?
+  deliveredAt DateTime?
+  respondedAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  step        CampaignStep @relation(fields: [stepId], references: [id])
+  contact     Contact      @relation(fields: [contactId], references: [id])
 
   @@map("sms_metrics")
 }
 
 model TaskMetric {
-  id            String   @id @default(uuid())
-  stepId        String
-  contactId     String
-  assigned      Boolean  @default(false)
-  completed     Boolean  @default(false)
-  assignedAt    DateTime?
-  completedAt   DateTime?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  step          CampaignStep @relation(fields: [stepId], references: [id])
-  contact       Contact      @relation(fields: [contactId], references: [id])
+  id          String       @id @default(uuid())
+  stepId      String
+  contactId   String
+  assigned    Boolean      @default(false)
+  completed   Boolean      @default(false)
+  assignedAt  DateTime?
+  completedAt DateTime?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  step        CampaignStep @relation(fields: [stepId], references: [id])
+  contact     Contact      @relation(fields: [contactId], references: [id])
 
   @@map("task_metrics")
 }
 
 model CampaignConversion {
-  id            String   @id @default(uuid())
-  campaignId    String
-  contactId     String
-  type          String
-  value         Float?
-  occurredAt    DateTime
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  campaign      LeadCampaign @relation(fields: [campaignId], references: [id])
-  contact       Contact      @relation(fields: [contactId], references: [id])
+  id         String       @id @default(uuid())
+  campaignId String
+  contactId  String
+  type       String
+  value      Float?
+  occurredAt DateTime
+  createdAt  DateTime     @default(now())
+  updatedAt  DateTime     @updatedAt
+  campaign   LeadCampaign @relation(fields: [campaignId], references: [id])
+  contact    Contact      @relation(fields: [contactId], references: [id])
 
   @@map("campaign_conversions")
+}
+
+model Form {
+  id          String           @id @default(uuid())
+  name        String
+  description String?
+  isActive    Boolean          @default(true)
+  isPublic    Boolean          @default(false)
+  settings    Json? // Form settings like success message, redirect URL, etc.
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
+  createdBy   String
+  user        User             @relation(fields: [createdBy], references: [id])
+  fields      FormField[]
+  submissions FormSubmission[]
+  webhooks    FormWebhook[]
+
+  @@map("forms")
+}
+
+model FormField {
+  id           String   @id @default(uuid())
+  formId       String
+  label        String
+  type         String // text, email, number, select, etc.
+  isRequired   Boolean  @default(false)
+  order        Int
+  defaultValue String?
+  placeholder  String?
+  options      Json? // For select, radio, checkbox fields
+  validation   Json? // Validation rules
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  form         Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@map("form_fields")
+}
+
+model FormSubmission {
+  id        String   @id @default(uuid())
+  formId    String
+  data      Json // Submitted form data
+  metadata  Json? // Browser info, IP, etc.
+  status    String   @default("PENDING") // PENDING, PROCESSED, FAILED
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  form      Form     @relation(fields: [formId], references: [id])
+  contact   Contact? @relation(fields: [contactId], references: [id])
+  contactId String?
+
+  @@map("form_submissions")
+}
+
+model FormWebhook {
+  id        String   @id @default(uuid())
+  formId    String
+  url       String
+  method    String   @default("POST")
+  headers   Json?
+  isActive  Boolean  @default(true)
+  secret    String? // For webhook signature verification
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  form      Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@map("form_webhooks")
 }

@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, BadRequestException } from '@nestjs/common';
 import { PrismaService } from '../../common/prisma/prisma.service';
 import { CreateFormDto } from './dto/create-form.dto';
 import { UpdateFormDto } from './dto/update-form.dto';
@@ -6,28 +6,41 @@ import { CreateFormFieldDto } from './dto/create-form-field.dto';
 import { CreateFormStepDto } from './dto/create-form-step.dto';
 import { CreateFormWebhookDto } from './dto/create-form-webhook.dto';
 import { Form, FormField, FormStep, FormSubmission, FormWebhook } from '@prisma/client';
+import axios from 'axios';
+import * as crypto from 'crypto';
+import { SubmitFormDto } from './dto/submit-form.dto';
 
 @Injectable()
 export class FormsService {
   constructor(private prisma: PrismaService) {}
 
   // Form CRUD operations
-  async createForm(createFormDto: CreateFormDto): Promise<Form> {
-    return this.prisma.form.create({
+  async createForm(dto: CreateFormDto, userId: string) {
+    const form = await this.prisma.form.create({
       data: {
-        name: createFormDto.name,
-        description: createFormDto.description,
-        status: createFormDto.status,
-        settings: createFormDto.settings,
-        client: {
-          connect: { id: createFormDto.clientId },
+        name: dto.name,
+        description: dto.description,
+        isActive: dto.isActive,
+        isPublic: dto.isPublic,
+        settings: dto.settings,
+        createdBy: userId,
+        fields: {
+          create: dto.fields.map((field, index) => ({
+            ...field,
+            order: field.order ?? index,
+          })),
         },
+        webhooks: dto.webhooks ? {
+          create: dto.webhooks,
+        } : undefined,
       },
       include: {
         fields: true,
-        steps: true,
+        webhooks: true,
       },
     });
+
+    return form;
   }
 
   async findAllForms(clientId: string): Promise<Form[]> {
@@ -307,5 +320,111 @@ export class FormsService {
     await this.prisma.formSubmission.delete({
       where: { id },
     });
+  }
+
+  async getForm(formId: string, includePrivate = false) {
+    const form = await this.prisma.form.findUnique({
+      where: { id: formId },
+      include: {
+        fields: {
+          orderBy: { order: 'asc' },
+        },
+        webhooks: includePrivate,
+      },
+    });
+
+    if (!form) {
+      throw new NotFoundException(`Form with ID ${formId} not found`);
+    }
+
+    if (!form.isPublic && !includePrivate) {
+      throw new NotFoundException('Form not found');
+    }
+
+    return form;
+  }
+
+  async submitForm(formId: string, dto: SubmitFormDto) {
+    const form = await this.getForm(formId);
+
+    if (!form.isActive) {
+      throw new BadRequestException('This form is no longer accepting submissions');
+    }
+
+    // Validate required fields
+    const missingFields = form.fields
+      .filter(field => field.isRequired)
+      .filter(field => !dto.data[field.label]);
+
+    if (missingFields.length > 0) {
+      throw new BadRequestException(
+        `Missing required fields: ${missingFields.map(f => f.label).join(', ')}`,
+      );
+    }
+
+    // Create submission
+    const submission = await this.prisma.formSubmission.create({
+      data: {
+        formId,
+        data: dto.data,
+        metadata: dto.metadata,
+      },
+    });
+
+    // Process webhooks
+    if (form.webhooks?.length > 0) {
+      await this.processWebhooks(form.webhooks, submission);
+    }
+
+    return submission;
+  }
+
+  async getSubmissions(formId: string) {
+    const form = await this.getForm(formId, true);
+
+    return this.prisma.formSubmission.findMany({
+      where: { formId },
+      orderBy: { createdAt: 'desc' },
+    });
+  }
+
+  private async processWebhooks(webhooks: any[], submission: any) {
+    const promises = webhooks
+      .filter(webhook => webhook.isActive)
+      .map(async webhook => {
+        try {
+          const headers = {
+            'Content-Type': 'application/json',
+            ...webhook.headers,
+          };
+
+          // Add signature if secret is present
+          if (webhook.secret) {
+            const signature = this.generateWebhookSignature(
+              submission,
+              webhook.secret,
+            );
+            headers['X-Webhook-Signature'] = signature;
+          }
+
+          await axios({
+            method: webhook.method,
+            url: webhook.url,
+            data: submission,
+            headers,
+          });
+        } catch (error) {
+          console.error(`Webhook processing failed: ${error.message}`);
+          // Log webhook failure but don't fail the submission
+        }
+      });
+
+    await Promise.allSettled(promises);
+  }
+
+  private generateWebhookSignature(payload: any, secret: string): string {
+    const hmac = crypto.createHmac('sha256', secret);
+    hmac.update(JSON.stringify(payload));
+    return hmac.digest('hex');
   }
 } 
