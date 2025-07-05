@@ -1,170 +1,202 @@
 'use client'
 
-import React from 'react';
-import { useRouter } from 'next/navigation';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { FormBuilder } from '@/components/forms/form-builder';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Textarea } from '@/components/ui/textarea';
-import { Switch } from '@/components/ui/switch';
-import { ArrowLeft } from 'lucide-react';
-import { useToast } from '@/components/ui/use-toast';
+import React, { useState } from 'react'
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Input } from '@/components/ui/input'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { 
+  Layout, 
+  Grid, 
+  Type, 
+  Settings, 
+  Eye,
+  Save,
+  RotateCcw
+} from 'lucide-react'
+import { MultiStepFormBuilder } from '@/components/forms/multi-step-form-builder'
+
+const templates = [
+  {
+    id: 'contact',
+    name: 'Contact Form',
+    description: 'Simple contact form with name, email, and message',
+    icon: '📝',
+    fields: [
+      { type: 'text', label: 'Name', required: true },
+      { type: 'email', label: 'Email', required: true },
+      { type: 'textarea', label: 'Message', required: true }
+    ]
+  },
+  {
+    id: 'survey',
+    name: 'Customer Survey',
+    description: 'Detailed customer feedback survey',
+    icon: '📊',
+    fields: [
+      { type: 'text', label: 'Name', required: true },
+      { type: 'email', label: 'Email', required: true },
+      { type: 'rating', label: 'How satisfied are you?', required: true },
+      { type: 'textarea', label: 'What could we improve?', required: false }
+    ]
+  },
+  {
+    id: 'registration',
+    name: 'User Registration',
+    description: 'Multi-step registration form',
+    icon: '👤',
+    fields: [
+      { type: 'text', label: 'Full Name', required: true },
+      { type: 'email', label: 'Email', required: true },
+      { type: 'password', label: 'Password', required: true },
+      { type: 'password', label: 'Confirm Password', required: true }
+    ]
+  }
+]
 
 export default function CreateFormPage() {
-  const router = useRouter();
-  const { toast } = useToast();
-  const [formData, setFormData] = React.useState({
+  const [activeTab, setActiveTab] = useState('design')
+  const [formData, setFormData] = useState({
     name: '',
     description: '',
-    type: 'contact',
-    isActive: true,
-    fields: [],
-  });
+    steps: []
+  })
+  const [previewMode, setPreviewMode] = useState(false)
 
-  const handleSubmit = async () => {
+  const handleSave = async () => {
     try {
-      // In real app, make API call to create form
-      const response = await fetch('/api/forms', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(formData),
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to create form');
-      }
-
-      toast({
-        title: "Success",
-        description: "Form created successfully",
-      });
-
-      router.push('/client/forms');
+      // TODO: Implement form saving
+      console.log('Saving form:', formData)
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create form",
-        variant: "destructive",
-      });
+      console.error('Error saving form:', error)
     }
-  };
+  }
+
+  const handleTemplateSelect = (template: any) => {
+    setFormData(prev => ({
+      ...prev,
+      steps: [
+        {
+          id: `step-${Date.now()}`,
+          title: 'Step 1',
+          description: '',
+          fields: template.fields
+        }
+      ]
+    }))
+  }
 
   return (
-    <div className="container mx-auto py-6 space-y-6">
+    <div className="container mx-auto p-6 space-y-6">
       <div className="flex justify-between items-center">
-        <div className="flex items-center gap-4">
-          <Button variant="ghost" onClick={() => router.back()}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back
+        <div>
+          <h1 className="text-2xl font-bold">Create New Form</h1>
+          <p className="text-muted-foreground">Design your form layout and fields</p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={() => setPreviewMode(!previewMode)}>
+            <Eye className="h-4 w-4 mr-2" />
+            {previewMode ? 'Edit Mode' : 'Preview'}
           </Button>
-          <div>
-            <h1 className="text-2xl font-bold">Create New Form</h1>
-            <p className="text-gray-500">Design your form and customize settings</p>
-          </div>
+          <Button onClick={handleSave}>
+            <Save className="h-4 w-4 mr-2" />
+            Save Form
+          </Button>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-6">
+      <div className="grid grid-cols-4 gap-6">
+        <div className="col-span-1">
           <Card>
             <CardHeader>
-              <CardTitle>Form Settings</CardTitle>
+              <CardTitle>Form Details</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="name">Form Name</Label>
-                <Input
-                  id="name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  placeholder="Enter form name"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="description">Description</Label>
-                <Textarea
-                  id="description"
-                  value={formData.description}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Enter form description"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="type">Form Type</Label>
-                <select
-                  id="type"
-                  className="w-full border rounded-md h-10 px-3"
-                  value={formData.type}
-                  onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                >
-                  <option value="contact">Contact</option>
-                  <option value="email">Email</option>
-                  <option value="feedback">Feedback</option>
-                  <option value="event">Event</option>
-                  <option value="support">Support</option>
-                </select>
-              </div>
-
-              <div className="flex items-center justify-between">
-                <div className="space-y-0.5">
-                  <Label htmlFor="active">Active</Label>
-                  <p className="text-sm text-gray-500">
-                    Form will be available for submissions
-                  </p>
-                </div>
-                <Switch
-                  id="active"
-                  checked={formData.isActive}
-                  onCheckedChange={(checked) =>
-                    setFormData({ ...formData, isActive: checked })
-                  }
-                />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Form Preview</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="p-4 border rounded-lg bg-gray-50">
-                <h2 className="text-lg font-semibold">{formData.name || 'Untitled Form'}</h2>
-                {formData.description && (
-                  <p className="text-sm text-gray-600 mt-1">{formData.description}</p>
-                )}
-                {/* Add form field previews here */}
-              </div>
+              <Input
+                placeholder="Form Name"
+                value={formData.name}
+                onChange={(e) => setFormData(prev => ({ ...prev, name: e.target.value }))}
+              />
+              <Input
+                placeholder="Description"
+                value={formData.description}
+                onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
+              />
             </CardContent>
           </Card>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Form Fields</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <FormBuilder
-              initialFields={formData.fields}
-              onFieldsChange={(fields) =>
-                setFormData({ ...formData, fields })
-              }
-            />
-          </CardContent>
-        </Card>
-      </div>
+        <div className="col-span-3">
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="mb-4">
+              <TabsTrigger value="templates">
+                <Layout className="h-4 w-4 mr-2" />
+                Templates
+              </TabsTrigger>
+              <TabsTrigger value="design">
+                <Grid className="h-4 w-4 mr-2" />
+                Design
+              </TabsTrigger>
+              <TabsTrigger value="fields">
+                <Type className="h-4 w-4 mr-2" />
+                Fields
+              </TabsTrigger>
+              <TabsTrigger value="settings">
+                <Settings className="h-4 w-4 mr-2" />
+                Settings
+              </TabsTrigger>
+            </TabsList>
 
-      <div className="flex justify-end gap-4">
-        <Button variant="outline" onClick={() => router.back()}>
-          Cancel
-        </Button>
-        <Button onClick={handleSubmit}>Create Form</Button>
+            <TabsContent value="templates">
+              <div className="grid grid-cols-3 gap-4">
+                {templates.map(template => (
+                  <Card 
+                    key={template.id}
+                    className="cursor-pointer hover:border-primary transition-colors"
+                    onClick={() => handleTemplateSelect(template)}
+                  >
+                    <CardHeader>
+                      <CardTitle className="flex items-center gap-2">
+                        <span>{template.icon}</span>
+                        {template.name}
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-sm text-muted-foreground">{template.description}</p>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </TabsContent>
+
+            <TabsContent value="design">
+              <Card>
+                <CardContent className="p-6">
+                  <MultiStepFormBuilder
+                    initialSteps={formData.steps}
+                    onStepsChange={(steps) => setFormData(prev => ({ ...prev, steps }))}
+                  />
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="fields">
+              <Card>
+                <CardContent className="p-6">
+                  {/* Field configuration panel will go here */}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="settings">
+              <Card>
+                <CardContent className="p-6">
+                  {/* Form settings will go here */}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
+        </div>
       </div>
     </div>
   );
