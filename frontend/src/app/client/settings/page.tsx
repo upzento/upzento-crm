@@ -25,8 +25,14 @@ import {
   Lock, 
   UserPlus, 
   Plug, 
-  Save 
+  Save,
+  FileText
 } from 'lucide-react';
+
+// Import custom components
+import SecuritySettings from './components/security-settings';
+import AuditLogs from './components/audit-logs';
+import IntegrationsSettings from './components/integrations-settings';
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState('general');
@@ -72,7 +78,7 @@ export default function SettingsPage() {
       </div>
       
       <Tabs defaultValue="general" value={activeTab} onValueChange={setActiveTab} className="space-y-4">
-        <TabsList className="grid grid-cols-2 md:grid-cols-5 lg:w-full">
+        <TabsList className="grid grid-cols-2 md:grid-cols-7 lg:w-full">
           <TabsTrigger value="general">
             <Settings className="mr-2 h-4 w-4" />
             General
@@ -92,6 +98,14 @@ export default function SettingsPage() {
           <TabsTrigger value="integrations">
             <Plug className="mr-2 h-4 w-4" />
             Integrations
+          </TabsTrigger>
+          <TabsTrigger value="security">
+            <Lock className="mr-2 h-4 w-4" />
+            Security
+          </TabsTrigger>
+          <TabsTrigger value="audit">
+            <FileText className="mr-2 h-4 w-4" />
+            Audit Logs
           </TabsTrigger>
         </TabsList>
         
@@ -504,27 +518,38 @@ export default function SettingsPage() {
                 Connect your account with third-party services
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-4">
-                {integrations.map((integration) => (
-                  <div 
-                    key={integration.id} 
-                    className="flex items-center justify-between p-4 border rounded-md"
-                  >
-                    <div className="space-y-1">
-                      <h4 className="font-medium">{integration.name}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {integration.connected 
-                          ? `Last synced ${integration.lastSync}` 
-                          : 'Not connected'}
-                      </p>
-                    </div>
-                    <Button variant={integration.connected ? "outline" : "default"}>
-                      {integration.connected ? 'Configure' : 'Connect'}
-                    </Button>
-                  </div>
-                ))}
-              </div>
+            <CardContent>
+              <IntegrationsSettings />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        {/* Security Settings */}
+        <TabsContent value="security" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Security Settings</CardTitle>
+              <CardDescription>
+                Manage security and privacy settings
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <SecuritySettings />
+            </CardContent>
+          </Card>
+        </TabsContent>
+        
+        {/* Audit Logs */}
+        <TabsContent value="audit" className="space-y-4">
+          <Card>
+            <CardHeader>
+              <CardTitle>Audit Logs</CardTitle>
+              <CardDescription>
+                View system activity and changes
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <AuditLogs />
             </CardContent>
           </Card>
         </TabsContent>
