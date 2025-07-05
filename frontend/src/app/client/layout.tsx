@@ -1,158 +1,99 @@
 'use client';
 
-import { ReactNode } from 'react';
+import React from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { ThemeToggle } from '@/components/ui/theme-toggle';
-import { 
-  LayoutDashboard, 
-  MessageSquare, 
-  Phone, 
-  Star, 
+import { cn } from '@/lib/utils';
+import {
+  LayoutDashboard,
+  Users,
+  BarChart,
   FileText,
-  ShoppingCart,
+  Star,
+  MessageSquare,
+  Phone,
   Calendar,
+  ShoppingBag,
+  CreditCard,
   HelpCircle,
   Settings,
   LogOut,
-  Users,
-  BarChart3,
-  CreditCard
 } from 'lucide-react';
 
-interface ClientLayoutProps {
-  children: ReactNode;
-}
-
-interface SidebarItem {
-  title: string;
-  href: string;
-  icon: JSX.Element;
-}
-
-const sidebarItems: SidebarItem[] = [
-  {
-    title: 'Dashboard',
-    href: '/client',
-    icon: <LayoutDashboard className="h-5 w-5" />
-  },
-  {
-    title: 'Contacts',
-    href: '/client/contacts',
-    icon: <Users className="h-5 w-5" />
-  },
-  {
-    title: 'Analytics',
-    href: '/client/analytics',
-    icon: <BarChart3 className="h-5 w-5" />
-  },
-  {
-    title: 'Forms',
-    href: '/client/forms',
-    icon: <FileText className="h-5 w-5" />
-  },
-  {
-    title: 'Reviews',
-    href: '/client/reviews',
-    icon: <Star className="h-5 w-5" />
-  },
-  {
-    title: 'Chat',
-    href: '/client/chat',
-    icon: <MessageSquare className="h-5 w-5" />
-  },
-  {
-    title: 'Phone & SMS',
-    href: '/client/phone-sms',
-    icon: <Phone className="h-5 w-5" />
-  },
-  {
-    title: 'Appointments',
-    href: '/client/appointments',
-    icon: <Calendar className="h-5 w-5" />
-  },
-  {
-    title: 'Shop',
-    href: '/client/shop',
-    icon: <ShoppingCart className="h-5 w-5" />
-  },
-  {
-    title: 'Payment',
-    href: '/client/payment',
-    icon: <CreditCard className="h-5 w-5" />
-  },
-  {
-    title: 'Support',
-    href: '/client/support',
-    icon: <HelpCircle className="h-5 w-5" />
-  },
-  {
-    title: 'Settings',
-    href: '/client/settings',
-    icon: <Settings className="h-5 w-5" />
-  }
+const navigation = [
+  { name: 'Dashboard', href: '/client', icon: LayoutDashboard },
+  { name: 'Contacts', href: '/client/contacts', icon: Users },
+  { name: 'Analytics', href: '/client/analytics', icon: BarChart },
+  { name: 'Forms', href: '/client/forms', icon: FileText },
+  { name: 'Reviews', href: '/client/reviews', icon: Star },
+  { name: 'Chat', href: '/client/chat', icon: MessageSquare },
+  { name: 'Phone & SMS', href: '/client/phone-sms', icon: Phone },
+  { name: 'Appointments', href: '/client/appointments', icon: Calendar },
+  { name: 'Shop', href: '/client/shop', icon: ShoppingBag },
+  { name: 'Payment', href: '/client/payment', icon: CreditCard },
+  { name: 'Support', href: '/client/support', icon: HelpCircle },
+  { name: 'Settings', href: '/client/settings', icon: Settings },
 ];
 
-export default function ClientLayout({ children }: ClientLayoutProps) {
+export default function ClientLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const pathname = usePathname();
-  
+
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="min-h-screen flex">
       {/* Sidebar */}
-      <aside className="hidden md:flex md:w-64 flex-col bg-background border-r">
-        <div className="p-6">
-          <h2 className="text-2xl font-bold">Upzento Client</h2>
+      <div className="w-64 bg-gray-900 text-white">
+        <div className="h-16 flex items-center px-6">
+          <h1 className="text-xl font-bold">Upzento Client</h1>
         </div>
-        <nav className="flex-1 overflow-y-auto">
-          <ul className="space-y-1 p-2">
-            {sidebarItems.map((item, index) => (
-              <li key={index}>
-                <Link 
-                  href={item.href} 
-                  className={`flex items-center gap-3 rounded-lg px-3 py-2 transition-all ${
-                    pathname === item.href 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'text-muted-foreground hover:bg-accent hover:text-accent-foreground'
-                  }`}
-                >
-                  {item.icon}
-                  <span>{item.title}</span>
-                </Link>
-              </li>
-            ))}
+        <nav className="px-4 py-4">
+          <ul className="space-y-1">
+            {navigation.map((item) => {
+              const isActive = pathname === item.href || pathname.startsWith(`${item.href}/`);
+              return (
+                <li key={item.name}>
+                  <Link
+                    href={item.href}
+                    className={cn(
+                      'flex items-center gap-3 px-3 py-2 rounded-md text-sm font-medium transition-colors',
+                      isActive
+                        ? 'bg-gray-800 text-white'
+                        : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                    )}
+                  >
+                    <item.icon className="h-5 w-5" />
+                    {item.name}
+                  </Link>
+                </li>
+              );
+            })}
           </ul>
         </nav>
-        <div className="p-4 border-t">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center">
-              <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground">
+        <div className="absolute bottom-0 w-64 p-4 border-t border-gray-800">
+          <div className="flex items-center gap-3 px-2">
+            <div className="flex-shrink-0">
+              <div className="h-8 w-8 rounded-full bg-gray-700 flex items-center justify-center">
                 C
               </div>
-              <span className="ml-2 font-medium">Client User</span>
             </div>
-            <ThemeToggle />
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-white truncate">
+                Client User
+              </p>
+            </div>
+            <button className="text-gray-400 hover:text-white">
+              <LogOut className="h-5 w-5" />
+            </button>
           </div>
-          <Link 
-            href="/login" 
-            className="mt-4 flex w-full items-center gap-2 rounded-lg px-3 py-2 text-muted-foreground hover:bg-accent hover:text-accent-foreground transition-all"
-          >
-            <LogOut className="h-4 w-4" />
-            <span>Log out</span>
-          </Link>
         </div>
-      </aside>
-      
+      </div>
+
       {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
-        {/* Top navbar for mobile */}
-        <header className="md:hidden bg-background border-b p-4">
-          <div className="flex items-center justify-between">
-            <h2 className="font-bold">Upzento Client</h2>
-            <ThemeToggle />
-          </div>
-        </header>
-        
-        <main className="flex-1 overflow-y-auto bg-muted/40 p-4">
+      <div className="flex-1 overflow-auto">
+        <main className="p-6">
           {children}
         </main>
       </div>
