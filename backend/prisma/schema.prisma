@@ -634,6 +634,7 @@ model Form {
   settings      FormSettings?
   webhooks      FormWebhook[]
   domains       FormDomain[]
+  analytics     FormAnalytics[]
 
   @@map("forms")
 }
