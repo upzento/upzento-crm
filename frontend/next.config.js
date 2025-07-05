@@ -27,14 +27,6 @@ const nextConfig = {
     
     return config;
   },
-  experimental: {
-    // Skip type checking during build for better performance
-    skipTypeCheck: true,
-    // Ignore missing modules during build
-    esmExternals: 'loose',
-    // Use SWC for faster builds
-    swcPlugins: [],
-  },
   // Disable static export errors
   outputFileTracing: false,
   // Disable image optimization

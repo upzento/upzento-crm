@@ -51,7 +51,9 @@
   h1, h2, h3, h4, h5, h6 {
     @apply font-space;
   }
+}
 
+@layer components {
   .cosmic-background {
     position: relative;
     overflow: hidden;
@@ -72,19 +74,31 @@
   }
 
   .cosmic-card {
-    @apply bg-surface rounded-lg p-6 shadow-md dark:shadow-lg dark:shadow-primary/10;
+    @apply bg-surface rounded-lg p-6 shadow-md;
     position: relative;
     overflow: hidden;
     transition: all 0.3s ease;
   }
 
+  .dark .cosmic-card {
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3), 0 0 8px rgba(61, 90, 254, 0.1);
+  }
+
   .cosmic-card:hover {
-    @apply shadow-lg dark:shadow-xl dark:shadow-primary/20;
+    @apply shadow-lg;
     transform: translateY(-2px);
   }
 
+  .dark .cosmic-card:hover {
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.4), 0 0 12px rgba(61, 90, 254, 0.2);
+  }
+
   .cosmic-input {
-    @apply bg-background dark:bg-surface border border-surface/20 dark:border-surface/10 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition;
+    @apply bg-background border border-surface/20 rounded-md px-3 py-2 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary transition;
+  }
+
+  .dark .cosmic-input {
+    @apply bg-surface border-surface/10;
   }
 
   .cosmic-label {
@@ -93,7 +107,17 @@
 
   /* Cosmic button variant - can be used by adding variant="cosmic" to Button component */
   .cosmic-button {
-    @apply bg-cosmic-gradient text-white font-medium rounded-md px-4 py-2 shadow-md hover:shadow-lg hover:shadow-primary/20 hover:-translate-y-0.5 transition-all duration-300;
+    @apply bg-cosmic-gradient text-white font-medium rounded-md px-4 py-2 shadow-md transition-all duration-300;
+    transform: translateY(0);
+  }
+
+  .cosmic-button:hover {
+    @apply shadow-lg;
+    transform: translateY(-2px);
+  }
+
+  .dark .cosmic-button:hover {
+    box-shadow: 0 0 16px rgba(61, 90, 254, 0.2);
   }
 }
 
