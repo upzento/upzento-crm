@@ -742,7 +742,7 @@ export default function ContactsPage() {
                           <TableCell className="hidden md:table-cell">{contact.email}</TableCell>
                           <TableCell className="hidden lg:table-cell">{contact.phone}</TableCell>
                           <TableCell>{getLeadStatusBadge(contact.leadStatus)}</TableCell>
-                          <TableCell className="text-right">
+                          <TableCell className="text-right" onClick={(e) => e.stopPropagation()}>
                             <DropdownMenu>
                               <DropdownMenuTrigger asChild>
                                 <Button variant="ghost" className="h-8 w-8 p-0">
@@ -753,22 +753,22 @@ export default function ContactsPage() {
                               <DropdownMenuContent align="end">
                                 <DropdownMenuLabel>Actions</DropdownMenuLabel>
                                 <DropdownMenuSeparator />
-                                <DropdownMenuItem onClick={() => handleEditContact(contact)}>
+                                <DropdownMenuItem onSelect={() => handleEditContact(contact)}>
                                   <Edit className="mr-2 h-4 w-4" /> Edit
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleSendEmail(contact)}>
+                                <DropdownMenuItem onSelect={() => handleSendEmail(contact)}>
                                   <Mail className="mr-2 h-4 w-4" /> Send Email
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleSendSMS(contact)}>
+                                <DropdownMenuItem onSelect={() => handleSendSMS(contact)}>
                                   <MessageSquare className="mr-2 h-4 w-4" /> Send SMS
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => handleScheduleMeeting(contact)}>
+                                <DropdownMenuItem onSelect={() => handleScheduleMeeting(contact)}>
                                   <Calendar className="mr-2 h-4 w-4" /> Schedule Meeting
                                 </DropdownMenuItem>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuItem 
                                   className="text-red-600"
-                                  onClick={() => handleDeleteContact(contact)}
+                                  onSelect={() => handleDeleteContact(contact)}
                                 >
                                   <Trash2 className="mr-2 h-4 w-4" /> Delete
                                 </DropdownMenuItem>
