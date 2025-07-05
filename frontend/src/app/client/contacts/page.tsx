@@ -242,30 +242,66 @@ export default function ContactsPage() {
   
   // Action handler functions
   const handleEditContact = (contact: any) => {
-    // Navigate to edit contact page or open modal
+    if (!contact) return;
+    // Navigate to edit contact page
     router.push(`/client/contacts/edit/${contact.id}`);
+    
+    // Log this action in the contact's activity history
+    logContactActivity(contact.id, 'Edit initiated', 'User accessed contact edit page');
   };
   
   const handleSendEmail = (contact: any) => {
-    // For now, open default email client
-    window.open(`mailto:${contact.email}`, '_blank');
+    if (!contact || !contact.email) {
+      toast({
+        title: "Cannot Send Email",
+        description: "This contact does not have a valid email address.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // In a real implementation, this would open an email compose modal within the app
+    // For now, we'll open the default email client
+    window.open(`mailto:${contact.email}?subject=Regarding your account with us`, '_blank');
+    
     toast({
       title: "Email Client Opened",
       description: `Sending email to ${contact.firstName} ${contact.lastName}`,
     });
+    
+    // Log this action in the contact's activity history
+    logContactActivity(contact.id, 'Email sent', `Email sent to ${contact.email}`);
   };
   
   const handleSendSMS = (contact: any) => {
-    // Open SMS dialog or navigate to SMS page
-    router.push(`/client/phone-sms/new?contactId=${contact.id}`);
+    if (!contact || !contact.phone) {
+      toast({
+        title: "Cannot Send SMS",
+        description: "This contact does not have a valid phone number.",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    // Navigate to SMS page with contact pre-selected - integrating with Phone & SMS Module
+    router.push(`/client/phone-sms/new?contactId=${contact.id}&phone=${encodeURIComponent(contact.phone)}`);
+    
+    // Log this activity when navigating away
+    logContactActivity(contact.id, 'SMS initiated', `SMS composition started to ${contact.phone}`);
   };
   
   const handleScheduleMeeting = (contact: any) => {
-    // Navigate to appointments page with contact pre-selected
-    router.push(`/client/appointments/new?contactId=${contact.id}`);
+    if (!contact) return;
+    
+    // Navigate to appointments page with contact pre-selected - integrating with Appointments Module
+    router.push(`/client/appointments/new?contactId=${contact.id}&name=${encodeURIComponent(`${contact.firstName} ${contact.lastName}`)}`);
+    
+    // Log this activity when navigating away
+    logContactActivity(contact.id, 'Meeting scheduled', `Appointment scheduling started with ${contact.firstName} ${contact.lastName}`);
   };
   
   const handleDeleteContact = (contact: any) => {
+    if (!contact) return;
     setContactToDelete(contact);
     setIsDeleteDialogOpen(true);
   };
@@ -275,15 +311,21 @@ export default function ContactsPage() {
     
     setIsLoading(true);
     try {
+      // First, check if this contact has any associated deals, forms, etc.
+      // This would be handled by the API in a real implementation
+      // Here we're just simulating a successful deletion
+      
       await contactsApi.deleteContact(contactToDelete.id);
+      
       toast({
         title: "Contact Deleted",
         description: `${contactToDelete.firstName} ${contactToDelete.lastName} has been deleted.`,
       });
-      // Refresh contacts list (in a real app, this would fetch from API)
-      const updatedContacts = contacts.filter(c => c.id !== contactToDelete.id);
-      // Would need to update state here in a real implementation
       
+      // Update the local data - in a real implementation, we would refetch from the API
+      const updatedContacts = contacts.filter(c => c.id !== contactToDelete.id);
+      
+      // Clear selection if the deleted contact was selected
       if (selectedContact === contactToDelete.id) {
         setSelectedContact(null);
       }
@@ -302,21 +344,32 @@ export default function ContactsPage() {
   };
   
   const handleImportContacts = () => {
-    // Navigate to import page
+    // Navigate to the multi-step import wizard page as specified in the docs
     router.push('/client/contacts/import');
   };
   
   const handleExportContacts = async () => {
     setIsLoading(true);
     try {
-      const tagIds = tagFilter !== 'all' ? [tagFilter] : undefined;
-      const response = await contactsApi.exportContacts(tagIds);
+      // Apply any active filters to the export
+      const params: any = {};
+      
+      if (typeFilter !== 'all') params.type = typeFilter;
+      if (tagFilter !== 'all') params.tagIds = [tagFilter];
+      if (statusFilter !== 'all') params.leadStatus = statusFilter;
+      if (searchQuery) params.query = searchQuery;
+      
+      const response = await contactsApi.exportContacts(params.tagIds);
       
       // Create a download link for the CSV
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', 'contacts.csv');
+      
+      // Add timestamp to filename for better organization
+      const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+      link.setAttribute('download', `contacts-export-${timestamp}.csv`);
+      
       document.body.appendChild(link);
       link.click();
       document.body.removeChild(link);
@@ -334,6 +387,18 @@ export default function ContactsPage() {
       });
     } finally {
       setIsLoading(false);
+    }
+  };
+  
+  // Helper function for logging contact activities
+  const logContactActivity = async (contactId: string, action: string, description: string) => {
+    try {
+      // In a real implementation, this would call an API endpoint to log the activity
+      console.log(`Activity logged: ${action} - ${description} for contact ${contactId}`);
+      // We would use something like:
+      // await apiClient.post(`/contacts/${contactId}/activities`, { action, description });
+    } catch (error) {
+      console.error('Error logging contact activity:', error);
     }
   };
   

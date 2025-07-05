@@ -148,12 +148,53 @@ export const contactsApi = {
   
   searchContacts: (query: string) => apiClient.get(`/contacts/search?query=${encodeURIComponent(query)}`),
   
+  // Tags related endpoints
+  getTags: () => apiClient.get('/contacts/tags'),
+  
+  createTag: (data: any) => apiClient.post('/contacts/tags', data),
+  
+  updateTag: (id: string, data: any) => apiClient.patch(`/contacts/tags/${id}`, data),
+  
+  deleteTag: (id: string) => apiClient.delete(`/contacts/tags/${id}`),
+  
+  addTagToContact: (contactId: string, tagId: string) => 
+    apiClient.post(`/contacts/${contactId}/tags/${tagId}`),
+  
+  removeTagFromContact: (contactId: string, tagId: string) => 
+    apiClient.delete(`/contacts/${contactId}/tags/${tagId}`),
+  
+  // Lead management
+  convertToLead: (id: string, leadStatus: string, leadSource: string) => 
+    apiClient.post(`/contacts/${id}/convert-to-lead`, { leadStatus, leadSource }),
+  
+  convertToContact: (id: string) => 
+    apiClient.post(`/contacts/${id}/convert-to-contact`),
+  
+  assignContact: (id: string, assignedToId: string) => 
+    apiClient.post(`/contacts/${id}/assign`, { assignedToId }),
+  
+  // Custom fields
+  getCustomFields: () => apiClient.get('/contacts/custom-fields'),
+  
+  createCustomField: (data: any) => apiClient.post('/contacts/custom-fields', data),
+  
+  // Import/Export
   importContacts: (data: any) => apiClient.post('/contacts/import', data),
   
   exportContacts: (tagIds?: string[]) => {
     const query = tagIds && tagIds.length ? `?tagIds=${tagIds.join(',')}` : '';
     return apiClient.get(`/contacts/export${query}`, { responseType: 'blob' });
   },
+  
+  // Duplicates management
+  findDuplicates: () => apiClient.get('/contacts/duplicates'),
+  
+  mergeContacts: (primaryId: string, secondaryIds: string[]) => 
+    apiClient.post('/contacts/merge', { primaryId, secondaryIds }),
+  
+  // Filtering
+  filterByTags: (tagIds: string[]) => 
+    apiClient.get(`/contacts/filter?tagIds=${tagIds.join(',')}`),
 };
 
 export default apiClient; 
