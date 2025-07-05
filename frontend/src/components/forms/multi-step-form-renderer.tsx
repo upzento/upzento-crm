@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,8 +11,8 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { ArrowLeft, ArrowRight, Send } from 'lucide-react';
 import { formService } from '@/lib/services/form-service';
-import { GoogleReCaptchaProvider, useGoogleReCaptcha } from 'react-google-recaptcha-v3';
 import { toast } from '@/components/ui/use-toast';
+import Script from 'next/script';
 
 interface FormField {
   id: string;
@@ -39,7 +39,7 @@ interface MultiStepFormRendererProps {
   onSubmit: (data: any) => void;
 }
 
-const FormRenderer: React.FC<MultiStepFormRendererProps> = ({
+export const MultiStepFormRenderer: React.FC<MultiStepFormRendererProps> = ({
   formId,
   steps,
   onSubmit,
@@ -47,13 +47,6 @@ const FormRenderer: React.FC<MultiStepFormRendererProps> = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<Record<string, any>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
-
-  const { executeRecaptcha } = useGoogleReCaptcha();
-
-  useEffect(() => {
-    // Track form view
-    formService.trackFormView(formId);
-  }, [formId]);
 
   const validateStep = () => {
     const currentFields = steps[currentStep].fields;
@@ -89,20 +82,10 @@ const FormRenderer: React.FC<MultiStepFormRendererProps> = ({
   const handleSubmit = async () => {
     if (validateStep()) {
       try {
-        // Execute reCAPTCHA
-        let captchaToken;
-        if (executeRecaptcha) {
-          captchaToken = await executeRecaptcha('form_submission');
-        }
-
-        // Track form submission
-        await formService.trackFormSubmission(formId, formData);
-
         // Submit form data
         const response = await formService.submitForm({
           formId,
           data: formData,
-          captchaToken,
           metadata: {
             userAgent: navigator.userAgent,
             referrer: document.referrer,
@@ -213,81 +196,74 @@ const FormRenderer: React.FC<MultiStepFormRendererProps> = ({
   };
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle>{steps[currentStep].title}</CardTitle>
-            {steps[currentStep].description && (
-              <p className="text-sm text-muted-foreground mt-1">
-                {steps[currentStep].description}
-              </p>
-            )}
-          </div>
-          <div className="text-sm text-muted-foreground">
-            Step {currentStep + 1} of {steps.length}
-          </div>
-        </div>
-      </CardHeader>
-      <CardContent>
-        <div className={`grid gap-6 ${
-          steps[currentStep].layout === 'grid' ? 'grid-cols-2' :
-          steps[currentStep].layout === 'columns' ? 'grid-cols-3' : 'grid-cols-1'
-        }`}>
-          {steps[currentStep].fields.map((field) => (
-            <div key={field.id} className="space-y-2">
-              <Label>
-                {field.label}
-                {field.required && <span className="text-destructive">*</span>}
-              </Label>
-              {renderField(field)}
-              {errors[field.id] && (
-                <p className="text-sm text-destructive">{errors[field.id]}</p>
+    <>
+      <Script
+        src={`https://www.google.com/recaptcha/api.js?render=${process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY}`}
+        strategy="lazyOnload"
+      />
+      <Card>
+        <CardHeader>
+          <div className="flex items-center justify-between">
+            <div>
+              <CardTitle>{steps[currentStep].title}</CardTitle>
+              {steps[currentStep].description && (
+                <p className="text-sm text-muted-foreground mt-1">
+                  {steps[currentStep].description}
+                </p>
               )}
             </div>
-          ))}
-        </div>
+            <div className="text-sm text-muted-foreground">
+              Step {currentStep + 1} of {steps.length}
+            </div>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className={`grid gap-6 ${
+            steps[currentStep].layout === 'grid' ? 'grid-cols-2' :
+            steps[currentStep].layout === 'columns' ? 'grid-cols-3' : 'grid-cols-1'
+          }`}>
+            {steps[currentStep].fields.map((field) => (
+              <div key={field.id} className="space-y-2">
+                <Label>
+                  {field.label}
+                  {field.required && <span className="text-destructive">*</span>}
+                </Label>
+                {renderField(field)}
+                {errors[field.id] && (
+                  <p className="text-sm text-destructive">{errors[field.id]}</p>
+                )}
+              </div>
+            ))}
+          </div>
 
-        <div className={`flex mt-6 ${
-          steps[currentStep].alignment === 'center' ? 'justify-center' :
-          steps[currentStep].alignment === 'right' ? 'justify-end' : 'justify-start'
-        }`}>
-          {currentStep > 0 && (
-            <Button
-              variant="outline"
-              onClick={handlePrevious}
-              className="mr-2"
-            >
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Previous
-            </Button>
-          )}
-          {currentStep < steps.length - 1 ? (
-            <Button onClick={handleNext}>
-              Next
-              <ArrowRight className="h-4 w-4 ml-2" />
-            </Button>
-          ) : (
-            <Button onClick={handleSubmit}>
-              Submit
-              <Send className="h-4 w-4 ml-2" />
-            </Button>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+          <div className={`flex mt-6 ${
+            steps[currentStep].alignment === 'center' ? 'justify-center' :
+            steps[currentStep].alignment === 'right' ? 'justify-end' : 'justify-start'
+          }`}>
+            {currentStep > 0 && (
+              <Button
+                variant="outline"
+                onClick={handlePrevious}
+                className="mr-2"
+              >
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Previous
+              </Button>
+            )}
+            {currentStep < steps.length - 1 ? (
+              <Button onClick={handleNext}>
+                Next
+                <ArrowRight className="h-4 w-4 ml-2" />
+              </Button>
+            ) : (
+              <Button onClick={handleSubmit}>
+                Submit
+                <Send className="h-4 w-4 ml-2" />
+              </Button>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </>
   );
-};
-
-export const MultiStepFormRenderer: React.FC<MultiStepFormRendererProps> = (props) => (
-  <GoogleReCaptchaProvider
-    reCaptchaKey={process.env.NEXT_PUBLIC_RECAPTCHA_SITE_KEY || ''}
-    scriptProps={{
-      async: true,
-      defer: true,
-      appendTo: 'body',
-    }}
-  >
-    <FormRenderer {...props} />
-  </GoogleReCaptchaProvider>
-); 
+}; 
