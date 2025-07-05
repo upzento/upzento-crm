@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { 
   Card, 
@@ -10,6 +10,7 @@ import {
   CardTitle,
   CardFooter 
 } from '@/components/ui/card';
+import { ActivityTimeline } from '@/components/contacts/activity-timeline';
 import { 
   Table, 
   TableBody, 
@@ -238,19 +239,135 @@ export default function ContactsPage() {
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [contactToDelete, setContactToDelete] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const [activities, setActivities] = useState<any[]>([]);
+  const [activitiesPage, setActivitiesPage] = useState(1);
+  const [hasMoreActivities, setHasMoreActivities] = useState(true);
+  const [isLoadingActivities, setIsLoadingActivities] = useState(false);
   const itemsPerPage = 5;
   
+  // Load activities when contact is selected
+  useEffect(() => {
+    if (selectedContact) {
+      loadActivities();
+    } else {
+      setActivities([]);
+      setActivitiesPage(1);
+      setHasMoreActivities(true);
+    }
+  }, [selectedContact]);
+  
+  const loadActivities = async (page = 1) => {
+    if (!selectedContact) return;
+    
+    setIsLoadingActivities(true);
+    try {
+      const response = await contactsApi.getContactActivities(selectedContact, {
+        page,
+        limit: 10
+      });
+      
+      // In a real implementation, this would come from the API
+      // For now, we'll use mock data
+      const mockActivities = [
+        {
+          id: '1',
+          type: 'EMAIL',
+          description: 'Sent follow-up email about the proposal',
+          timestamp: '2024-03-20T14:30:00Z',
+          status: 'COMPLETED',
+          metadata: {
+            subject: 'Re: Project Proposal',
+            preview: 'Thank you for your time yesterday...'
+          },
+          performedBy: {
+            id: '1',
+            name: 'Alex Johnson'
+          }
+        },
+        {
+          id: '2',
+          type: 'MEETING',
+          description: 'Project kickoff meeting',
+          timestamp: '2024-03-19T10:00:00Z',
+          status: 'COMPLETED',
+          metadata: {
+            when: 'Tuesday, March 19, 2024 10:00 AM',
+            duration: '1 hour',
+            agenda: 'Discuss project requirements and timeline'
+          },
+          performedBy: {
+            id: '1',
+            name: 'Alex Johnson'
+          }
+        },
+        {
+          id: '3',
+          type: 'EDIT',
+          description: 'Updated contact information',
+          timestamp: '2024-03-18T16:45:00Z',
+          metadata: {
+            changes: {
+              'Phone Number': {
+                old: '+1 (555) 123-4567',
+                new: '+1 (555) 987-6543'
+              },
+              'Job Title': {
+                old: 'Marketing Manager',
+                new: 'Marketing Director'
+              }
+            }
+          },
+          performedBy: {
+            id: '2',
+            name: 'Maria Garcia'
+          }
+        }
+      ];
+      
+      if (page === 1) {
+        setActivities(mockActivities);
+      } else {
+        setActivities(prev => [...prev, ...mockActivities]);
+      }
+      
+      setActivitiesPage(page);
+      setHasMoreActivities(mockActivities.length === 10);
+    } catch (error) {
+      console.error('Error loading activities:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load contact activities. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoadingActivities(false);
+    }
+  };
+  
+  const handleLoadMoreActivities = () => {
+    loadActivities(activitiesPage + 1);
+  };
+  
   // Action handler functions
-  const handleEditContact = (contact: any) => {
+  const handleEditContact = async (contact: any) => {
     if (!contact) return;
     // Navigate to edit contact page
     router.push(`/client/contacts/edit/${contact.id}`);
     
-    // Log this action in the contact's activity history
-    logContactActivity(contact.id, 'Edit initiated', 'User accessed contact edit page');
+    try {
+      await contactsApi.createContactActivity(contact.id, {
+        type: 'EDIT',
+        description: 'Started editing contact',
+        metadata: {
+          action: 'edit_initiated'
+        }
+      });
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
   };
   
-  const handleSendEmail = (contact: any) => {
+  const handleSendEmail = async (contact: any) => {
     if (!contact || !contact.email) {
       toast({
         title: "Cannot Send Email",
@@ -269,11 +386,21 @@ export default function ContactsPage() {
       description: `Sending email to ${contact.firstName} ${contact.lastName}`,
     });
     
-    // Log this action in the contact's activity history
-    logContactActivity(contact.id, 'Email sent', `Email sent to ${contact.email}`);
+    try {
+      await contactsApi.createContactActivity(contact.id, {
+        type: 'EMAIL',
+        description: 'Started composing email',
+        metadata: {
+          action: 'email_initiated',
+          email: contact.email
+        }
+      });
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
   };
   
-  const handleSendSMS = (contact: any) => {
+  const handleSendSMS = async (contact: any) => {
     if (!contact || !contact.phone) {
       toast({
         title: "Cannot Send SMS",
@@ -286,18 +413,38 @@ export default function ContactsPage() {
     // Navigate to SMS page with contact pre-selected - integrating with Phone & SMS Module
     router.push(`/client/phone-sms/new?contactId=${contact.id}&phone=${encodeURIComponent(contact.phone)}`);
     
-    // Log this activity when navigating away
-    logContactActivity(contact.id, 'SMS initiated', `SMS composition started to ${contact.phone}`);
+    try {
+      await contactsApi.createContactActivity(contact.id, {
+        type: 'SMS',
+        description: 'Started composing SMS',
+        metadata: {
+          action: 'sms_initiated',
+          phone: contact.phone
+        }
+      });
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
   };
   
-  const handleScheduleMeeting = (contact: any) => {
+  const handleScheduleMeeting = async (contact: any) => {
     if (!contact) return;
     
     // Navigate to appointments page with contact pre-selected - integrating with Appointments Module
     router.push(`/client/appointments/new?contactId=${contact.id}&name=${encodeURIComponent(`${contact.firstName} ${contact.lastName}`)}`);
     
-    // Log this activity when navigating away
-    logContactActivity(contact.id, 'Meeting scheduled', `Appointment scheduling started with ${contact.firstName} ${contact.lastName}`);
+    try {
+      await contactsApi.createContactActivity(contact.id, {
+        type: 'MEETING',
+        description: 'Started scheduling meeting',
+        metadata: {
+          action: 'meeting_initiated',
+          contactName: `${contact.firstName} ${contact.lastName}`
+        }
+      });
+    } catch (error) {
+      console.error('Error logging activity:', error);
+    }
   };
   
   const handleDeleteContact = (contact: any) => {
@@ -313,7 +460,15 @@ export default function ContactsPage() {
     try {
       // First, check if this contact has any associated deals, forms, etc.
       // This would be handled by the API in a real implementation
-      // Here we're just simulating a successful deletion
+      
+      await contactsApi.createContactActivity(contactToDelete.id, {
+        type: 'DELETE',
+        description: 'Contact deleted',
+        metadata: {
+          action: 'contact_deleted',
+          contactName: `${contactToDelete.firstName} ${contactToDelete.lastName}`
+        }
+      });
       
       await contactsApi.deleteContact(contactToDelete.id);
       
@@ -378,6 +533,16 @@ export default function ContactsPage() {
         title: "Contacts Exported",
         description: "Your contacts have been exported to CSV.",
       });
+      
+      // Log the export activity
+      await contactsApi.createContactActivity('system', {
+        type: 'EXPORT',
+        description: 'Contacts exported to CSV',
+        metadata: {
+          action: 'contacts_exported',
+          filters: params
+        }
+      });
     } catch (error) {
       console.error('Error exporting contacts:', error);
       toast({
@@ -387,18 +552,6 @@ export default function ContactsPage() {
       });
     } finally {
       setIsLoading(false);
-    }
-  };
-  
-  // Helper function for logging contact activities
-  const logContactActivity = async (contactId: string, action: string, description: string) => {
-    try {
-      // In a real implementation, this would call an API endpoint to log the activity
-      console.log(`Activity logged: ${action} - ${description} for contact ${contactId}`);
-      // We would use something like:
-      // await apiClient.post(`/contacts/${contactId}/activities`, { action, description });
-    } catch (error) {
-      console.error('Error logging contact activity:', error);
     }
   };
   
@@ -789,6 +942,17 @@ export default function ContactsPage() {
                         <Calendar className="h-4 w-4" />
                       </Button>
                     </div>
+                  </div>
+                  
+                  {/* Activity Timeline */}
+                  <div className="pt-6">
+                    <ActivityTimeline
+                      contactId={selectedContactData.id}
+                      activities={activities}
+                      hasMore={hasMoreActivities}
+                      isLoading={isLoadingActivities}
+                      onLoadMore={handleLoadMoreActivities}
+                    />
                   </div>
                 </div>
               ) : (

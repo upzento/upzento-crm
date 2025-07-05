@@ -214,6 +214,35 @@ export const contactsApi = {
   // Filtering
   filterByTags: (tagIds: string[]) => 
     apiClient.get(`/contacts/filter?tagIds=${tagIds.join(',')}`),
+    
+  // Activities
+  getContactActivities: (contactId: string, params?: {
+    page?: number;
+    limit?: number;
+    type?: string;
+    startDate?: string;
+    endDate?: string;
+  }) => apiClient.get(`/contacts/${contactId}/activities`, { params }),
+  
+  createContactActivity: (contactId: string, data: {
+    type: string;
+    description: string;
+    metadata?: any;
+  }) => apiClient.post(`/contacts/${contactId}/activities`, data),
+  
+  updateContactActivity: (contactId: string, activityId: string, data: {
+    description?: string;
+    metadata?: any;
+    status?: string;
+  }) => apiClient.patch(`/contacts/${contactId}/activities/${activityId}`, data),
+  
+  deleteContactActivity: (contactId: string, activityId: string) => 
+    apiClient.delete(`/contacts/${contactId}/activities/${activityId}`),
+  
+  getActivityTypes: () => apiClient.get('/contacts/activity-types'),
+  
+  getActivityStats: (contactId: string) => 
+    apiClient.get(`/contacts/${contactId}/activity-stats`),
 };
 
 export default apiClient; 
