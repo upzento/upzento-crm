@@ -616,68 +616,200 @@ model CampaignConversion {
   @@map("campaign_conversions")
 }
 
+// Form Models
 model Form {
-  id          String           @id @default(uuid())
-  name        String
-  description String?
-  isActive    Boolean          @default(true)
-  isPublic    Boolean          @default(false)
-  settings    Json? // Form settings like success message, redirect URL, etc.
-  createdAt   DateTime         @default(now())
-  updatedAt   DateTime         @updatedAt
-  createdBy   String
-  user        User             @relation(fields: [createdBy], references: [id])
-  fields      FormField[]
-  submissions FormSubmission[]
-  webhooks    FormWebhook[]
+  id            String          @id @default(cuid())
+  name          String
+  description   String?
+  status        String         // active, inactive, draft
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  createdBy     String
+  user          User           @relation(fields: [createdBy], references: [id])
+  
+  // Relations
+  fields        FormField[]
+  steps         FormStep[]
+  submissions   FormSubmission[]
+  settings      FormSettings?
+  webhooks      FormWebhook[]
+  domains       FormDomain[]
 
   @@map("forms")
 }
 
 model FormField {
-  id           String   @id @default(uuid())
-  formId       String
-  label        String
-  type         String // text, email, number, select, etc.
-  isRequired   Boolean  @default(false)
-  order        Int
-  defaultValue String?
-  placeholder  String?
-  options      Json? // For select, radio, checkbox fields
-  validation   Json? // Validation rules
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-  form         Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  id            String   @id @default(cuid())
+  formId        String
+  type          String   // text, email, phone, textarea, select, checkbox, radio, date, file, rating
+  label         String
+  placeholder   String?
+  required      Boolean  @default(false)
+  order         Int
+  stepId        String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  form          Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  step          FormStep? @relation(fields: [stepId], references: [id])
+  options       FormFieldOption[]
+  validations   FormFieldValidation[]
+  conditions    FormFieldCondition[]
 
   @@map("form_fields")
 }
 
+model FormFieldOption {
+  id            String   @id @default(cuid())
+  fieldId       String
+  label         String
+  value         String
+  order         Int
+  
+  // Relations
+  field         FormField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+
+  @@map("form_field_options")
+}
+
+model FormFieldValidation {
+  id            String   @id @default(cuid())
+  fieldId       String
+  type          String   // required, email, min, max, pattern
+  value         String?
+  message       String?
+  
+  // Relations
+  field         FormField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+
+  @@map("form_field_validations")
+}
+
+model FormFieldCondition {
+  id            String   @id @default(cuid())
+  fieldId       String
+  targetFieldId String
+  operator      String   // equals, not_equals, contains, greater_than, less_than
+  value         String
+  action        String   // show, hide
+  
+  // Relations
+  field         FormField @relation(fields: [fieldId], references: [id], onDelete: Cascade)
+
+  @@map("form_field_conditions")
+}
+
+model FormStep {
+  id            String   @id @default(cuid())
+  formId        String
+  title         String
+  description   String?
+  order         Int
+  
+  // Relations
+  form          Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  fields        FormField[]
+
+  @@map("form_steps")
+}
+
+model FormSettings {
+  id                String   @id @default(cuid())
+  formId            String   @unique
+  submitButtonText  String   @default("Submit")
+  successMessage    String?
+  redirectUrl       String?
+  enableCaptcha     Boolean  @default(true)
+  notifyEmail       String?
+  theme             Json?    // Custom theme settings
+  customCss         String?  // Custom CSS
+  customJs          String?  // Custom JavaScript
+  
+  // Relations
+  form              Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@map("form_settings")
+}
+
 model FormSubmission {
-  id        String   @id @default(uuid())
-  formId    String
-  data      Json // Submitted form data
-  metadata  Json? // Browser info, IP, etc.
-  status    String   @default("PENDING") // PENDING, PROCESSED, FAILED
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  form      Form     @relation(fields: [formId], references: [id])
-  contact   Contact? @relation(fields: [contactId], references: [id])
-  contactId String?
+  id            String   @id @default(cuid())
+  formId        String
+  data          Json
+  status        String   @default("new") // new, viewed, flagged, archived
+  ipAddress     String?
+  userAgent     String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  form          Form     @relation(fields: [formId], references: [id])
+  contactId     String?
+  contact       Contact? @relation(fields: [contactId], references: [id])
+  notifications FormSubmissionNotification[]
 
   @@map("form_submissions")
 }
 
+model FormSubmissionNotification {
+  id            String   @id @default(cuid())
+  submissionId  String
+  type          String   // email, webhook, system
+  status        String   // pending, sent, failed
+  error         String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  submission    FormSubmission @relation(fields: [submissionId], references: [id], onDelete: Cascade)
+
+  @@map("form_submission_notifications")
+}
+
 model FormWebhook {
-  id        String   @id @default(uuid())
-  formId    String
-  url       String
-  method    String   @default("POST")
-  headers   Json?
-  isActive  Boolean  @default(true)
-  secret    String? // For webhook signature verification
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  form      Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+  id            String   @id @default(cuid())
+  formId        String
+  url           String
+  secret        String?
+  active        Boolean  @default(true)
+  events        String[] // submission_created, submission_updated
+  headers       Json?    // Custom headers
+  
+  // Relations
+  form          Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
 
   @@map("form_webhooks")
+}
+
+model FormDomain {
+  id            String   @id @default(cuid())
+  formId        String
+  domain        String
+  verified      Boolean  @default(false)
+  verificationToken String?
+  verifiedAt    DateTime?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  
+  // Relations
+  form          Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@map("form_domains")
+  @@unique([formId, domain])
+}
+
+model FormAnalytics {
+  id            String   @id @default(cuid())
+  formId        String
+  date          DateTime @default(now())
+  views         Int      @default(0)
+  submissions   Int      @default(0)
+  completionRate Float   @default(0)
+  avgTimeToComplete Int? // in seconds
+  
+  // Relations
+  form          Form     @relation(fields: [formId], references: [id], onDelete: Cascade)
+
+  @@map("form_analytics")
+  @@unique([formId, date])
 }
