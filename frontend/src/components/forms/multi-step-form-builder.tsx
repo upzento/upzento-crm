@@ -5,6 +5,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
 import { 
   Plus, 
   Trash2, 
@@ -15,7 +18,9 @@ import {
   Rows,
   AlignLeft,
   AlignCenter,
-  AlignRight
+  AlignRight,
+  Settings2,
+  Link2
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -32,6 +37,15 @@ interface FormField {
   required: boolean;
   options?: { label: string; value: string }[];
   validation?: any;
+  conditions?: FormFieldCondition[];
+}
+
+interface FormFieldCondition {
+  id: string;
+  targetFieldId: string;
+  operator: 'equals' | 'not_equals' | 'contains' | 'greater_than' | 'less_than';
+  value: string;
+  action: 'show' | 'hide';
 }
 
 interface FormStep {
@@ -58,7 +72,21 @@ const FIELD_TYPES = [
   { id: 'checkbox', label: 'Checkboxes', icon: '☑️' },
   { id: 'date', label: 'Date Picker', icon: '📅' },
   { id: 'file', label: 'File Upload', icon: '📎' },
-  { id: 'rating', label: 'Rating', icon: '⭐' }
+  { id: 'rating', label: 'Rating', icon: '⭐' },
+  { id: 'calculation', label: 'Calculation', icon: '🔢' },
+];
+
+const OPERATORS = [
+  { value: 'equals', label: 'Equals' },
+  { value: 'not_equals', label: 'Not Equals' },
+  { value: 'contains', label: 'Contains' },
+  { value: 'greater_than', label: 'Greater Than' },
+  { value: 'less_than', label: 'Less Than' },
+];
+
+const ACTIONS = [
+  { value: 'show', label: 'Show' },
+  { value: 'hide', label: 'Hide' },
 ];
 
 export const MultiStepFormBuilder: React.FC<MultiStepFormBuilderProps> = ({
@@ -74,6 +102,7 @@ export const MultiStepFormBuilder: React.FC<MultiStepFormBuilderProps> = ({
     fields: []
   }]);
   const [activeStep, setActiveStep] = useState(0);
+  const [selectedField, setSelectedField] = useState<string | null>(null);
 
   const addStep = () => {
     const newStep: FormStep = {
@@ -114,6 +143,7 @@ export const MultiStepFormBuilder: React.FC<MultiStepFormBuilderProps> = ({
       type,
       label: `New ${type} field`,
       required: false,
+      conditions: [],
     };
     
     const updatedSteps = steps.map((step, index) => {
@@ -121,6 +151,24 @@ export const MultiStepFormBuilder: React.FC<MultiStepFormBuilderProps> = ({
         return {
           ...step,
           fields: [...step.fields, newField]
+        };
+      }
+      return step;
+    });
+    
+    setSteps(updatedSteps);
+    onStepsChange(updatedSteps);
+    setSelectedField(newField.id);
+  };
+
+  const updateField = (fieldId: string, updates: Partial<FormField>) => {
+    const updatedSteps = steps.map((step, index) => {
+      if (index === activeStep) {
+        return {
+          ...step,
+          fields: step.fields.map(field =>
+            field.id === fieldId ? { ...field, ...updates } : field
+          )
         };
       }
       return step;
@@ -143,24 +191,212 @@ export const MultiStepFormBuilder: React.FC<MultiStepFormBuilderProps> = ({
     
     setSteps(updatedSteps);
     onStepsChange(updatedSteps);
-  };
-
-  const getLayoutIcon = (layout: string) => {
-    switch (layout) {
-      case 'grid': return <LayoutGrid className="h-4 w-4" />;
-      case 'columns': return <Columns className="h-4 w-4" />;
-      case 'rows': return <Rows className="h-4 w-4" />;
-      default: return <LayoutGrid className="h-4 w-4" />;
+    if (selectedField === fieldId) {
+      setSelectedField(null);
     }
   };
 
-  const getAlignmentIcon = (alignment: string) => {
-    switch (alignment) {
-      case 'left': return <AlignLeft className="h-4 w-4" />;
-      case 'center': return <AlignCenter className="h-4 w-4" />;
-      case 'right': return <AlignRight className="h-4 w-4" />;
-      default: return <AlignLeft className="h-4 w-4" />;
-    }
+  const addCondition = (fieldId: string) => {
+    const newCondition: FormFieldCondition = {
+      id: `condition-${Date.now()}`,
+      targetFieldId: '',
+      operator: 'equals',
+      value: '',
+      action: 'show'
+    };
+
+    updateField(fieldId, {
+      conditions: [...(steps[activeStep].fields.find(f => f.id === fieldId)?.conditions || []), newCondition]
+    });
+  };
+
+  const updateCondition = (fieldId: string, conditionId: string, updates: Partial<FormFieldCondition>) => {
+    const field = steps[activeStep].fields.find(f => f.id === fieldId);
+    if (!field) return;
+
+    const updatedConditions = field.conditions?.map(condition =>
+      condition.id === conditionId ? { ...condition, ...updates } : condition
+    );
+
+    updateField(fieldId, { conditions: updatedConditions });
+  };
+
+  const removeCondition = (fieldId: string, conditionId: string) => {
+    const field = steps[activeStep].fields.find(f => f.id === fieldId);
+    if (!field) return;
+
+    const updatedConditions = field.conditions?.filter(condition => condition.id !== conditionId);
+    updateField(fieldId, { conditions: updatedConditions });
+  };
+
+  const getAvailableTargetFields = (currentFieldId: string) => {
+    return steps[activeStep].fields.filter(field => field.id !== currentFieldId);
+  };
+
+  const renderFieldSettings = (field: FormField) => {
+    return (
+      <div className="space-y-4">
+        <div>
+          <Label>Field Label</Label>
+          <Input
+            value={field.label}
+            onChange={(e) => updateField(field.id, { label: e.target.value })}
+          />
+        </div>
+        <div>
+          <Label>Placeholder</Label>
+          <Input
+            value={field.placeholder || ''}
+            onChange={(e) => updateField(field.id, { placeholder: e.target.value })}
+          />
+        </div>
+        <div className="flex items-center justify-between">
+          <Label>Required</Label>
+          <Switch
+            checked={field.required}
+            onCheckedChange={(checked) => updateField(field.id, { required: checked })}
+          />
+        </div>
+        {(field.type === 'select' || field.type === 'radio' || field.type === 'checkbox') && (
+          <div>
+            <Label>Options</Label>
+            <div className="space-y-2">
+              {field.options?.map((option, index) => (
+                <div key={index} className="flex gap-2">
+                  <Input
+                    value={option.label}
+                    onChange={(e) => {
+                      const newOptions = [...(field.options || [])];
+                      newOptions[index] = { ...option, label: e.target.value };
+                      updateField(field.id, { options: newOptions });
+                    }}
+                    placeholder="Option label"
+                  />
+                  <Input
+                    value={option.value}
+                    onChange={(e) => {
+                      const newOptions = [...(field.options || [])];
+                      newOptions[index] = { ...option, value: e.target.value };
+                      updateField(field.id, { options: newOptions });
+                    }}
+                    placeholder="Option value"
+                  />
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => {
+                      const newOptions = field.options?.filter((_, i) => i !== index);
+                      updateField(field.id, { options: newOptions });
+                    }}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  const newOptions = [...(field.options || []), { label: '', value: '' }];
+                  updateField(field.id, { options: newOptions });
+                }}
+              >
+                <Plus className="h-4 w-4 mr-2" />
+                Add Option
+              </Button>
+            </div>
+          </div>
+        )}
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <Label>Conditional Logic</Label>
+            <Button variant="outline" size="sm" onClick={() => addCondition(field.id)}>
+              <Plus className="h-4 w-4 mr-2" />
+              Add Condition
+            </Button>
+          </div>
+          <div className="space-y-4">
+            {field.conditions?.map((condition) => (
+              <Card key={condition.id}>
+                <CardContent className="p-4 space-y-4">
+                  <div className="flex items-center gap-2">
+                    <Select
+                      value={condition.action}
+                      onValueChange={(value) =>
+                        updateCondition(field.id, condition.id, { action: value as 'show' | 'hide' })
+                      }
+                    >
+                      <SelectTrigger className="w-[100px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {ACTIONS.map(action => (
+                          <SelectItem key={action.value} value={action.value}>
+                            {action.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <span>this field if</span>
+                    <Select
+                      value={condition.targetFieldId}
+                      onValueChange={(value) =>
+                        updateCondition(field.id, condition.id, { targetFieldId: value })
+                      }
+                    >
+                      <SelectTrigger className="w-[200px]">
+                        <SelectValue placeholder="Select field" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {getAvailableTargetFields(field.id).map(targetField => (
+                          <SelectItem key={targetField.id} value={targetField.id}>
+                            {targetField.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Select
+                      value={condition.operator}
+                      onValueChange={(value) =>
+                        updateCondition(field.id, condition.id, {
+                          operator: value as FormFieldCondition['operator']
+                        })
+                      }
+                    >
+                      <SelectTrigger className="w-[150px]">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {OPERATORS.map(operator => (
+                          <SelectItem key={operator.value} value={operator.value}>
+                            {operator.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <Input
+                      value={condition.value}
+                      onChange={(e) =>
+                        updateCondition(field.id, condition.id, { value: e.target.value })
+                      }
+                      placeholder="Value"
+                      className="w-[200px]"
+                    />
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => removeCondition(field.id, condition.id)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
   };
 
   return (
@@ -255,105 +491,154 @@ export const MultiStepFormBuilder: React.FC<MultiStepFormBuilderProps> = ({
                 />
                 
                 <div className="flex gap-4">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        {getLayoutIcon(steps[activeStep]?.layout)}
-                        <span className="ml-2">Layout</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem onClick={() => updateStep(activeStep, { layout: 'grid' })}>
-                        <LayoutGrid className="h-4 w-4 mr-2" /> Grid
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => updateStep(activeStep, { layout: 'columns' })}>
-                        <Columns className="h-4 w-4 mr-2" /> Columns
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => updateStep(activeStep, { layout: 'rows' })}>
-                        <Rows className="h-4 w-4 mr-2" /> Rows
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <Select
+                    value={steps[activeStep]?.layout}
+                    onValueChange={(value) =>
+                      updateStep(activeStep, { layout: value as FormStep['layout'] })
+                    }
+                  >
+                    <SelectTrigger className="w-[200px]">
+                      <SelectValue placeholder="Select layout" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="grid">
+                        <div className="flex items-center">
+                          <LayoutGrid className="h-4 w-4 mr-2" />
+                          Grid
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="columns">
+                        <div className="flex items-center">
+                          <Columns className="h-4 w-4 mr-2" />
+                          Columns
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="rows">
+                        <div className="flex items-center">
+                          <Rows className="h-4 w-4 mr-2" />
+                          Rows
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
 
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        {getAlignmentIcon(steps[activeStep]?.alignment)}
-                        <span className="ml-2">Align</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent>
-                      <DropdownMenuItem onClick={() => updateStep(activeStep, { alignment: 'left' })}>
-                        <AlignLeft className="h-4 w-4 mr-2" /> Left
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => updateStep(activeStep, { alignment: 'center' })}>
-                        <AlignCenter className="h-4 w-4 mr-2" /> Center
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => updateStep(activeStep, { alignment: 'right' })}>
-                        <AlignRight className="h-4 w-4 mr-2" /> Right
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  <Select
+                    value={steps[activeStep]?.alignment}
+                    onValueChange={(value) =>
+                      updateStep(activeStep, { alignment: value as FormStep['alignment'] })
+                    }
+                  >
+                    <SelectTrigger className="w-[200px]">
+                      <SelectValue placeholder="Select alignment" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="left">
+                        <div className="flex items-center">
+                          <AlignLeft className="h-4 w-4 mr-2" />
+                          Left
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="center">
+                        <div className="flex items-center">
+                          <AlignCenter className="h-4 w-4 mr-2" />
+                          Center
+                        </div>
+                      </SelectItem>
+                      <SelectItem value="right">
+                        <div className="flex items-center">
+                          <AlignRight className="h-4 w-4 mr-2" />
+                          Right
+                        </div>
+                      </SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
 
-              <div className="border rounded-lg p-4">
-                <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 mb-4">
-                  {FIELD_TYPES.map((fieldType) => (
-                    <Button
-                      key={fieldType.id}
-                      variant="outline"
-                      className="h-auto py-4 flex flex-col items-center justify-center gap-2"
-                      onClick={() => addField(fieldType.id)}
-                    >
-                      <span className="text-2xl">{fieldType.icon}</span>
-                      <span className="text-xs">{fieldType.label}</span>
-                    </Button>
-                  ))}
+              <div className="grid grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <h3 className="text-sm font-medium">Add Fields</h3>
+                  <div className="grid grid-cols-2 gap-2">
+                    {FIELD_TYPES.map((fieldType) => (
+                      <Button
+                        key={fieldType.id}
+                        variant="outline"
+                        className="h-auto py-4 flex flex-col items-center justify-center gap-2"
+                        onClick={() => addField(fieldType.id)}
+                      >
+                        <span className="text-2xl">{fieldType.icon}</span>
+                        <span className="text-xs">{fieldType.label}</span>
+                      </Button>
+                    ))}
+                  </div>
                 </div>
 
-                <div className={`grid gap-4 ${
-                  steps[activeStep]?.layout === 'grid' ? 'grid-cols-2' :
-                  steps[activeStep]?.layout === 'columns' ? 'grid-cols-3' : 'grid-cols-1'
-                }`}>
-                  {steps[activeStep]?.fields.map((field) => (
-                    <Card key={field.id} className="relative">
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        className="absolute top-2 right-2"
-                        onClick={() => removeField(field.id)}
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                      <CardContent className="pt-8">
-                        <div className="space-y-2">
+                <div className="space-y-4">
+                  <h3 className="text-sm font-medium">Field Settings</h3>
+                  {selectedField ? (
+                    renderFieldSettings(
+                      steps[activeStep].fields.find(f => f.id === selectedField)!
+                    )
+                  ) : (
+                    <p className="text-sm text-muted-foreground">
+                      Select a field to configure its settings
+                    </p>
+                  )}
+                </div>
+              </div>
+
+              <div className={`grid gap-4 ${
+                steps[activeStep]?.layout === 'grid' ? 'grid-cols-2' :
+                steps[activeStep]?.layout === 'columns' ? 'grid-cols-3' : 'grid-cols-1'
+              }`}>
+                {steps[activeStep]?.fields.map((field) => (
+                  <Card
+                    key={field.id}
+                    className={`relative cursor-pointer ${
+                      selectedField === field.id ? 'ring-2 ring-primary' : ''
+                    }`}
+                    onClick={() => setSelectedField(field.id)}
+                  >
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="absolute top-2 right-2"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        removeField(field.id);
+                      }}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                    <CardContent className="pt-8">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <span className="text-lg">
+                            {FIELD_TYPES.find(t => t.id === field.type)?.icon}
+                          </span>
                           <Input
                             value={field.label}
                             onChange={(e) => {
-                              const updatedSteps = steps.map((step, index) => {
-                                if (index === activeStep) {
-                                  return {
-                                    ...step,
-                                    fields: step.fields.map(f => 
-                                      f.id === field.id ? { ...f, label: e.target.value } : f
-                                    )
-                                  };
-                                }
-                                return step;
-                              });
-                              setSteps(updatedSteps);
-                              onStepsChange(updatedSteps);
+                              e.stopPropagation();
+                              updateField(field.id, { label: e.target.value });
                             }}
+                            onClick={(e) => e.stopPropagation()}
                           />
-                          <div className="text-xs text-muted-foreground">
-                            Type: {field.type}
-                          </div>
                         </div>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </div>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <span>{field.type}</span>
+                          {field.required && <span className="text-destructive">*</span>}
+                          {field.conditions?.length > 0 && (
+                            <span className="flex items-center gap-1">
+                              <Link2 className="h-3 w-3" />
+                              {field.conditions.length} condition(s)
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
               </div>
             </CardContent>
           </Card>

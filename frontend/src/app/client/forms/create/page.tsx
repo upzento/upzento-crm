@@ -15,6 +15,10 @@ import {
   RotateCcw
 } from 'lucide-react'
 import { MultiStepFormBuilder } from '@/components/forms/multi-step-form-builder'
+import { Switch } from '@/components/ui/switch'
+import { Label } from '@/components/ui/label'
+import { Textarea } from '@/components/ui/textarea'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 
 const templates = [
   {
@@ -59,7 +63,27 @@ export default function CreateFormPage() {
   const [formData, setFormData] = useState({
     name: '',
     description: '',
-    steps: []
+    steps: [],
+    settings: {
+      submitButtonText: 'Submit',
+      successMessage: 'Thank you for your submission!',
+      redirectUrl: '',
+      enableCaptcha: true,
+      notifyEmail: '',
+      showRequiredIndicator: true,
+      showLabels: true,
+      showHelpText: true,
+      requiredMessage: 'This field is required',
+      emailMessage: 'Please enter a valid email address',
+      theme: {
+        primaryColor: '#0066cc',
+        backgroundColor: '#ffffff',
+        textColor: '#000000',
+        borderRadius: '4px',
+      },
+      customCss: '',
+      customJs: '',
+    }
   })
   const [previewMode, setPreviewMode] = useState(false)
 
@@ -183,7 +207,114 @@ export default function CreateFormPage() {
             <TabsContent value="fields">
               <Card>
                 <CardContent className="p-6">
-                  {/* Field configuration panel will go here */}
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-medium mb-4">Field Properties</h3>
+                      <p className="text-sm text-muted-foreground mb-4">
+                        Configure global field properties that apply to all form fields.
+                      </p>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label>Required Field Indicator</Label>
+                            <p className="text-sm text-muted-foreground">
+                              Show asterisk (*) next to required fields
+                            </p>
+                          </div>
+                          <Switch
+                            checked={formData.settings.showRequiredIndicator}
+                            onCheckedChange={(checked) =>
+                              setFormData(prev => ({
+                                ...prev,
+                                settings: {
+                                  ...prev.settings,
+                                  showRequiredIndicator: checked
+                                }
+                              }))
+                            }
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label>Field Labels</Label>
+                            <p className="text-sm text-muted-foreground">
+                              Show labels above form fields
+                            </p>
+                          </div>
+                          <Switch
+                            checked={formData.settings.showLabels}
+                            onCheckedChange={(checked) =>
+                              setFormData(prev => ({
+                                ...prev,
+                                settings: {
+                                  ...prev.settings,
+                                  showLabels: checked
+                                }
+                              }))
+                            }
+                          />
+                        </div>
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label>Field Help Text</Label>
+                            <p className="text-sm text-muted-foreground">
+                              Show help text below form fields
+                            </p>
+                          </div>
+                          <Switch
+                            checked={formData.settings.showHelpText}
+                            onCheckedChange={(checked) =>
+                              setFormData(prev => ({
+                                ...prev,
+                                settings: {
+                                  ...prev.settings,
+                                  showHelpText: checked
+                                }
+                              }))
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-medium mb-4">Validation Messages</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <Label>Required Field Message</Label>
+                          <Input
+                            value={formData.settings.requiredMessage}
+                            onChange={(e) =>
+                              setFormData(prev => ({
+                                ...prev,
+                                settings: {
+                                  ...prev.settings,
+                                  requiredMessage: e.target.value
+                                }
+                              }))
+                            }
+                            placeholder="This field is required"
+                          />
+                        </div>
+                        <div>
+                          <Label>Email Validation Message</Label>
+                          <Input
+                            value={formData.settings.emailMessage}
+                            onChange={(e) =>
+                              setFormData(prev => ({
+                                ...prev,
+                                settings: {
+                                  ...prev.settings,
+                                  emailMessage: e.target.value
+                                }
+                              }))
+                            }
+                            placeholder="Please enter a valid email address"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>
@@ -191,7 +322,248 @@ export default function CreateFormPage() {
             <TabsContent value="settings">
               <Card>
                 <CardContent className="p-6">
-                  {/* Form settings will go here */}
+                  <div className="space-y-6">
+                    <div>
+                      <h3 className="text-lg font-medium mb-4">Form Settings</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <Label>Submit Button Text</Label>
+                          <Input
+                            value={formData.settings.submitButtonText}
+                            onChange={(e) =>
+                              setFormData(prev => ({
+                                ...prev,
+                                settings: {
+                                  ...prev.settings,
+                                  submitButtonText: e.target.value
+                                }
+                              }))
+                            }
+                            placeholder="Submit"
+                          />
+                        </div>
+                        <div>
+                          <Label>Success Message</Label>
+                          <Textarea
+                            value={formData.settings.successMessage}
+                            onChange={(e) =>
+                              setFormData(prev => ({
+                                ...prev,
+                                settings: {
+                                  ...prev.settings,
+                                  successMessage: e.target.value
+                                }
+                              }))
+                            }
+                            placeholder="Thank you for your submission!"
+                          />
+                        </div>
+                        <div>
+                          <Label>Redirect URL</Label>
+                          <Input
+                            value={formData.settings.redirectUrl}
+                            onChange={(e) =>
+                              setFormData(prev => ({
+                                ...prev,
+                                settings: {
+                                  ...prev.settings,
+                                  redirectUrl: e.target.value
+                                }
+                              }))
+                            }
+                            placeholder="https://example.com/thank-you"
+                          />
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Redirect users to this URL after form submission (optional)
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-medium mb-4">Security & Notifications</h3>
+                      <div className="space-y-4">
+                        <div className="flex items-center justify-between">
+                          <div>
+                            <Label>Enable reCAPTCHA</Label>
+                            <p className="text-sm text-muted-foreground">
+                              Protect your form from spam and abuse
+                            </p>
+                          </div>
+                          <Switch
+                            checked={formData.settings.enableCaptcha}
+                            onCheckedChange={(checked) =>
+                              setFormData(prev => ({
+                                ...prev,
+                                settings: {
+                                  ...prev.settings,
+                                  enableCaptcha: checked
+                                }
+                              }))
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label>Notification Email</Label>
+                          <Input
+                            type="email"
+                            value={formData.settings.notifyEmail}
+                            onChange={(e) =>
+                              setFormData(prev => ({
+                                ...prev,
+                                settings: {
+                                  ...prev.settings,
+                                  notifyEmail: e.target.value
+                                }
+                              }))
+                            }
+                            placeholder="notifications@example.com"
+                          />
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Receive email notifications for new submissions
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-medium mb-4">Appearance</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <Label>Primary Color</Label>
+                          <Input
+                            type="color"
+                            value={formData.settings.theme.primaryColor}
+                            onChange={(e) =>
+                              setFormData(prev => ({
+                                ...prev,
+                                settings: {
+                                  ...prev.settings,
+                                  theme: {
+                                    ...prev.settings.theme,
+                                    primaryColor: e.target.value
+                                  }
+                                }
+                              }))
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label>Background Color</Label>
+                          <Input
+                            type="color"
+                            value={formData.settings.theme.backgroundColor}
+                            onChange={(e) =>
+                              setFormData(prev => ({
+                                ...prev,
+                                settings: {
+                                  ...prev.settings,
+                                  theme: {
+                                    ...prev.settings.theme,
+                                    backgroundColor: e.target.value
+                                  }
+                                }
+                              }))
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label>Text Color</Label>
+                          <Input
+                            type="color"
+                            value={formData.settings.theme.textColor}
+                            onChange={(e) =>
+                              setFormData(prev => ({
+                                ...prev,
+                                settings: {
+                                  ...prev.settings,
+                                  theme: {
+                                    ...prev.settings.theme,
+                                    textColor: e.target.value
+                                  }
+                                }
+                              }))
+                            }
+                          />
+                        </div>
+                        <div>
+                          <Label>Border Radius</Label>
+                          <Select
+                            value={formData.settings.theme.borderRadius}
+                            onValueChange={(value) =>
+                              setFormData(prev => ({
+                                ...prev,
+                                settings: {
+                                  ...prev.settings,
+                                  theme: {
+                                    ...prev.settings.theme,
+                                    borderRadius: value
+                                  }
+                                }
+                              }))
+                            }
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select border radius" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="0">None</SelectItem>
+                              <SelectItem value="4px">Small</SelectItem>
+                              <SelectItem value="8px">Medium</SelectItem>
+                              <SelectItem value="12px">Large</SelectItem>
+                              <SelectItem value="16px">Extra Large</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h3 className="text-lg font-medium mb-4">Advanced</h3>
+                      <div className="space-y-4">
+                        <div>
+                          <Label>Custom CSS</Label>
+                          <Textarea
+                            value={formData.settings.customCss}
+                            onChange={(e) =>
+                              setFormData(prev => ({
+                                ...prev,
+                                settings: {
+                                  ...prev.settings,
+                                  customCss: e.target.value
+                                }
+                              }))
+                            }
+                            placeholder=".my-form { /* Custom styles */ }"
+                            className="font-mono"
+                          />
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Add custom CSS styles to your form
+                          </p>
+                        </div>
+                        <div>
+                          <Label>Custom JavaScript</Label>
+                          <Textarea
+                            value={formData.settings.customJs}
+                            onChange={(e) =>
+                              setFormData(prev => ({
+                                ...prev,
+                                settings: {
+                                  ...prev.settings,
+                                  customJs: e.target.value
+                                }
+                              }))
+                            }
+                            placeholder="// Custom JavaScript code"
+                            className="font-mono"
+                          />
+                          <p className="text-sm text-muted-foreground mt-1">
+                            Add custom JavaScript code to your form
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             </TabsContent>

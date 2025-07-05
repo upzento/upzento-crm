@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Plus, Copy, Download, Eye } from 'lucide-react';
+import { Plus, Copy, Download, Eye, Edit, CopyPlus } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -21,6 +21,7 @@ import {
   TabsList,
   TabsTrigger,
 } from "@/components/ui/tabs";
+import { toast } from '@/components/ui/use-toast';
 
 // Mock data - replace with actual API calls
 const mockForms = [
@@ -106,6 +107,24 @@ export default function FormsPage() {
     console.log('Export submissions for form:', id);
   };
 
+  const handleDuplicateForm = async (formId: string) => {
+    try {
+      // TODO: Implement form duplication API call
+      console.log('Duplicating form:', formId);
+      // For now, just show success message
+      toast({
+        title: 'Success',
+        description: 'Form duplicated successfully',
+      });
+    } catch (error) {
+      toast({
+        title: 'Error',
+        description: 'Failed to duplicate form',
+        variant: 'destructive',
+      });
+    }
+  };
+
   return (
     <div className="container mx-auto py-6 space-y-6">
       <div className="flex justify-between items-center">
@@ -180,9 +199,23 @@ export default function FormsPage() {
                             <Button
                               variant="ghost"
                               size="sm"
+                              onClick={() => router.push(`/client/forms/${form.id}/edit`)}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
                               onClick={() => handlePreviewForm(form.id)}
                             >
                               <Eye className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleDuplicateForm(form.id)}
+                            >
+                              <CopyPlus className="h-4 w-4" />
                             </Button>
                             <Button
                               variant="ghost"
