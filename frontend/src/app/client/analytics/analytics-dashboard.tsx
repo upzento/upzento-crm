@@ -6,6 +6,31 @@ import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Calendar } from '@/components/ui/calendar';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import {
   LineChart,
   Line,
@@ -33,8 +58,16 @@ import {
   Share2,
   Plus,
   Filter,
+  Calendar as CalendarIcon,
+  ChevronDown,
+  Check,
+  Copy,
+  Mail,
+  FileDown,
+  FileUp,
 } from 'lucide-react';
 import { addDays, format, subDays } from 'date-fns';
+import { useToast } from '@/components/ui/use-toast';
 
 // Mock data - replace with API calls
 const mockData = {
@@ -82,6 +115,65 @@ export function AnalyticsDashboard() {
   });
   const [selectedView, setSelectedView] = useState('overview');
   const [selectedDataSource, setSelectedDataSource] = useState('all');
+  const [isFilterDialogOpen, setIsFilterDialogOpen] = useState(false);
+  const [isCreateDashboardOpen, setIsCreateDashboardOpen] = useState(false);
+  const [isDatePickerOpen, setIsDatePickerOpen] = useState(false);
+  const [filters, setFilters] = useState({
+    channels: [],
+    metrics: [],
+    minRevenue: '',
+    maxRevenue: '',
+    showTrends: true,
+  });
+  const [newDashboard, setNewDashboard] = useState({
+    name: '',
+    description: '',
+    isPublic: false,
+    layout: 'grid',
+  });
+  const { toast } = useToast();
+
+  const handleExport = (format: 'pdf' | 'csv' | 'xlsx') => {
+    toast({
+      title: "Exporting Analytics",
+      description: `Your analytics data will be exported as ${format.toUpperCase()}`,
+    });
+    // In real implementation, this would trigger the export API call
+  };
+
+  const handleShare = async (method: 'copy' | 'email') => {
+    if (method === 'copy') {
+      await navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: "Link Copied",
+        description: "Dashboard link has been copied to clipboard",
+      });
+    } else {
+      window.location.href = `mailto:?subject=Analytics Dashboard&body=Check out this dashboard: ${window.location.href}`;
+    }
+  };
+
+  const handleCreateDashboard = () => {
+    toast({
+      title: "Dashboard Created",
+      description: `Dashboard "${newDashboard.name}" has been created successfully`,
+    });
+    setIsCreateDashboardOpen(false);
+    // In real implementation, this would create the dashboard via API
+  };
+
+  const handleApplyFilters = () => {
+    toast({
+      title: "Filters Applied",
+      description: "The dashboard has been updated with your filters",
+    });
+    setIsFilterDialogOpen(false);
+    // In real implementation, this would refresh the data with filters
+  };
+
+  const formatDate = (date: Date) => {
+    return format(date, 'MMM dd, yyyy');
+  };
 
   return (
     <div className="container mx-auto py-6 space-y-6">
@@ -93,22 +185,152 @@ export function AnalyticsDashboard() {
         </div>
         <div className="flex gap-4">
           <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm">
-              <Filter className="h-4 w-4 mr-2" />
-              Filter
-            </Button>
-            <Button variant="outline" size="sm">
-              <Download className="h-4 w-4 mr-2" />
-              Export
-            </Button>
-            <Button variant="outline" size="sm">
-              <Share2 className="h-4 w-4 mr-2" />
-              Share
-            </Button>
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Create Dashboard
-            </Button>
+            <Dialog open={isFilterDialogOpen} onOpenChange={setIsFilterDialogOpen}>
+              <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Filter className="h-4 w-4 mr-2" />
+                  Filter
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Filter Analytics</DialogTitle>
+                  <DialogDescription>
+                    Customize your analytics view with filters
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="space-y-2">
+                    <Label>Revenue Range</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        placeholder="Min"
+                        value={filters.minRevenue}
+                        onChange={(e) => setFilters({ ...filters, minRevenue: e.target.value })}
+                      />
+                      <Input
+                        placeholder="Max"
+                        value={filters.maxRevenue}
+                        onChange={(e) => setFilters({ ...filters, maxRevenue: e.target.value })}
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Show Trends</Label>
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        checked={filters.showTrends}
+                        onCheckedChange={(checked) => setFilters({ ...filters, showTrends: checked })}
+                      />
+                      <Label>Include trend indicators</Label>
+                    </div>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsFilterDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleApplyFilters}>Apply Filters</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Download className="h-4 w-4 mr-2" />
+                  Export
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Choose Format</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => handleExport('pdf')}>
+                  <FileDown className="h-4 w-4 mr-2" />
+                  Export as PDF
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport('csv')}>
+                  <FileDown className="h-4 w-4 mr-2" />
+                  Export as CSV
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleExport('xlsx')}>
+                  <FileDown className="h-4 w-4 mr-2" />
+                  Export as Excel
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" size="sm">
+                  <Share2 className="h-4 w-4 mr-2" />
+                  Share
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuLabel>Share Dashboard</DropdownMenuLabel>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={() => handleShare('copy')}>
+                  <Copy className="h-4 w-4 mr-2" />
+                  Copy Link
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => handleShare('email')}>
+                  <Mail className="h-4 w-4 mr-2" />
+                  Share via Email
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            <Dialog open={isCreateDashboardOpen} onOpenChange={setIsCreateDashboardOpen}>
+              <DialogTrigger asChild>
+                <Button>
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Dashboard
+                </Button>
+              </DialogTrigger>
+              <DialogContent className="sm:max-w-[425px]">
+                <DialogHeader>
+                  <DialogTitle>Create New Dashboard</DialogTitle>
+                  <DialogDescription>
+                    Create a custom dashboard to track specific metrics
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="grid gap-4 py-4">
+                  <div className="grid gap-2">
+                    <Label htmlFor="name">Dashboard Name</Label>
+                    <Input
+                      id="name"
+                      value={newDashboard.name}
+                      onChange={(e) => setNewDashboard({ ...newDashboard, name: e.target.value })}
+                      placeholder="My Custom Dashboard"
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <Label htmlFor="description">Description</Label>
+                    <Input
+                      id="description"
+                      value={newDashboard.description}
+                      onChange={(e) => setNewDashboard({ ...newDashboard, description: e.target.value })}
+                      placeholder="Track specific metrics and KPIs"
+                    />
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="public"
+                      checked={newDashboard.isPublic}
+                      onCheckedChange={(checked) => setNewDashboard({ ...newDashboard, isPublic: checked })}
+                    />
+                    <Label htmlFor="public">Make dashboard public</Label>
+                  </div>
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setIsCreateDashboardOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button onClick={handleCreateDashboard}>Create Dashboard</Button>
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       </div>
@@ -128,13 +350,40 @@ export function AnalyticsDashboard() {
             ))}
           </SelectContent>
         </Select>
-        <Calendar
-          mode="range"
-          selected={{ from: dateRange.from, to: dateRange.to }}
-          onSelect={(range: any) => setDateRange(range)}
-          numberOfMonths={2}
-          className="rounded-md border"
-        />
+
+        <Popover open={isDatePickerOpen} onOpenChange={setIsDatePickerOpen}>
+          <PopoverTrigger asChild>
+            <Button variant="outline" className="w-[300px] justify-start text-left font-normal">
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {dateRange.from ? (
+                dateRange.to ? (
+                  <>
+                    {formatDate(dateRange.from)} - {formatDate(dateRange.to)}
+                  </>
+                ) : (
+                  formatDate(dateRange.from)
+                )
+              ) : (
+                <span>Pick a date range</span>
+              )}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0" align="end">
+            <Calendar
+              initialFocus
+              mode="range"
+              defaultMonth={dateRange.from}
+              selected={dateRange}
+              onSelect={(range: any) => {
+                setDateRange(range);
+                if (range?.from && range?.to) {
+                  setIsDatePickerOpen(false);
+                }
+              }}
+              numberOfMonths={2}
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       {/* Overview Cards */}
