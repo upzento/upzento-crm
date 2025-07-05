@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: false,
+  reactStrictMode: true,
   swcMinify: false,
   eslint: {
     // Warning: This allows production builds to successfully complete even if
@@ -32,7 +32,17 @@ const nextConfig = {
   // Disable image optimization
   images: {
     unoptimized: true,
-  }
+    domains: ['api.upzento.com', 'app.upzento.com'],
+  },
+  output: 'standalone',
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://api.upzento.com/:path*',
+      },
+    ];
+  },
 }
 
 module.exports = nextConfig

@@ -2,7 +2,7 @@ import axios from 'axios';
 
 // Create an axios instance with default configuration
 const apiClient = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001',
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'https://api.upzento.com',
   headers: {
     'Content-Type': 'application/json',
   },
