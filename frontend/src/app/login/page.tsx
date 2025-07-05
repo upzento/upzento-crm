@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/lib/auth-context';
+import { Button } from '@/components/ui/button';
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -19,8 +20,44 @@ export default function LoginPage() {
     setIsLoading(true);
 
     try {
-      await login(email, password);
-      router.push('/dashboard'); // Redirect to dashboard on success
+      // For demo purposes - admin credentials
+      if (email === 'admin@upzento.com' && password === 'admin123') {
+        // Simulate successful login
+        await new Promise(resolve => setTimeout(resolve, 800));
+        router.push('/admin');
+        return;
+      }
+      
+      // For demo purposes - agency credentials
+      if (email === 'agency@upzento.com' && password === 'agency123') {
+        // Simulate successful login
+        await new Promise(resolve => setTimeout(resolve, 800));
+        router.push('/agency');
+        return;
+      }
+      
+      // For demo purposes - client credentials
+      if (email === 'client@upzento.com' && password === 'client123') {
+        // Simulate successful login
+        await new Promise(resolve => setTimeout(resolve, 800));
+        router.push('/client');
+        return;
+      }
+      
+      // Real authentication flow
+      const result = await login(email, password);
+      
+      // Redirect based on user role
+      if (result?.tenantContext?.isAdmin) {
+        router.push('/admin');
+      } else if (result?.tenantContext?.isAgencyUser) {
+        router.push('/agency');
+      } else if (result?.tenantContext?.isClientUser) {
+        router.push('/client');
+      } else {
+        // Default fallback
+        router.push('/dashboard');
+      }
     } catch (error: any) {
       setError(error.response?.data?.message || 'Login failed. Please check your credentials.');
     } finally {
@@ -28,34 +65,47 @@ export default function LoginPage() {
     }
   };
 
+  // Demo credentials
+  const setDemoCredentials = (type: 'admin' | 'agency' | 'client') => {
+    switch (type) {
+      case 'admin':
+        setEmail('admin@upzento.com');
+        setPassword('admin123');
+        break;
+      case 'agency':
+        setEmail('agency@upzento.com');
+        setPassword('agency123');
+        break;
+      case 'client':
+        setEmail('client@upzento.com');
+        setPassword('client123');
+        break;
+    }
+  };
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center p-8 relative">
-      {/* Background stars effect */}
-      <div className="absolute inset-0 overflow-hidden opacity-20 pointer-events-none">
-        <div className="absolute inset-0 bg-[url('/stars.svg')] bg-repeat" />
-      </div>
-      
+    <div className="min-h-screen bg-background flex flex-col items-center justify-center p-4 relative cosmic-background">
       <div className="z-10 w-full max-w-md">
         <div className="flex justify-center mb-8">
-          <div className="w-16 h-16 rounded-full bg-cosmic-gradient flex items-center justify-center text-white font-space font-bold text-xl">
+          <div className="w-16 h-16 rounded-full bg-cosmic-gradient flex items-center justify-center text-white font-space font-bold text-2xl shadow-[0_0_20px_rgba(61,90,254,0.5)]">
             U
           </div>
         </div>
         
-        <h1 className="text-3xl font-bold font-space text-center mb-8 bg-clip-text text-transparent bg-cosmic-gradient">
+        <h1 className="text-3xl font-bold font-space text-center mb-8 text-text-primary">
           Login to Upzento CRM
         </h1>
         
-        <div className="cosmic-card">
+        <div className="cosmic-card border border-surface/20">
           {error && (
-            <div className="bg-error/10 border border-error text-error rounded-cosmic p-4 mb-6">
+            <div className="bg-error/10 border border-error text-error rounded-md p-4 mb-6">
               {error}
             </div>
           )}
           
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium mb-2">
+              <label htmlFor="email" className="cosmic-label">
                 Email
               </label>
               <input
@@ -70,13 +120,13 @@ export default function LoginPage() {
             </div>
             
             <div>
-              <div className="flex items-center justify-between mb-2">
-                <label htmlFor="password" className="block text-sm font-medium">
+              <div className="flex items-center justify-between mb-1">
+                <label htmlFor="password" className="cosmic-label">
                   Password
                 </label>
                 <Link 
                   href="/forgot-password"
-                  className="text-sm text-primary hover:underline"
+                  className="text-sm text-primary hover:text-primary/80 hover:underline"
                 >
                   Forgot password?
                 </Link>
@@ -92,17 +142,46 @@ export default function LoginPage() {
               />
             </div>
             
-            <button
+            <Button
               type="submit"
               disabled={isLoading}
-              className="cosmic-button w-full"
+              variant="cosmic"
+              className="w-full"
             >
               {isLoading ? 'Logging in...' : 'Login'}
-            </button>
+            </Button>
           </form>
+
+          {/* Demo credentials section */}
+          <div className="mt-6 pt-6 border-t border-surface/20">
+            <p className="text-sm text-text-secondary mb-2">Demo accounts:</p>
+            <div className="flex flex-wrap gap-2">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setDemoCredentials('admin')}
+              >
+                Admin
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setDemoCredentials('agency')}
+              >
+                Agency
+              </Button>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={() => setDemoCredentials('client')}
+              >
+                Client
+              </Button>
+            </div>
+          </div>
         </div>
         
-        <p className="text-center mt-6 text-light-text-secondary dark:text-dark-text-secondary">
+        <p className="text-center mt-6 text-text-secondary">
           Don't have an account?{' '}
           <Link href="/contact" className="text-primary hover:underline">
             Contact us

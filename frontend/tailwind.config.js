@@ -9,17 +9,17 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        border: "hsl(var(--border))",
-        background: "hsl(var(--background))",
-        surface: "hsl(var(--surface))",
-        primary: "hsl(var(--primary))",
-        secondary: "hsl(var(--secondary))",
-        accent: "hsl(var(--accent))",
-        error: "hsl(var(--error))",
-        success: "hsl(var(--success))",
-        warning: "hsl(var(--warning))",
-        "text-primary": "hsl(var(--text-primary))",
-        "text-secondary": "hsl(var(--text-secondary))",
+        border: "var(--surface)",
+        background: "var(--background)",
+        surface: "var(--surface)",
+        primary: "var(--primary)",
+        secondary: "var(--secondary)",
+        accent: "var(--accent)",
+        error: "var(--error)",
+        success: "var(--success)",
+        warning: "var(--warning)",
+        "text-primary": "var(--text-primary)",
+        "text-secondary": "var(--text-secondary)",
         
         // Additional cosmic palette
         'cosmic-blue': {
@@ -60,9 +60,9 @@ module.exports = {
         },
       },
       backgroundImage: {
-        'cosmic-gradient': 'linear-gradient(to right, #3D5AFE, #AA00FF)',
-        'nebula-gradient': 'linear-gradient(to right, #FF4081, #AA00FF)',
-        'aurora-gradient': 'linear-gradient(to right, #00E676, #3D5AFE)',
+        'cosmic-gradient': 'var(--cosmic-gradient)',
+        'nebula-gradient': 'var(--nebula-gradient)',
+        'aurora-gradient': 'var(--aurora-gradient)',
         'star-field': 'url("/images/star-field.svg")',
       },
       fontFamily: {

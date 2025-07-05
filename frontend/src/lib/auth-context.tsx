@@ -8,7 +8,7 @@ interface AuthContextType {
   tenantContext: TenantContext | null;
   isLoading: boolean;
   isAuthenticated: boolean;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<{ user: User; tenantContext: TenantContext } | undefined>;
   logout: () => void;
 }
 
@@ -61,6 +61,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const response = await apiClient.login(email, password);
       setUser(response.user);
       setTenantContext(response.tenantContext);
+      return { user: response.user, tenantContext: response.tenantContext };
     } finally {
       setIsLoading(false);
     }

@@ -7,7 +7,9 @@ Using Detected Dockerfile
 =========================
 
 
-context: cdmv-
+context: 26px-
+
+[internal] load build definition from Dockerfile
 
 [internal] load build definition from Dockerfile
 
@@ -15,7 +17,7 @@ context: cdmv-
 
 [internal] load build definition from Dockerfile
 
-[internal] load build definition from Dockerfile  ✔ 9ms
+[internal] load build definition from Dockerfile  ✔ 17ms
 
 [internal] load metadata for docker.io/library/node:18-alpine
 
@@ -23,7 +25,7 @@ context: cdmv-
 
 [auth] library/node:pull token for registry-1.docker.io  ✔ 0ms
 
-[internal] load metadata for docker.io/library/node:18-alpine  ✔ 471ms
+[internal] load metadata for docker.io/library/node:18-alpine  ✔ 550ms
 
 [internal] load .dockerignore
 
@@ -31,19 +33,13 @@ context: cdmv-
 
 [internal] load .dockerignore
 
-[internal] load .dockerignore  ✔ 8ms
-
-[runner 5/6] COPY --from=builder /app/package*.json ./
-
-[runner 4/6] COPY --from=builder /app/node_modules ./node_modules
-
-[runner 3/6] COPY --from=builder /app/.next ./.next
+[internal] load .dockerignore  ✔ 7ms
 
 [builder 8/8] RUN npm run build || echo "Build completed with warnings"
 
 [builder 7/8] RUN node update-ui-components.js || echo "UI components update completed with warnings"
 
-[builder 1/8] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
+[builder 6/8] RUN node fix-frontend-encoding.js || echo "No encoding issues found"
 
 [builder 5/8] COPY . .
 
@@ -55,9 +51,15 @@ context: cdmv-
 
 [builder 2/8] WORKDIR /app
 
+[builder 1/8] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
+
 [runner 6/6] COPY --from=builder /app/public ./public
 
-[builder 6/8] RUN node fix-frontend-encoding.js || echo "No encoding issues found"
+[runner 5/6] COPY --from=builder /app/package*.json ./
+
+[runner 4/6] COPY --from=builder /app/node_modules ./node_modules
+
+[runner 3/6] COPY --from=builder /app/.next ./.next
 
 [builder 1/8] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
 
@@ -65,23 +67,57 @@ context: cdmv-
 
 [internal] load build context  ✔ 0ms
 
-[builder 1/8] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e  ✔ 5ms
+[builder 1/8] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e  ✔ 13ms
 
 [internal] load build context
 
-[internal] load build context  ✔ 33ms
+[internal] load build context  ✔ 44ms
+
+[builder 2/8] WORKDIR /app – CACHED
 
 [builder 2/8] WORKDIR /app  ✔ 0ms – CACHED
 
-[builder 3/8] COPY package*.json ./  ✔ 0ms – CACHED
+[builder 3/8] COPY package*.json ./
 
-[builder 4/8] RUN npm install – CACHED
+[builder 3/8] COPY package*.json ./  ✔ 82ms
 
-[builder 4/8] RUN npm install  ✔ 0ms – CACHED
+[builder 4/8] RUN npm install
 
-[builder 5/8] COPY . .
+npm warn EBADENGINE Unsupported engine {
+npm warn EBADENGINE   package: 'upzento-crm-frontend@0.1.0',
+npm warn EBADENGINE   required: { node: '20.18.1', npm: '>=9.0.0' },
+npm warn EBADENGINE   current: { node: 'v18.20.8', npm: '10.8.2' }
+npm warn EBADENGINE }
 
-[builder 5/8] COPY . .  ✔ 128ms
+npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+
+npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+
+npm warn deprecated glob@7.1.7: Glob versions prior to v9 are no longer supported
+
+npm warn deprecated @humanwhocodes/config-array@0.11.14: Use @eslint/config-array instead
+
+npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+
+npm warn deprecated react-beautiful-dnd@13.1.1: react-beautiful-dnd is now deprecated. Context and options: https://github.com/atlassian/react-beautiful-dnd/issues/2672
+
+npm warn deprecated eslint@8.44.0: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+
+
+> upzento-crm-frontend@0.1.0 postinstall
+> echo 'Skipping postinstall scripts'
+
+
+Skipping postinstall scripts
+
+
+added 618 packages, and audited 619 packages in 25s
+
+
+
+162 packages are looking for funding
+  run `npm fund` for details
+
 
 [builder 6/8] RUN node fix-frontend-encoding.js || echo "No encoding issues found"
 
@@ -89,7 +125,7 @@ Scanning for UTF-16LE files...
 
 Converted 0 files from UTF-16LE to UTF-8
 
-[builder 6/8] RUN node fix-frontend-encoding.js || echo "No encoding issues found"  ✔ 146ms
+[builder 6/8] RUN node fix-frontend-encoding.js || echo "No encoding issues found"  ✔ 168ms
 
 [builder 7/8] RUN node update-ui-components.js || echo "UI components update completed with warnings"
 
@@ -106,91 +142,1602 @@ Created input.tsx
 Created dropdown-menu.tsx
 All UI components updated successfully!
 
-[builder 7/8] RUN node update-ui-components.js || echo "UI components update completed with warnings"  ✔ 202ms
+[builder 7/8] RUN node update-ui-components.js || echo "UI components update completed with warnings"  ✔ 595ms
 
 [builder 8/8] RUN npm run build || echo "Build completed with warnings"
+
+
 > upzento-crm-frontend@0.1.0 build
 > next build
 
 
-Attention: Next.js now collects completely anonymous telemetry regarding usage.
+- warn Invalid next.config.js options detected: 
 
+- warn     The value at .experimental has an unexpected property, skipTypeCheck, which is not in the list of allowed properties (appDocumentPreloading, adjustFontFallbacks, adjustFontFallbacksWithSizeAdjust, allowedRevalidateHeaderKeys, amp, clientRouterFilter, clientRouterFilterRedirects, clientRouterFilterAllowedRate, cpus, memoryBasedWorkersCount, craCompat, caseSensitiveRoutes, useDeploymentId, useDeploymentIdServerActions, deploymentId, disableOptimizedLoading, disablePostcssPresetEnv, esmExternals, appDir, serverActions, extensionAlias, externalDir, externalMiddlewareRewritesResolve, fallbackNodePolyfills, fetchCacheKeyPrefix, forceSwcTransforms, fullySpecified, gzipSize, incrementalCacheHandlerPath, isrFlushToDisk, isrMemoryCacheSize, largePageDataBytes, legacyBrowsers, manualClientBasePath, middlewarePrefetch, newNextLinkBehavior, nextScriptWorkers, optimizeCss, optimisticClientCache, outputFileTracingRoot, outputFileTracingExcludes, outputFileTracingIgnores, outputFileTracingIncludes, pageEnv, proxyTimeout, serverComponentsExternalPackages, scrollRestoration, sharedPool, sri, strictNextHead, swcFileReading, swcMinify, swcPlugins, swcTraceProfiling, urlImports, workerThreads, webVitalsAttribution, mdxRs, typedRoutes, webpackBuildWorker, turbo, instrumentationHook, turbotrace, logging).
+- warn See more info here: https://nextjs.org/docs/messages/invalid-next-config
+
+- warn You have enabled experimental features (skipTypeCheck, esmExternals, swcPlugins) in next.config.js.
+- warn Experimental features are not covered by semver, and may cause unexpected or broken application behavior. Use at your own risk.
+
+
+
+Attention: Next.js now collects completely anonymous telemetry regarding usage.
 This information is used to shape Next.js' roadmap and prioritize features.
+
 You can learn more, including how to opt-out if you'd not like to participate in this anonymous program, by visiting the following URL:
 
 https://nextjs.org/telemetry
 
 
+
 - info Creating an optimized production build...
 
-Failed to compile.
+- warn Compiled with warnings
 
-./src/app/admin/agencies/page.tsx
-Module not found: Can't resolve 'lucide-react'
 
-https://nextjs.org/docs/messages/module-not-found
+./src/components/ui/pagination.tsx
+Attempted import error: 'buttonVariants' is not exported from '@/components/ui/button' (imported as 'buttonVariants').
 
-./src/app/admin/clients/page.tsx
-Module not found: Can't resolve 'lucide-react'
+Import trace for requested module:
+./src/components/ui/pagination.tsx
+./src/app/dashboard/forms/[id]/submissions/page.tsx
 
-https://nextjs.org/docs/messages/module-not-found
+./src/components/ui/theme-toggle.tsx
+Attempted import error: 'useTheme' is not exported from '@/lib/theme-provider' (imported as 'useTheme').
 
+Import trace for requested module:
+./src/components/ui/theme-toggle.tsx
 ./src/app/admin/layout.tsx
-Module not found: Can't resolve 'lucide-react'
 
-https://nextjs.org/docs/messages/module-not-found
+./src/components/ui/pagination.tsx
+Attempted import error: 'buttonVariants' is not exported from '@/components/ui/button' (imported as 'buttonVariants').
 
-./src/app/admin/page.tsx
-Module not found: Can't resolve '@/components/ui/tabs'
+Import trace for requested module:
+./src/components/ui/pagination.tsx
+./src/app/dashboard/forms/[id]/submissions/page.tsx
 
-https://nextjs.org/docs/messages/module-not-found
+./src/components/ui/theme-toggle.tsx
+Attempted import error: 'useTheme' is not exported from '@/lib/theme-provider' (imported as 'useTheme').
 
-./src/app/admin/page.tsx
-Module not found: Can't resolve 'lucide-react'
-
-https://nextjs.org/docs/messages/module-not-found
-
-
+Import trace for requested module:
+./src/components/ui/theme-toggle.tsx
+./src/app/admin/layout.tsx
 
 
-> Build failed because of webpack errors
+- info Skipping validation of types
+- info Skipping linting
+
+- info Collecting page data...
+
+- info Generating static pages (0/63)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/dashboard/payment". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    Error occurred prerendering page "/dashboard". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    Error occurred prerendering page "/agency/team". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+Error occurred prerendering page "/dashboard/shop". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+Error: Unsupported Server Component type: {...}
+    at T (/app/.next/server/chunks/9796.js:10213:11)
+    at Xa (/app/.next/server/chunks/9796.js:10274:21)
+    at Array.toJSON (/app/.next/server/chunks/9796.js:10088:20)
+    at stringify (<anonymous>)
+    at hb (/app/.next/server/chunks/9796.js:10484:9)
+    at eb (/app/.next/server/chunks/9796.js:10383:29)
+    at Timeout._onTimeout (/app/.next/server/chunks/9796.js:10219:16)
+    at listOnTimeout (node:internal/timers:569:17)
+    at process.processTimers (node:internal/timers:512:7)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/agency/clients". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+Error occurred prerendering page "/admin/clients". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/dashboard/reviews/widgets". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+Error occurred prerendering page "/client/appointments/locations". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+Error occurred prerendering page "/dashboard/phone-sms/campaigns". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/dashboard/reviews". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    
+Error occurred prerendering page "/dashboard/deals". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/contacts". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/campaigns/segments". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/admin/subscriptions". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/deals". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/dashboard/phone-sms". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/admin/agencies". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/chat". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/forms/embed". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/reviews/widgets". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/phone-sms/phone-numbers". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/dashboard/campaigns". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/settings". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/admin". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    Error occurred prerendering page "/client/appointments". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/campaigns". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+- info Generating static pages (31/63)
+
+
+Error occurred prerendering page "/client/reviews". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/campaigns/workflows". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/agency". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/dashboard/phone-sms/phone-numbers". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/deals/pipelines". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    
+Error occurred prerendering page "/client/shop/products/new". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/phone-sms/campaigns". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/appointments/widget". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/shop/widgets". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/dashboard/forms". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    
+Error occurred prerendering page "/client/forms/preview". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/shop/settings". Read more: https://nextjs.org/docs/messages/prerender-error
+Error: Unsupported Server Component type: {...}
+    at T (/app/.next/server/chunks/9796.js:10213:11)
+    at Xa (/app/.next/server/chunks/9796.js:10274:21)
+    at Array.toJSON (/app/.next/server/chunks/9796.js:10088:20)
+    at stringify (<anonymous>)
+    at hb (/app/.next/server/chunks/9796.js:10484:9)
+    at eb (/app/.next/server/chunks/9796.js:10383:29)
+    at Timeout._onTimeout (/app/.next/server/chunks/9796.js:10219:16)
+    at listOnTimeout (node:internal/timers:569:17)
+    at process.processTimers (node:internal/timers:512:7)
+
+
+Error occurred prerendering page "/dashboard/settings". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/appointments/staff". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/appointments/services". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    - info Generating static pages (47/63)
+
+
+Error occurred prerendering page "/client/forms". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/dashboard/analytics/dashboards". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/forms/submissions". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/forms/builder". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/dashboard/contacts". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/contacts/tags". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/dashboard/analytics/integrations". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/deals/create". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    
+Error occurred prerendering page "/client/phone-sms". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/chat/widgets". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/client/shop". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/dashboard/forms/create". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+
+Error occurred prerendering page "/dashboard/analytics". Read more: https://nextjs.org/docs/messages/prerender-error
+TypeError: (0 , _lib_theme_provider__WEBPACK_IMPORTED_MODULE_1__.useTheme) is not a function
+    at ThemeToggle (/app/.next/server/chunks/2404.js:29:97)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:121:272)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Me (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:130:289)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:350)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+    at Je (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:122:215)
+    at Z (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:128:91)
+    at Ke (/app/node_modules/next/dist/compiled/react-dom/cjs/react-dom-server.edge.production.min.js:131:155)
+
+- info Generating static pages (63/63)
+
+Export encountered errors on following paths:
+	/admin/agencies/page: /admin/agencies
+	/admin/clients/page: /admin/clients
+	/admin/page: /admin
+	/admin/subscriptions/page: /admin/subscriptions
+	/agency/clients/page: /agency/clients
+	/agency/page: /agency
+	/agency/team/page: /agency/team
+	/client/appointments/locations/page: /client/appointments/locations
+	/client/appointments/page: /client/appointments
+	/client/appointments/services/page: /client/appointments/services
+	/client/appointments/staff/page: /client/appointments/staff
+	/client/appointments/widget/page: /client/appointments/widget
+	/client/campaigns/create/page: /client/campaigns/create
+	/client/campaigns/page: /client/campaigns
+	/client/campaigns/segments/page: /client/campaigns/segments
+	/client/campaigns/workflows/page: /client/campaigns/workflows
+	/client/chat/page: /client/chat
+	/client/chat/widgets/page: /client/chat/widgets
+	/client/contacts/import/page: /client/contacts/import
+	/client/contacts/page: /client/contacts
+	/client/contacts/tags/page: /client/contacts/tags
+	/client/deals/create/page: /client/deals/create
+	/client/deals/page: /client/deals
+	/client/deals/pipelines/page: /client/deals/pipelines
+	/client/forms/builder/page: /client/forms/builder
+	/client/forms/embed/page: /client/forms/embed
+	/client/forms/page: /client/forms
+	/client/forms/preview/page: /client/forms/preview
+	/client/forms/submissions/page: /client/forms/submissions
+	/client/page: /client
+	/client/phone-sms/campaigns/page: /client/phone-sms/campaigns
+	/client/phone-sms/page: /client/phone-sms
+	/client/phone-sms/phone-numbers/page: /client/phone-sms/phone-numbers
+	/client/reviews/page: /client/reviews
+	/client/reviews/widgets/page: /client/reviews/widgets
+	/client/settings/page: /client/settings
+	/client/shop/page: /client/shop
+	/client/shop/products/new/page: /client/shop/products/new
+	/client/shop/settings/page: /client/shop/settings
+	/client/shop/widgets/page: /client/shop/widgets
+	/dashboard/analytics/dashboards/page: /dashboard/analytics/dashboards
+	/dashboard/analytics/integrations/page: /dashboard/analytics/integrations
+	/dashboard/analytics/page: /dashboard/analytics
+	/dashboard/campaigns/page: /dashboard/campaigns
+	/dashboard/contacts/page: /dashboard/contacts
+	/dashboard/deals/page: /dashboard/deals
+	/dashboard/forms/create/page: /dashboard/forms/create
+	/dashboard/forms/page: /dashboard/forms
+	/dashboard/page: /dashboard
+	/dashboard/payment/page: /dashboard/payment
+	/dashboard/phone-sms/campaigns/page: /dashboard/phone-sms/campaigns
+	/dashboard/phone-sms/page: /dashboard/phone-sms
+	/dashboard/phone-sms/phone-numbers/page: /dashboard/phone-sms/phone-numbers
+	/dashboard/reviews/page: /dashboard/reviews
+	/dashboard/reviews/widgets/page: /dashboard/reviews/widgets
+	/dashboard/settings/page: /dashboard/settings
+	/dashboard/shop/page: /dashboard/shop
+	/dashboard/shop/widgets/page: /dashboard/shop/widgets
 
 Build completed with warnings
 
-[builder 8/8] RUN npm run build || echo "Build completed with warnings"  ✔ 11s
-
-[builder 2/8] WORKDIR /app – CACHED
-
-[builder 2/8] WORKDIR /app  ✔ 0ms – CACHED
+[builder 8/8] RUN npm run build || echo "Build completed with warnings"  ✔ 37s
 
 [runner 3/6] COPY --from=builder /app/.next ./.next
 
-[runner 3/6] COPY --from=builder /app/.next ./.next  ✔ 153ms
+[runner 3/6] COPY --from=builder /app/.next ./.next  ✔ 402ms
 
 [runner 4/6] COPY --from=builder /app/node_modules ./node_modules
 
-[runner 4/6] COPY --from=builder /app/node_modules ./node_modules  ✔ 2s
+[runner 4/6] COPY --from=builder /app/node_modules ./node_modules  ✔ 4s
 
 [runner 5/6] COPY --from=builder /app/package*.json ./
 
-[runner 5/6] COPY --from=builder /app/package*.json ./  ✔ 523ms
+[runner 5/6] COPY --from=builder /app/package*.json ./  ✔ 784ms
 
 [runner 6/6] COPY --from=builder /app/public ./public
 
-[runner 6/6] COPY --from=builder /app/public ./public  ✔ 16ms
+[runner 6/6] COPY --from=builder /app/public ./public  ✔ 26ms
 
 exporting to docker image format
+
 exporting to image
+
+importing to docker
 
 [auth] sharing credentials for production-europe-west4-drams3a.railway-registry.com
 
 [auth] sharing credentials for production-europe-west4-drams3a.railway-registry.com  ✔ 0ms
 
-importing to docker
-
-importing to docker  ✔ 7s
-
-Build time: 44.73 seconds
+importing to docker  ✔ 13s
+Build time: 124.77 seconds
 
  
 
@@ -207,26 +1754,34 @@ Retry window: 5m0s
 
  
 
-Attempt #1 failed with service unavailable. Continuing to retry for 4m57s
+Attempt #1 failed with service unavailable. Continuing to retry for 4m56s
 
-Attempt #3 failed with service unavailable. Continuing to retry for 4m52s
+Attempt #2 failed with service unavailable. Continuing to retry for 4m47s
 
-Attempt #4 failed with service unavailable. Continuing to retry for 4m48s
+Attempt #3 failed with service unavailable. Continuing to retry for 4m45s
 
-Attempt #5 failed with service unavailable. Continuing to retry for 4m29s
+Attempt #4 failed with service unavailable. Continuing to retry for 4m31s
 
-Attempt #6 failed with service unavailable. Continuing to retry for 4m13s
+Attempt #5 failed with service unavailable. Continuing to retry for 4m23s
 
-Attempt #7 failed with service unavailable. Continuing to retry for 3m43s
+Attempt #6 failed with service unavailable. Continuing to retry for 4m6s
 
-Attempt #8 failed with service unavailable. Continuing to retry for 3m13s
+Attempt #7 failed with service unavailable. Continuing to retry for 3m36s
 
-Attempt #9 failed with service unavailable. Continuing to retry for 2m43s
+Attempt #8 failed with service unavailable. Continuing to retry for 3m6s
 
-Attempt #10 failed with service unavailable. Continuing to retry for 2m13s
+Attempt #9 failed with service unavailable. Continuing to retry for 2m36s
 
-Attempt #11 failed with service unavailable. Continuing to retry for 1m42s
+Attempt #10 failed with service unavailable. Continuing to retry for 2m6s
 
-Attempt #12 failed with service unavailable. Continuing to retry for 1m12s
+Attempt #11 failed with service unavailable. Continuing to retry for 1m36s
 
-Attempt #13 failed with service unavailable. Continuing to retry for 42s
+Attempt #12 failed with service unavailable. Continuing to retry for 1m6s
+
+Attempt #13 failed with service unavailable. Continuing to retry for 35s
+
+ 
+
+1/1 replicas never became healthy!
+
+Healthcheck failed!
