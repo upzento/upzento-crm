@@ -173,10 +173,29 @@ export const contactsApi = {
   assignContact: (id: string, assignedToId: string) => 
     apiClient.post(`/contacts/${id}/assign`, { assignedToId }),
   
-  // Custom fields
+  // Custom Fields
   getCustomFields: () => apiClient.get('/contacts/custom-fields'),
   
-  createCustomField: (data: any) => apiClient.post('/contacts/custom-fields', data),
+  getCustomField: (id: string) => apiClient.get(`/contacts/custom-fields/${id}`),
+  
+  createCustomField: (data: {
+    name: string;
+    type: string;
+    isRequired: boolean;
+    options?: string[];
+  }) => apiClient.post('/contacts/custom-fields', data),
+  
+  updateCustomField: (id: string, data: {
+    name: string;
+    type?: string;
+    isRequired?: boolean;
+    options?: string[];
+  }) => apiClient.patch(`/contacts/custom-fields/${id}`, data),
+  
+  deleteCustomField: (id: string) => apiClient.delete(`/contacts/custom-fields/${id}`),
+  
+  reorderCustomFields: (fieldIds: string[]) => 
+    apiClient.post('/contacts/custom-fields/reorder', { fieldIds }),
   
   // Import/Export
   importContacts: (data: any) => apiClient.post('/contacts/import', data),
